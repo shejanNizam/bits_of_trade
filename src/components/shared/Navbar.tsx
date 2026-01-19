@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import main_logo from "../assets/main_logo.svg";
+import main_logo from "../../assets/main_logo.svg";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,9 +37,9 @@ export default function Navbar() {
         </Link>
 
         {/* Middle - Menu (Desktop) */}
-        <div className="hidden md:flex space-x-6 font-normal text-black border border-gray-200 p-4 rounded-full">
+        <div className="hidden md:flex space-x-8 font-medium text-black border border-gray-200 p-4 rounded-full">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="font-medium">
+            <Link key={link.href} href={link.href}>
               {link.label}
             </Link>
           ))}
