@@ -1,9 +1,9 @@
-export default function HowItWorks() {
+export default function Faqs() {
   return (
-    <>
+    <div>
       <h3 className="flex justify-center items-center h-screen">
-        HowItWorks comming soon...
+        Faqs comming soon ...
       </h3>
-    </>
+    </div>
   );
 }

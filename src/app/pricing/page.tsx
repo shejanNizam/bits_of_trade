@@ -1,9 +1,9 @@
-export default function HowItWorks() {
+export default function Pricing() {
   return (
-    <>
+    <div>
       <h3 className="flex justify-center items-center h-screen">
-        HowItWorks comming soon...
+        Pricing comming soon ...{" "}
       </h3>
-    </>
+    </div>
   );
 }
