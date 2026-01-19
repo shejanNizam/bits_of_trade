@@ -2,11 +2,9 @@
 
 import { MenuOutlined } from "@ant-design/icons";
 import { Button, Drawer } from "antd";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import main_logo from "../../assets/main_logo.svg";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,21 +23,24 @@ export default function Navbar() {
     <nav className="bg-white shadow sticky top-0 z-50">
       <div className="container mx-auto px-4 flex items-center justify-between h-20">
         {/* Left - Logo */}
-        <Link href="/">
-          <Image
-            src={main_logo}
-            alt="BitsOfTrade Logo"
-            className="w-28 h-auto"
-            width={1000}
-            height={1000}
-            priority
-          />
+        <Link href="/" className="flex flex-col">
+          <h1 className="text-2xl font-bold leading-tight">
+            <span className="text-gray-900">BitsOf</span>
+            <span className="text-blue-500">Trade</span>
+          </h1>
+          <p className="text-[10px] text-gray-500 tracking-wide">
+            Discipline • Journal • Learning
+          </p>
         </Link>
 
         {/* Middle - Menu (Desktop) */}
-        <div className="hidden md:flex space-x-8 font-medium text-black border border-gray-200 p-4 rounded-full">
+        <div className="hidden md:flex space-x-8 font-medium text-black border border-gray-300 p-4 rounded-full">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href}>
+            <Link
+              className="hover:text-secondary rounded-full"
+              key={link.href}
+              href={link.href}
+            >
               {link.label}
             </Link>
           ))}
@@ -47,7 +48,7 @@ export default function Navbar() {
 
         {/* Right - Buttons (Desktop) */}
         <div className="hidden md:flex items-center gap-3">
-          <Link href="/">
+          <Link href="/login">
             <Button size="large">Login</Button>
           </Link>
           <Link href="/">
@@ -71,21 +72,20 @@ export default function Navbar() {
         onClose={toggleDrawer}
         closable={false}
         styles={{
-          body: { padding: 0, backgroundColor: "#ffffff", color: "#000000" },
+          body: { padding: 0, backgroundColor: "#ffffff", color: "#2083d4" },
           header: { padding: 0 },
         }}
       >
         {/* Drawer Header - Logo left & Close button right */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <Link href="/" onClick={toggleDrawer}>
-            <Image
-              src={main_logo}
-              alt="BitsOfTrade Logo"
-              className="w-28 h-auto"
-              width={1000}
-              height={1000}
-              priority
-            />
+          <Link href="/" onClick={toggleDrawer} className="flex flex-col">
+            <h1 className="text-2xl font-bold leading-tight">
+              <span className="text-gray-900">BitsOf</span>
+              <span className="text-blue-500">Trade</span>
+            </h1>
+            <p className="text-[10px] text-gray-500 tracking-wide">
+              Discipline • Journal • Learning
+            </p>
           </Link>
           <button
             onClick={toggleDrawer}
@@ -110,7 +110,7 @@ export default function Navbar() {
 
           {/* Drawer Buttons */}
           <div className="flex flex-col gap-3 mt-6">
-            <Link href="/" onClick={toggleDrawer}>
+            <Link href="/login" onClick={toggleDrawer}>
               <Button className="w-full">Login</Button>
             </Link>
             <Link href="/" onClick={toggleDrawer}>

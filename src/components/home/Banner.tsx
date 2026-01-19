@@ -15,16 +15,16 @@ export default function Banner() {
           {/* Left Content */}
           <div className="flex flex-col items-start text-left space-y-6">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-full px-4 py-2">
+            <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-4 py-2">
               <span className="w-2 h-2 bg-primary rounded-full" />
-              <span className="text-sm text-gray-700">
+              <span className="text-xs md:text-sm text-primary">
                 World&apos;s first discipline &amp; risk governance layer
               </span>
             </div>
 
             {/* Main Heading */}
             <div className="w-full">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
                 Built for Traders Who Want Longevity, Not Excitement
               </h1>
               {/* Blue underline decoration - full width */}
@@ -45,18 +45,18 @@ export default function Banner() {
             </div>
 
             {/* Description */}
-            <p className="text-lg text-gray-600 max-w-lg leading-relaxed">
+            <p className="text-lg max-w-lg leading-relaxed">
               A discipline-first trading journal that enforces rules, introduces
               consequences, and prevents overtrading from becoming a habit.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-colors">
+              <button className="rounded-full bg-primary hover:bg-secondary text-white font-medium px-6 py-3 transition-colors cursor-pointer">
                 Take the Discipline Test
               </button>
-              <button className="flex items-center gap-2 text-gray-700 hover:text-gray-900 font-medium px-4 py-3 transition-colors">
-                <span className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-full">
+              <button className="rounded-full flex items-center gap-2 text-gray-700 font-medium px-4 py-3 transition-colors cursor-pointer hover:bg-secondary hover:text-white">
+                <span className="w-6 h-6 flex items-center justify-center border border-gray-300 rounded-full">
                   <svg
                     className="w-4 h-4 ml-0.5"
                     fill="currentColor"
@@ -88,15 +88,13 @@ export default function Banner() {
             </div>
 
             {/* Quote Card - Below Image */}
-            <div className="bg-white rounded-xl shadow-lg p-6 mt-6 border border-gray-100">
-              <p className="text-gray-700 text-sm leading-relaxed mb-3">
+            <div className="bg-white rounded-xl shadow-lg p-6 mt-6 border-l-8 border-primary">
+              <p className="text-sm md:text-lg leading-relaxed mb-3">
                 &quot;Most traders don&apos;t fail because they lack knowledge.
                 They fail because their behavior breaks under pressure.&quot;
               </p>
-              <p className="text-gray-500 text-sm">
-                —{" "}
-                <span className="font-medium text-gray-700">Bharat Joshi</span>,
-                Founder
+              <p className="font-bold text-gray-500">
+                — <span>Bharat Joshi</span>, Founder
               </p>
             </div>
           </div>
