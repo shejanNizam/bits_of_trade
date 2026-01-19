@@ -6,7 +6,7 @@ export default function Banner() {
   return (
     <section className="relative min-h-screen bg-white overflow-hidden">
       {/* Background decorative elements */}
-      <div className="absolute top-20 right-20 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-60" />
+      <div className="absolute top-20 right-20 w-64 h-64 bg-secondary/50 rounded-full blur-3xl opacity-60" />
       <div className="absolute bottom-40 right-40 w-32 h-32 bg-blue-200 rounded-full opacity-40" />
       <div className="absolute bottom-20 left-1/2 w-24 h-24 bg-blue-100 rounded-full opacity-50" />
 
@@ -24,7 +24,7 @@ export default function Banner() {
 
             {/* Main Heading */}
             <div className="w-full">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+              <h1 className="text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight">
                 Built for Traders Who Want Longevity, Not Excitement
               </h1>
               {/* Blue underline decoration - full width */}
