@@ -3,11 +3,24 @@
 import { MenuOutlined } from "@ant-design/icons";
 import { Button, Drawer } from "antd";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  // const [loading, setLoading] = useState(true);
+
+  const pathname = usePathname();
+
+  // const showLoading = () => {
+  //   setIsOpen(true);
+  //   setLoading(true);
+
+  //   setTimeout(() => {
+  //     setLoading(false);
+  //   }, 1000);
+  // };
 
   const navLinks = [
     { href: "/how-it-works", label: "How It Works" },
@@ -18,6 +31,8 @@ export default function Navbar() {
   ];
 
   const toggleDrawer = () => setIsOpen(!isOpen);
+
+  const isActive = (href: string) => pathname === href;
 
   return (
     <nav className="bg-white shadow sticky top-0 z-50">
@@ -37,7 +52,11 @@ export default function Navbar() {
         <div className="hidden md:flex space-x-8 font-medium text-black border border-gray-300 p-4 rounded-full">
           {navLinks.map((link) => (
             <Link
-              className="hover:text-secondary rounded-full"
+              className={`rounded-full transition-colors ${
+                isActive(link.href)
+                  ? "text-primary font-semibold"
+                  : "hover:text-secondary"
+              }`}
               key={link.href}
               href={link.href}
             >
@@ -59,19 +78,24 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu Button */}
-        <button className="md:hidden" onClick={toggleDrawer}>
-          <MenuOutlined className="text-2xl text-black" />
+        <button
+          className="md:hidden"
+          // onClick={showLoading}
+          onClick={toggleDrawer}
+        >
+          <MenuOutlined className="text-2xl" />
         </button>
       </div>
 
       {/* Mobile Drawer */}
       <Drawer
         placement="left"
-        width={"70%"}
         open={isOpen}
         onClose={toggleDrawer}
         closable={false}
+        // loading={loading}
         styles={{
+          wrapper: { width: "70%", height: "100%" },
           body: { padding: 0, backgroundColor: "#ffffff", color: "#2083d4" },
           header: { padding: 0 },
         }}
@@ -89,7 +113,7 @@ export default function Navbar() {
           </Link>
           <button
             onClick={toggleDrawer}
-            className="text-black hover:text-gray-600 focus:outline-none w-8 h-8 flex items-center justify-center"
+            className="text-secondary hover:text-gray-600 focus:outline-none w-8 h-8 flex items-center justify-center"
           >
             <FaTimes size={20} />
           </button>
@@ -102,7 +126,11 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={toggleDrawer}
-              className="font-medium text-black"
+              className={`font-medium transition-colors ${
+                isActive(link.href)
+                  ? "text-primary font-semibold"
+                  : "text-black"
+              }`}
             >
               {link.label}
             </Link>
