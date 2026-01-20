@@ -49,7 +49,7 @@ export default function Navbar() {
         </Link>
 
         {/* Middle - Menu (Desktop) */}
-        <div className="hidden md:flex space-x-8 font-medium text-gray-700 border border-gray-300 p-4 rounded-full">
+        <div className="hidden md:flex space-x-8 font-medium text-gray-700 border border-gray-200 p-4 rounded-full">
           {navLinks.map((link) => (
             <Link
               className={`rounded-full transition-colors ${
