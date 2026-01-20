@@ -4,7 +4,7 @@ import bannerImage from "../../assets/banner_image.svg";
 
 export default function Banner() {
   return (
-    <section className="relative min-h-screen bg-white overflow-hidden">
+    <section className="relative bg-white overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute top-20 right-20 w-64 h-64 bg-secondary/50 rounded-full blur-3xl opacity-60" />
       <div className="absolute bottom-40 right-40 w-32 h-32 bg-blue-200 rounded-full opacity-40" />

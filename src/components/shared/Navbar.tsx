@@ -49,7 +49,7 @@ export default function Navbar() {
         </Link>
 
         {/* Middle - Menu (Desktop) */}
-        <div className="hidden md:flex space-x-8 font-medium text-black border border-gray-300 p-4 rounded-full">
+        <div className="hidden md:flex space-x-4 font-medium text-black border border-gray-300 p-4 rounded-full">
           {navLinks.map((link) => (
             <Link
               className={`rounded-full transition-colors ${
@@ -121,7 +121,7 @@ export default function Navbar() {
 
         {/* Drawer Body - Links */}
         <div className="flex flex-col p-6 space-y-4">
-          {navLinks.map((link) => (
+          {navLinks?.map((link) => (
             <Link
               key={link.href}
               href={link.href}
