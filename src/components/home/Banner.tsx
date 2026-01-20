@@ -52,7 +52,7 @@ export default function Banner() {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
-              <button className="h-12 rounded-full bg-primary hover:bg-secondary text-white font-medium px-6 transition-colors cursor-pointer">
+              <button className="h-12 rounded-full bg-primary border border-gray-300 hover:bg-secondary text-white font-medium px-6 transition-colors cursor-pointer">
                 Take the Discipline Test
               </button>
               <button className="h-12 rounded-full flex items-center gap-2 text-gray-700 font-medium px-4 transition-colors cursor-pointer border border-gray-300 hover:bg-secondary hover:text-white">
