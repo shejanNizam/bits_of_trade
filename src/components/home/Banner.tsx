@@ -10,7 +10,7 @@ export default function Banner() {
       <div className="absolute bottom-40 right-40 w-32 h-32 bg-blue-200 rounded-full opacity-40" />
       <div className="absolute bottom-20 left-1/2 w-24 h-24 bg-blue-100 rounded-full opacity-50" />
 
-      <div className="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+      <div className="max-w-7xl mx-auto px-6 py-12 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           {/* Left Content */}
           <div className="flex flex-col items-start text-left space-y-6">
