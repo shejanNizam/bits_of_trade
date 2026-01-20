@@ -35,7 +35,7 @@ export default function Navbar() {
   const isActive = (href: string) => pathname === href;
 
   return (
-    <nav className="bg-white shadow sticky top-0 z-50">
+    <nav className="bg-white sticky top-0 z-50">
       <div className="container mx-auto px-4 flex items-center justify-between h-20">
         {/* Left - Logo */}
         <Link href="/" className="flex flex-col">
