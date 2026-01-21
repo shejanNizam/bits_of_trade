@@ -28,15 +28,17 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand Section */}
           <div className="lg:col-span-2">
-            <div className="mb-4">
-              <h2 className="text-2xl font-bold">
-                <span className="text-white">BitsOf</span>
-                <span className="text-blue-500">Trade</span>
-              </h2>
-              <p className="text-gray-400 text-sm mt-1">
-                Discipline • Journal • Learning
-              </p>
-            </div>
+            <Link href="/">
+              <div className="mb-4">
+                <h2 className="text-2xl font-bold">
+                  <span className="text-white">BitsOf</span>
+                  <span className="text-blue-500">Trade</span>
+                </h2>
+                <p className="text-gray-400 text-sm mt-1">
+                  Discipline • Journal • Learning
+                </p>
+              </div>
+            </Link>
             <p className="text-gray-300 text-sm mb-4">
               Built for discipline, not dopamine.
             </p>
