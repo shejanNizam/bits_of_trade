@@ -1,8 +1,10 @@
+import ActuallyDoesForWorks from "@/components/howItWorks/ActuallyDoesForWorks";
 import CustomBanner from "@/components/shared/CustomBanner";
 
 export default function HowItWorks() {
   return (
     <>
+      {/* banner section */}
       <CustomBanner
         title="How BitsOfTrade Works"
         subtitle="BitsOfTrade is a discipline and learning system that operates around your trading — not inside your broker."
@@ -29,6 +31,9 @@ export default function HowItWorks() {
           <span>No broker integration required</span>
         </div>
       </CustomBanner>
+
+      {/* Actually Does For Works Section */}
+      <ActuallyDoesForWorks />
     </>
   );
 }
