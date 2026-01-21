@@ -1,4 +1,5 @@
 import ActuallyDoesForWorks from "@/components/howItWorks/ActuallyDoesForWorks";
+import LearnMoreAbout from "@/components/howItWorks/LearnMoreAbout";
 import WhatItIsOrNot from "@/components/howItWorks/WhatItIsOrNot";
 import CustomBanner from "@/components/shared/CustomBanner";
 
@@ -38,6 +39,9 @@ export default function HowItWorks() {
 
       {/* What it is or not  */}
       <WhatItIsOrNot />
+
+      {/* learning more about */}
+      <LearnMoreAbout />
     </>
   );
 }
