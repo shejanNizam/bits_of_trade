@@ -1,9 +1,9 @@
-export default function Faqs() {
+import Faqs from "@/components/home/Faqs";
+
+export default function FaqsPage() {
   return (
     <div>
-      <h3 className="flex justify-center items-center h-screen">
-        Faqs comming soon ...
-      </h3>
+      <Faqs />
     </div>
   );
 }
