@@ -52,10 +52,10 @@ export default function Navbar() {
         <div className="hidden md:flex space-x-8 font-medium text-gray-700 border border-gray-200 p-4 rounded-full">
           {navLinks.map((link) => (
             <Link
-              className={`rounded-full transition-colors ${
+              className={`font-semibold transition-all duration-200 rounded-lg ${
                 isActive(link.href)
-                  ? "text-primary font-semibold"
-                  : "hover:text-secondary"
+                  ? "text-secondary font-bold border-b-4 px-2 border-secondary"
+                  : "text-gray-700 hover:bg-gray-50 hover:text-secondary"
               }`}
               key={link.href}
               href={link.href}
@@ -126,10 +126,10 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={toggleDrawer}
-              className={`font-medium transition-colors ${
+              className={`font-semibold transition-all duration-200 px-2 py-2 rounded-lg ${
                 isActive(link.href)
-                  ? "text-primary font-semibold"
-                  : "text-black"
+                  ? "text-secondary font-bold bg-blue-50 border-l-4 border-secondary"
+                  : "text-gray-700 hover:bg-gray-50 hover:text-secondary"
               }`}
             >
               {link.label}

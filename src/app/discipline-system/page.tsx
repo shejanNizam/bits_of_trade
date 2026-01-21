@@ -2,7 +2,7 @@ import CustomBanner from "@/components/shared/CustomBanner";
 
 export default function DisciplineSystem() {
   return (
-    <div>
+    <div className="h-screen">
       <CustomBanner
         title="Discipline System"
         subtitle="A detailed explanation of how BitsOfTrade observes behavior, introduces friction, and enforces review when trading discipline breaks down."
