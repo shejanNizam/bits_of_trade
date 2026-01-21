@@ -1,9 +1,13 @@
+import CustomBanner from "@/components/shared/CustomBanner";
+
 export default function LearningHub() {
   return (
     <div>
-      <h3 className="flex justify-center items-center h-screen">
-        LearningHub comming soon ...
-      </h3>
+      <CustomBanner
+        badge="Learning Hub"
+        title="Learn trading the way professionals do"
+        subtitle="Risk, execution, and behavioral control."
+      />
     </div>
   );
 }
