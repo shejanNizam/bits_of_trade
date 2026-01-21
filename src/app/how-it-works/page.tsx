@@ -7,8 +7,21 @@ export default function HowItWorks() {
         title="How BitsOfTrade Works"
         subtitle="BitsOfTrade is a discipline and learning system that operates around your trading — not inside your broker."
       >
-        {/* Tags Pill */}
-        <div className="inline-flex items-center gap-2 md:gap-3 px-5 py-2.5 rounded-full border border-gray-200 bg-white text-xs md:text-sm text-gray-600">
+        {/* Mobile: Stacked vertically */}
+        <div className="flex flex-col items-center gap-2 md:hidden">
+          <span className="px-4 py-1.5 rounded-full border border-gray-200 bg-white text-xs text-gray-600">
+            No signals
+          </span>
+          <span className="px-4 py-1.5 rounded-full border border-gray-200 bg-white text-xs text-gray-600">
+            No predictions
+          </span>
+          <span className="px-4 py-1.5 rounded-full border border-gray-200 bg-white text-xs text-gray-600">
+            No broker integration required
+          </span>
+        </div>
+
+        {/* Desktop: Single pill with dots */}
+        <div className="hidden md:inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-gray-200 bg-white text-sm text-gray-600">
           <span>No signals</span>
           <span className="w-1 h-1 rounded-full bg-gray-400"></span>
           <span>No predictions</span>

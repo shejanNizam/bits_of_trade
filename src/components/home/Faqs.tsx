@@ -59,7 +59,7 @@ export default function Faqs() {
     <section className="py-16 px-4 bg-white">
       <div className="container mx-auto max-w-4xl">
         {/* Border Container */}
-        <div className="rounded-2xl p-6 md:p-10">
+        <div className="rounded-2xl py-6 md:py-10">
           {/* Title */}
           <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-8">
             Frequently Asked Questions
@@ -70,12 +70,12 @@ export default function Faqs() {
             {faqs?.map((faq) => (
               <div
                 key={faq.id}
-                className="border border-dashed border-gray-200 rounded-xl overflow-hidden transition-all duration-300 hover:border-blue-300"
+                className="border border-gray-200 shadow-lg rounded-xl overflow-hidden transition-all duration-300 hover:border-blue-300"
               >
                 {/* Question */}
                 <button
                   onClick={() => toggleFaq(faq.id)}
-                  className="w-full flex items-center justify-between p-4 md:p-5 text-left bg-white hover:bg-gray-50 transition-colors duration-200"
+                  className="w-full flex items-center justify-between p-4 md:p-5 text-left bg-white hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
                 >
                   <span className="font-semibold text-gray-900 pr-4">
                     {faq.question}
