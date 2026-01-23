@@ -131,74 +131,62 @@ export default function ActuallyDoesForWorks() {
   ];
 
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-16 px-4 bg-white dark:bg-gray-900">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-12">
           <CustomHeading>What BitsOfTrade actually does</CustomHeading>
 
-          <p className="text-gray-600 max-w-xl mx-auto mb-6">
+          <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto mb-6">
             You trade wherever you want — Zerodha, Binance, MT4, anywhere.
             BitsOfTrade works before, during, and after your trading session to:
           </p>
 
-          {/* Tags */}
           <div className="flex flex-wrap justify-center gap-3 mb-4">
             {tags.map((tag, index) => (
               <span
                 key={index}
-                className="px-4 py-2 rounded-full border border-blue-200 bg-blue-50 text-[#3B82F6] text-sm font-medium"
+                className="px-4 py-2 rounded-full border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/30 text-[#3B82F6] dark:text-[#60A5FA] text-sm font-medium"
               >
                 {tag}
               </span>
             ))}
           </div>
 
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-400 dark:text-gray-500 text-sm">
             It does not try to predict markets.
           </p>
         </div>
 
-        {/* Timeline Steps */}
         <div className="relative">
-          {/* Vertical Line - Hidden on mobile */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-200 -translate-x-1/2"></div>
+          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700 -translate-x-1/2"></div>
 
-          {/* Steps */}
           <div className="space-y-8 md:space-y-0">
             {steps?.map((step) => (
               <div key={step.number} className="relative">
-                {/* Mobile Layout */}
                 <div className="md:hidden space-y-4">
-                  {/* Step Number */}
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-white border-2 border-[#3B82F6] text-[#3B82F6] font-bold flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-900 border-2 border-[#3B82F6] text-[#3B82F6] font-bold flex items-center justify-center">
                       {step.number}
                     </div>
-                    <div className="h-0.5 flex-1 bg-gray-200"></div>
+                    <div className="h-0.5 flex-1 bg-gray-200 dark:bg-gray-700"></div>
                   </div>
 
-                  {/* Left Card */}
                   <StepCard data={step.left} variant="left" />
 
-                  {/* Right Card */}
                   <StepCard data={step.right} variant="right" />
                 </div>
 
-                {/* Desktop Layout */}
                 <div className="hidden md:grid md:grid-cols-[1fr_60px_1fr] items-center gap-4 py-6">
-                  {/* Left Card */}
                   <div className="flex justify-end">
                     <StepCard data={step.left} variant="left" />
                   </div>
 
-                  {/* Center Number */}
                   <div className="flex justify-center">
-                    <div className="w-10 h-10 rounded-full bg-white border-2 border-[#3B82F6] text-[#3B82F6] font-bold flex items-center justify-center z-10">
+                    <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-900 border-2 border-[#3B82F6] text-[#3B82F6] font-bold flex items-center justify-center z-10">
                       {step.number}
                     </div>
                   </div>
 
-                  {/* Right Card */}
                   <div className="flex justify-start">
                     <StepCard data={step.right} variant="right" />
                   </div>

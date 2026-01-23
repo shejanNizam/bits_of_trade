@@ -25,7 +25,7 @@ export default function StepCard({ data, variant }: StepCardProps) {
       } ${
         hasIcon
           ? "bg-transparent"
-          : "bg-white border border-gray-200 shadow-sm hover:shadow-lg hover:border-blue-200"
+          : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-500"
       }`}
     >
       {/* Title with Icon */}
@@ -35,17 +35,21 @@ export default function StepCard({ data, variant }: StepCardProps) {
         }`}
       >
         {!isLeft && data.icon && (
-          <data.icon className="w-5 h-5 text-[#3B82F6]" />
+          <data.icon className="w-5 h-5 text-[#3B82F6] dark:text-[#60A5FA]" />
         )}
-        <h4 className="font-bold text-gray-900">{data.title}</h4>
+        <h4 className="font-bold text-gray-900 dark:text-white">
+          {data.title}
+        </h4>
         {isLeft && data.icon && (
-          <data.icon className="w-5 h-5 text-[#3B82F6]" />
+          <data.icon className="w-5 h-5 text-[#3B82F6] dark:text-[#60A5FA]" />
         )}
       </div>
 
       {/* Description */}
       {data.description && (
-        <p className="text-gray-600 text-sm mb-3">{data.description}</p>
+        <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
+          {data.description}
+        </p>
       )}
 
       {/* List Items */}
@@ -54,11 +58,11 @@ export default function StepCard({ data, variant }: StepCardProps) {
           {data.items.map((item, index) => (
             <li
               key={index}
-              className={`flex items-center gap-2 text-sm text-gray-600 ${
+              className={`flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 ${
                 isLeft ? "md:flex-row-reverse md:text-right" : ""
               }`}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#3B82F6] shrink-0"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3B82F6] dark:bg-[#60A5FA] shrink-0"></span>
               {item}
             </li>
           ))}
@@ -75,9 +79,13 @@ export default function StepCard({ data, variant }: StepCardProps) {
                 isLeft ? "md:justify-end" : ""
               }`}
             >
-              <span className="text-gray-600">{example.from}</span>
-              <span className="text-gray-400">→</span>
-              <span className="font-medium">{example.to}</span>
+              <span className="text-gray-600 dark:text-gray-400">
+                {example.from}
+              </span>
+              <span className="text-gray-400 dark:text-gray-500">→</span>
+              <span className="font-medium text-gray-900 dark:text-white">
+                {example.to}
+              </span>
             </div>
           ))}
         </div>
@@ -85,14 +93,16 @@ export default function StepCard({ data, variant }: StepCardProps) {
 
       {/* Note */}
       {data.note && (
-        <p className="text-gray-400 text-xs mt-3 italic">{data.note}</p>
+        <p className="text-gray-400 dark:text-gray-500 text-xs mt-3 italic">
+          {data.note}
+        </p>
       )}
 
       {/* Link */}
       {data.link && (
         <Link
           href={data.link.href}
-          className={`inline-flex items-center gap-1 text-[#3B82F6] text-sm font-medium mt-3 hover:underline ${
+          className={`inline-flex items-center gap-1 text-[#3B82F6] dark:text-[#60A5FA] text-sm font-medium mt-3 hover:underline ${
             isLeft ? "md:justify-end" : ""
           }`}
         >
