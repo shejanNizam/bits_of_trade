@@ -56,12 +56,12 @@ export default function Faqs() {
   };
 
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-16 px-4 bg-white dark:bg-gray-900">
       <div className="container mx-auto max-w-4xl">
         {/* Border Container */}
         <div className="rounded-2xl py-6 md:py-10">
           {/* Title */}
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-8">
+          <h2 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-8">
             Frequently Asked Questions
           </h2>
 
@@ -70,18 +70,18 @@ export default function Faqs() {
             {faqs?.map((faq) => (
               <div
                 key={faq.id}
-                className="border border-gray-200 shadow-lg rounded-xl overflow-hidden transition-all duration-300 hover:border-blue-300"
+                className="border border-gray-200 dark:border-gray-700 shadow-lg rounded-xl overflow-hidden transition-all duration-300 hover:border-blue-300 dark:hover:border-blue-500"
               >
                 {/* Question */}
                 <button
                   onClick={() => toggleFaq(faq.id)}
-                  className="w-full flex items-center justify-between p-4 md:p-5 text-left bg-white hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
+                  className="w-full flex items-center justify-between p-4 md:p-5 text-left bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
                 >
-                  <span className="font-semibold text-gray-900 pr-4">
+                  <span className="font-semibold text-gray-900 dark:text-white pr-4">
                     {faq.question}
                   </span>
                   <IoChevronDownOutline
-                    className={`w-5 h-5 text-gray-800 shrink-0 transition-transform duration-300 ${
+                    className={`w-5 h-5 text-gray-800 dark:text-gray-300 shrink-0 transition-transform duration-300 ${
                       openIndex === faq.id ? "rotate-180" : ""
                     }`}
                   />
@@ -93,7 +93,7 @@ export default function Faqs() {
                     openIndex === faq.id ? "max-h-96" : "max-h-0"
                   }`}
                 >
-                  <div className="p-4 md:p-5 pt-0 text-gray-600 text-sm leading-relaxed">
+                  <div className="p-4 md:p-5 pt-0 text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                     {faq.answer}
                   </div>
                 </div>
