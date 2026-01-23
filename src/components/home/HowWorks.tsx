@@ -14,7 +14,7 @@ export default function HowWorks() {
       icon: HiOutlineLightBulb,
       color: "[#8B5CF6]",
       bgColor: "bg-[#8B5CF6]",
-      textColor: "text-[#8B5CF6]",
+      textColor: "text-[#8B5CF6] dark:text-[#A78BFA]",
       lightBg: "bg-[#8B5CF6]",
       position: "left",
     },
@@ -27,7 +27,7 @@ export default function HowWorks() {
       icon: IoLayersOutline,
       color: "[#3B82F6]",
       bgColor: "bg-[#3B82F6]",
-      textColor: "text-[#3B82F6]",
+      textColor: "text-[#3B82F6] dark:text-[#60A5FA]",
       lightBg: "bg-[#3B82F6]",
       position: "right",
     },
@@ -40,7 +40,7 @@ export default function HowWorks() {
       icon: BsJournalBookmark,
       color: "[#10B981]",
       bgColor: "bg-[#10B981]",
-      textColor: "text-[#10B981]",
+      textColor: "text-[#10B981] dark:text-[#34D399]",
       lightBg: "bg-[#10B981]",
       position: "left",
     },
@@ -53,14 +53,14 @@ export default function HowWorks() {
       icon: IoBookOutline,
       color: "[#F59E0B]",
       bgColor: "bg-[#F59E0B]",
-      textColor: "text-[#F59E0B]",
+      textColor: "text-[#F59E0B] dark:text-[#FBBF24]",
       lightBg: "bg-[#F59E0B]",
       position: "right",
     },
   ];
 
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-16 px-4 bg-white dark:bg-gray-900">
       <div className="container mx-auto max-w-6xl">
         <CustomHeading>How BitsOfTrade works</CustomHeading>
 
@@ -88,7 +88,7 @@ export default function HowWorks() {
                   >
                     {step.number}
                   </span>
-                  <h3 className="text-xl font-bold text-gray-900">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                     {step.title}
                   </h3>
                 </div>
@@ -100,16 +100,13 @@ export default function HowWorks() {
 
                 {/* Description */}
                 <p
-                  // className="text-gray-600 text-sm max-w-md"
-                  className={`text-gray-600 text-sm max-w-md ${
+                  className={`text-gray-600 dark:text-gray-400 text-sm max-w-md ${
                     step.position === "right" ? "md:ml-auto" : ""
                   }`}
                 >
                   {step.description}
                 </p>
               </div>
-
-              {/* Icon Card */}
 
               {/* Icon Card */}
               <div
