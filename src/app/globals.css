@@ -24,6 +24,16 @@ body {
     color 0.3s ease;
 }
 
+@theme inline {
+  --color-primary: #2563eb;
+  --color-secondary: #1183bd;
+
+  /* --font-sans: "Inter", sans-serif;
+  --font-mono: "Roboto Mono", monospace;
+  --font-raleway: var(--times-new-roman);
+  --font-raleway-bold: var(--times-new-roman-bold); */
+}
+
 /* Drawer dark mode styles */
 .ant-drawer .ant-drawer-content {
   background-color: var(--background) !important;
@@ -43,6 +53,7 @@ body {
   background-color: rgba(0, 0, 0, 0.65) !important;
 }
 
+/* for ignore tailwind */
 .no-tailwind * {
   all: revert !important;
 }

@@ -1,12 +1,14 @@
 "use client";
 
 import { MenuOutlined } from "@ant-design/icons";
-import { Button, Drawer } from "antd";
+import { Drawer } from "antd";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import CustomPrimaryButton from "./CustomPrimaryButton";
+import CustomSecondaryButton from "./CustomSecondaryButton";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
@@ -38,8 +40,8 @@ export default function Navbar() {
   const drawerBorder = isDark ? "#374151" : "#e5e7eb";
 
   return (
-    <nav className="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-700 transition-colors">
-      <div className="container mx-auto px-4 flex items-center justify-between h-20">
+    <nav className="sticky top-0 z-50 bg-white dark:bg-slate-900 transition-colors">
+      <div className="container mx-auto px-4 flex items-center justify-between h-16">
         {/* Left - Logo */}
         <Link href="/" className="flex flex-col">
           <h1 className="text-2xl font-bold leading-tight">
@@ -55,7 +57,7 @@ export default function Navbar() {
         <div className="hidden md:flex space-x-8 font-medium border border-gray-200 dark:border-gray-700 p-4 rounded-full bg-gray-50 dark:bg-slate-800">
           {navLinks.map((link) => (
             <Link
-              className={`font-semibold transition-all duration-200 rounded-lg px-3 py-1 ${
+              className={`font-semibold transition-all duration-200 rounded-lg px-2 ${
                 isActive(link.href)
                   ? "text-blue-500 font-bold border-b-4 border-blue-500"
                   : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-500"
@@ -72,12 +74,10 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           <ThemeToggle />
           <Link href="/login">
-            <Button size="large">Login</Button>
+            <CustomSecondaryButton>Login</CustomSecondaryButton>
           </Link>
           <Link href="/">
-            <Button type="primary" size="large">
-              Get Started
-            </Button>
+            <CustomPrimaryButton>Get Started</CustomPrimaryButton>
           </Link>
         </div>
 
@@ -145,7 +145,7 @@ export default function Navbar() {
 
         {/* Drawer Body */}
         <div
-          className="flex flex-col p-6 space-y-4 h-full"
+          className="flex flex-col p-4 space-y-2 h-full"
           style={{ backgroundColor: drawerBg }}
         >
           {navLinks?.map((link) => (
@@ -153,7 +153,7 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={toggleDrawer}
-              className="font-semibold transition-all duration-200 px-3 py-3 rounded-lg"
+              className="font-semibold transition-all duration-200 px-2 py-2 rounded-full"
               style={{
                 color: isActive(link.href)
                   ? "#3b82f6"
@@ -169,20 +169,6 @@ export default function Navbar() {
                   ? "4px solid #3b82f6"
                   : "4px solid transparent",
               }}
-              onMouseEnter={(e) => {
-                if (!isActive(link.href)) {
-                  e.currentTarget.style.backgroundColor = isDark
-                    ? "#1e293b"
-                    : "#f9fafb";
-                  e.currentTarget.style.color = "#3b82f6";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive(link.href)) {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = isDark ? "#d1d5db" : "#374151";
-                }
-              }}
             >
               {link.label}
             </Link>
@@ -191,14 +177,14 @@ export default function Navbar() {
           {/* Drawer Buttons */}
           <div className="flex flex-col gap-3 mt-6">
             <Link href="/login" onClick={toggleDrawer}>
-              <Button size="large" className="w-full">
+              <CustomSecondaryButton className="w-full">
                 Login
-              </Button>
+              </CustomSecondaryButton>
             </Link>
             <Link href="/" onClick={toggleDrawer}>
-              <Button type="primary" size="large" className="w-full">
+              <CustomPrimaryButton className="w-full">
                 Get Started
-              </Button>
+              </CustomPrimaryButton>
             </Link>
           </div>
         </div>

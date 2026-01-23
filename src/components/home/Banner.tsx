@@ -1,6 +1,8 @@
 import Image from "next/image";
 
 import bannerImage from "../../assets/banner_image.svg";
+import CustomPrimaryButton from "../shared/CustomPrimaryButton";
+import CustomSecondaryButton from "../shared/CustomSecondaryButton";
 
 export default function Banner() {
   return (
@@ -52,10 +54,9 @@ export default function Banner() {
 
             {/* CTA Buttons - Updated */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
-              <button className="h-12 rounded-full bg-blue-500 dark:bg-blue-600 shadow-lg dark:shadow-blue-500/20 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium px-6 transition-all duration-300 cursor-pointer hover:shadow-xl hover:scale-105 active:scale-95">
-                Take Discipline Test
-              </button>
-              <button className="h-12 rounded-full flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium px-4 transition-all duration-300 cursor-pointer border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-800 shadow-md hover:bg-blue-500 hover:border-blue-500 dark:hover:bg-blue-600 dark:hover:border-blue-600 hover:text-white hover:shadow-lg hover:scale-105 active:scale-95 group">
+              <CustomPrimaryButton>Take Discipline Test</CustomPrimaryButton>
+
+              <CustomSecondaryButton className="flex items-center gap-2">
                 <span className="w-6 h-6 flex items-center justify-center border border-gray-300 dark:border-gray-600 group-hover:border-white rounded-full transition-colors duration-300">
                   <svg
                     className="w-4 h-4 ml-0.5"
@@ -66,7 +67,7 @@ export default function Banner() {
                   </svg>
                 </span>
                 View Demo
-              </button>
+              </CustomSecondaryButton>
             </div>
           </div>
 
