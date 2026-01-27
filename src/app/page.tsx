@@ -6,6 +6,7 @@ import Faqs from "@/components/home/Faqs";
 import HomeDisciplineSystem from "@/components/home/homeDisciplineSystem/HomeDisciplineSystem";
 import HowWorks from "@/components/home/HowWorks";
 import TradersReview from "@/components/home/TradersReview";
+import Pricing from "./pricing/page";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
       <Capabilities />
       <HomeDisciplineSystem />
       <TradersReview />
+      <Pricing />
       <Faqs />
     </>
   );
