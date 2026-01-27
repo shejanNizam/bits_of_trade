@@ -1,4 +1,5 @@
 import CustomHeading from "@/components/shared/CustomHeading";
+import ChasingOutcomes from "./ChasingOutcomes";
 import ControlsBehavior from "./ControlsBehavior";
 import DisciplineSystemWorks from "./DisciplineSystemWorks";
 import LayerOne from "./LayerOne";
@@ -40,6 +41,7 @@ export default function HomeDisciplineSystem() {
       <LayerTwo />
       <LayerThree />
       <ControlsBehavior />
+      <ChasingOutcomes />
     </>
   );
 }
