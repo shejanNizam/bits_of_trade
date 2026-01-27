@@ -1,4 +1,5 @@
 import CustomHeading from "@/components/shared/CustomHeading";
+import CustomPrimaryButton from "@/components/shared/CustomPrimaryButton";
 import CustomSecondaryButton from "@/components/shared/CustomSecondaryButton";
 import { BsCheckLg } from "react-icons/bs";
 
@@ -200,9 +201,19 @@ export default function Pricing() {
               </div>
 
               {/* CTA Button */}
-              <CustomSecondaryButton className="w-full">
-                {plan.buttonText}
-              </CustomSecondaryButton>
+              {plan?.featured ? (
+                <>
+                  <CustomPrimaryButton className="w-full">
+                    {plan.buttonText}
+                  </CustomPrimaryButton>
+                </>
+              ) : (
+                <>
+                  <CustomSecondaryButton className="w-full">
+                    {plan.buttonText}
+                  </CustomSecondaryButton>
+                </>
+              )}
             </div>
           ))}
         </div>
