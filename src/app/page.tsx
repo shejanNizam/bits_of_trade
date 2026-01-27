@@ -1,5 +1,6 @@
 import ActuallyDoes from "@/components/home/ActuallyDoes";
 import Banner from "@/components/home/Banner";
+import BuildingDiscipline from "@/components/home/BuildingDiscipline";
 import Capabilities from "@/components/home/Capabilities";
 import DifferentHow from "@/components/home/DifferentHow";
 import DisciplineFails from "@/components/home/DisciplineFails";
@@ -21,6 +22,7 @@ export default function Home() {
       <TradersReview />
       <Pricing />
       <DifferentHow />
+      <BuildingDiscipline />
       <Faqs />
     </>
   );
