@@ -124,7 +124,7 @@ export default function LayerTwo() {
                 <h4 className="text-base font-bold text-gray-900 dark:text-white transition-colors">
                   Outcome Metrics
                 </h4>
-                <span className="text-xs text-gray-400 dark:text-gray-500 transition-colors">
+                <span className="text-xs bg-gray-200 dark:bg-gray-700 px-3 py-1.5 rounded-md text-gray-600 dark:text-gray-400 transition-colors">
                   Industry Standard
                 </span>
               </div>
@@ -134,13 +134,13 @@ export default function LayerTwo() {
                     key={index}
                     className="flex items-center gap-3 text-gray-500 dark:text-gray-400 transition-colors"
                   >
-                    <BsCheckCircle className="w-4 h-4 shrink-0" />
+                    <BsCheckCircle className="w-4 h-4 shrink-0 text-gray-400 dark:text-gray-500 transition-colors" />
                     <span className="text-sm">{metric}</span>
                   </li>
                 ))}
               </ul>
-              <div className="flex items-start gap-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg transition-colors">
-                <BsInfoCircle className="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors">
+                <BsInfoCircle className="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0 mt-0.5 transition-colors" />
                 <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors">
                   Useful for review. Never for permission.
                 </p>
@@ -153,7 +153,7 @@ export default function LayerTwo() {
                 <h4 className="text-base font-bold text-gray-900 dark:text-white transition-colors">
                   Discipline Metrics
                 </h4>
-                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold transition-colors">
+                <span className="text-xs bg-emerald-100 dark:bg-emerald-900/30 px-3 py-1.5 rounded-md text-emerald-700 dark:text-emerald-400 font-semibold transition-colors">
                   BitsOfTrade Exclusive
                 </span>
               </div>
@@ -163,13 +163,13 @@ export default function LayerTwo() {
                     key={index}
                     className="flex items-center gap-3 text-gray-700 dark:text-gray-300 transition-colors"
                   >
-                    <BsCheckCircle className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
+                    <BsCheckCircle className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0 transition-colors" />
                     <span className="text-sm">{metric}</span>
                   </li>
                 ))}
               </ul>
               <div className="flex items-start gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-900/30 transition-colors">
-                <BsShieldLock className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                <BsShieldLock className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5 transition-colors" />
                 <p className="text-xs text-emerald-700 dark:text-emerald-300 transition-colors">
                   Used to monitor and control trading behavior.
                 </p>
