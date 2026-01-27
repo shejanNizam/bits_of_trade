@@ -5,6 +5,7 @@ import DisciplineFails from "@/components/home/DisciplineFails";
 import Faqs from "@/components/home/Faqs";
 import HomeDisciplineSystem from "@/components/home/homeDisciplineSystem/HomeDisciplineSystem";
 import HowWorks from "@/components/home/HowWorks";
+import TradersReview from "@/components/home/TradersReview";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
       <HowWorks />
       <Capabilities />
       <HomeDisciplineSystem />
+      <TradersReview />
       <Faqs />
     </>
   );

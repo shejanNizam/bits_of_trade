@@ -1,5 +1,6 @@
 import CustomHeading from "@/components/shared/CustomHeading";
 import CustomPrimaryButton from "@/components/shared/CustomPrimaryButton";
+import Link from "next/link";
 import { BsCheckCircleFill, BsXCircleFill } from "react-icons/bs";
 
 export default function ChasingOutcomes() {
@@ -50,7 +51,9 @@ export default function ChasingOutcomes() {
           </div>
 
           {/* CTA Button */}
-          <CustomPrimaryButton>Explore The Learning Hub</CustomPrimaryButton>
+          <Link href="/learning-hub">
+            <CustomPrimaryButton>Explore The Learning Hub</CustomPrimaryButton>
+          </Link>
 
           {/* Subtitle */}
           <p className="text-gray-500 dark:text-gray-600 text-xs transition-colors py-2">
