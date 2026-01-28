@@ -73,8 +73,7 @@ export default function Navbar() {
         {/* Right - Theme Toggle & Buttons (Desktop) */}
         <div className="hidden md:flex items-center gap-3">
           <ThemeToggle />
-          {/* <Link href="/login"> */}
-          <Link href="/onboarding">
+          <Link href="/login">
             <CustomSecondaryButton>Login</CustomSecondaryButton>
           </Link>
           <Link href="/">
