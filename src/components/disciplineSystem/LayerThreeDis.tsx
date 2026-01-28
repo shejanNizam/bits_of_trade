@@ -16,7 +16,6 @@ export default function LayerThreeDis() {
   return (
     <div className="py-12">
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.01]">
-        {/* ==================== HEADER ==================== */}
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center transition-all duration-300 hover:scale-110">
             <BsShield className="w-5 h-5 text-blue-600 dark:text-blue-400 transition-colors" />
@@ -26,18 +25,15 @@ export default function LayerThreeDis() {
           </h2>
         </div>
 
-        {/* ==================== DESCRIPTION ==================== */}
         <p className="text-gray-700 dark:text-gray-300 mb-8 transition-colors">
           When behavioral risk increases, the Discipline System introduces
           friction, not advice.
         </p>
 
-        {/* ==================== INTERVENTION MECHANISMS LABEL ==================== */}
         <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4 transition-colors">
           Intervention mechanisms:
         </h3>
 
-        {/* ==================== MECHANISMS LIST ==================== */}
         <div className="space-y-3 mb-8">
           {interventionMechanisms.map((mechanism) => (
             <div
@@ -56,7 +52,6 @@ export default function LayerThreeDis() {
           ))}
         </div>
 
-        {/* ==================== WHAT THIS IS NOT BOX ==================== */}
         <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-xl p-6 hover:scale-[1.02] hover:shadow-md transition-all duration-300">
           <h4 className="text-base font-bold text-amber-900 dark:text-amber-300 mb-3 transition-colors">
             What this is NOT
