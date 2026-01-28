@@ -18,7 +18,7 @@ export default function LayerOneDis() {
   ];
 
   return (
-    <div className="py-12">
+    <div className="py-8">
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.01]">
         <div className="flex items-center gap-3 mb-6">
           <BsInfoCircle className="w-6 h-6 text-blue-600 dark:text-blue-400 shrink-0 transition-colors" />

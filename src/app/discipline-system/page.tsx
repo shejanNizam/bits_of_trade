@@ -49,7 +49,7 @@ export default function DisciplineSystem() {
         </p>
       </CustomBanner>
 
-      <div className="container mx-auto max-w-6xl px-4 py-12">
+      <div className="container mx-auto max-w-6xl px-4 py-8">
         <div className="bg-white dark:bg-gray-800 rounded-2xl border-2 border-blue-500 dark:border-blue-400 p-8 md:p-10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.01] mb-8">
           <div className="mb-8">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3 transition-colors">
