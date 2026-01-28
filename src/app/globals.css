@@ -1,6 +1,14 @@
-/* app/globals.css */
-
 @import "tailwindcss";
+
+/* @layer base {
+  body {
+    @apply antialiased;
+  }
+} */
+
+* {
+  box-sizing: border-box;
+}
 
 /* Tailwind v4 dark mode variant */
 @variant dark (&:is(.dark *));

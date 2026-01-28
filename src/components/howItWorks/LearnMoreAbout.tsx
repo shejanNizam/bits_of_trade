@@ -53,7 +53,7 @@ export default function LearnMoreAbout() {
             Explore Discipline System
           </Link>
           <Link
-            href="/discipline-test"
+            href="/onboarding/discipline-test"
             className="w-full sm:w-auto px-6 py-3 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium text-center transition-all duration-300 hover:bg-gray-800 dark:hover:bg-gray-100"
           >
             Take the Discipline Test

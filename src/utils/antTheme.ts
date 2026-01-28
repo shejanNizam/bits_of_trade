@@ -1,6 +1,6 @@
 export const mainTheme = {
   token: {
-    colorPrimary: "#1d4ed8",
+    colorPrimary: "#2563EB",
     colorInfo: "#000000",
   },
   components: {
@@ -26,8 +26,12 @@ export const mainTheme = {
       colorBgContainerDisabled: "#ffffff",
       borderRadius: 6,
       fontSize: 14,
-      height: 60,
+      controlHeight: 60, // ✅ Changed from height to controlHeight
       boxShadow: "0 0px 0 rgba(5, 145, 255, 0.1)",
+    },
+    Progress: {
+      defaultColor: "#2563EB",
+      colorSuccess: "#2563EB",
     },
     Form: {
       labelColor: "#FFEB3B",
@@ -44,12 +48,12 @@ export const mainTheme = {
       colorBorder: "#DEAD35",
       colorTextPlaceholder: "#666666",
       borderRadius: 4,
-      height: 80,
+      controlHeight: 80,
     },
     InputPassword: {
       colorBorder: "#DEAD35",
       borderRadius: 4,
-      height: 80,
+      controlHeight: 80,
       colorTextPlaceholder: "#666666",
     },
     InputNumber: {
@@ -58,7 +62,7 @@ export const mainTheme = {
     Select: {
       colorBorder: "#DEAD35",
       borderRadius: 8,
-      height: 80,
+      controlHeight: 80,
       colorTextPlaceholder: "#666666",
     },
     DatePicker: {
@@ -79,22 +83,22 @@ export const mainTheme = {
       borderRadius: 8,
     },
     Tabs: {
-      itemActiveColor: "#8E0003",
-      colorPrimary: "#8E0003",
-      colorText: "#8E0003",
-      colorTextHeading: "#8E0003",
-      colorBorderSecondary: "#8E0003",
-      itemColor: "#8E0003",
-      itemSelectedColor: "#8E0003",
-      itemHoverColor: "#8E0003",
-      inkBarColor: "#8E0003",
+      itemActiveColor: "#2563EB",
+      colorPrimary: "#2563EB",
+      colorText: "#2563EB",
+      colorTextHeading: "#2563EB",
+      colorBorderSecondary: "#2563EB",
+      itemColor: "#666666",
+      itemSelectedColor: "#2563EB",
+      itemHoverColor: "#2563EB",
+      inkBarColor: "#2563EB",
       titleFontSize: 16,
       horizontalItemGutter: 32,
     },
     Drawer: {
-      colorBgElevated: "#ffffff", // white background
-      colorText: "#000000", // all text black
-      colorTextHeading: "#ffffff", // heading dark gray / black
+      colorBgElevated: "#ffffff",
+      colorText: "#000000",
+      colorTextHeading: "#ffffff",
       padding: 24,
       borderRadius: 8,
     },
