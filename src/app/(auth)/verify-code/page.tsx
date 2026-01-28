@@ -3,7 +3,7 @@
 import { Button, Form, Input, InputRef, theme } from "antd";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 
 // 🔥 Uncomment when API is integrated
@@ -37,8 +37,8 @@ interface VerifyCodeFormValues {
 //   message?: string;
 // }
 
-// ==================== COMPONENT ====================
-const VerifyCode: React.FC = () => {
+// ==================== INNER COMPONENT WITH SEARCH PARAMS ====================
+const VerifyCodeContent: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [form] = Form.useForm<VerifyCodeFormValues>();
@@ -348,6 +348,27 @@ const VerifyCode: React.FC = () => {
         </p>
       </div>
     </div>
+  );
+};
+
+// ==================== LOADING FALLBACK ====================
+function VerifyCodeLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+      <div className="text-center">
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400"></div>
+        <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+      </div>
+    </div>
+  );
+}
+
+// ==================== MAIN COMPONENT WITH SUSPENSE ====================
+const VerifyCode: React.FC = () => {
+  return (
+    <Suspense fallback={<VerifyCodeLoading />}>
+      <VerifyCodeContent />
+    </Suspense>
   );
 };
 

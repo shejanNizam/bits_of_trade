@@ -2,7 +2,8 @@
 
 import { Button, Checkbox, Form, Input, theme } from "antd";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 
 // 🔥 Uncomment when Redux is integrated
@@ -39,10 +40,10 @@ interface LoginFormValues {
 //   message?: string;
 // }
 
-// ==================== COMPONENT ====================
-const Login: React.FC = () => {
+// ==================== LOGIN CONTENT COMPONENT ====================
+const LoginContent: React.FC = () => {
   const router = useRouter();
-  // const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const [form] = Form.useForm<LoginFormValues>();
   const { token } = theme.useToken();
 
@@ -50,7 +51,7 @@ const Login: React.FC = () => {
   // const dispatch = useDispatch();
 
   // Get redirect path from URL params
-  // const redirectPath = searchParams.get("from") || "/";
+  const redirectPath = searchParams.get("from") || "/";
 
   // ==================== API INTEGRATION ====================
   // 🔥 Uncomment when backend API is ready
@@ -104,7 +105,7 @@ const Login: React.FC = () => {
       // 🔥 Remove this block when API is integrated
       console.log("Mock login - Email:", values.email);
       alert("Login successful! (Mock - Remove when API ready)");
-      router.push("/onboarding");
+      router.push(redirectPath);
       // Mock redirect
       // setTimeout(() => {
       //   router.push(redirectPath);
@@ -277,6 +278,21 @@ const Login: React.FC = () => {
         </Form>
       </div>
     </div>
+  );
+};
+
+// ==================== MAIN COMPONENT WITH SUSPENSE ====================
+const Login: React.FC = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen w-full flex justify-center items-center bg-white dark:bg-gray-900">
+          <div className="text-gray-900 dark:text-white">Loading...</div>
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 };
 

@@ -1,20 +1,13 @@
-// export default function OnBoardingPage() {
-//   return (
-//     <div>
-//       <h3>OnBoardingPage---------</h3>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import { OneLastThing } from "@/components/onboarding/OneLastThing";
 import { QuestionFlow } from "@/components/onboarding/QuestionFlow";
 import { WelcomeCard } from "@/components/onboarding/WelcomeCard";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
-export default function OnboardingPage() {
+// ==================== ONBOARDING CONTENT COMPONENT ====================
+function OnboardingContent() {
   const searchParams = useSearchParams();
   const step = searchParams.get("step");
   const [currentView, setCurrentView] = useState<
@@ -44,4 +37,19 @@ export default function OnboardingPage() {
   }
 
   return null;
+}
+
+// ==================== MAIN COMPONENT WITH SUSPENSE ====================
+export default function OnboardingPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen w-full flex justify-center items-center bg-white dark:bg-gray-900">
+          <div className="text-gray-900 dark:text-white">Loading...</div>
+        </div>
+      }
+    >
+      <OnboardingContent />
+    </Suspense>
+  );
 }
