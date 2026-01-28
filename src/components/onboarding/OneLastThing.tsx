@@ -2,8 +2,8 @@
 
 "use client";
 
-import { ArrowLeftOutlined, PlayCircleOutlined } from "@ant-design/icons";
-import { Avatar, Button, Card, Progress, Space, Typography } from "antd";
+import { PlayCircleOutlined } from "@ant-design/icons";
+import { Avatar, Button, Card, Space, Typography } from "antd";
 import { useRouter } from "next/navigation";
 
 const { Title, Paragraph } = Typography;
@@ -14,7 +14,7 @@ export function OneLastThing() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Top Bar */}
-      <div className="bg-white border-b shadow-sm">
+      {/* <div className="bg-white border-b shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Space>
             <Button
@@ -36,7 +36,7 @@ export function OneLastThing() {
 
           <Button type="link">Logout</Button>
         </div>
-      </div>
+      </div> */}
 
       {/* Content */}
       <div className="flex-1 flex items-center justify-center p-4">

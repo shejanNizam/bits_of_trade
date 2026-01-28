@@ -51,7 +51,7 @@ const LoginContent: React.FC = () => {
   // const dispatch = useDispatch();
 
   // Get redirect path from URL params
-  const redirectPath = searchParams.get("from") || "/";
+  const redirectPath = searchParams.get("from") || "/onboarding";
 
   // ==================== API INTEGRATION ====================
   // 🔥 Uncomment when backend API is ready

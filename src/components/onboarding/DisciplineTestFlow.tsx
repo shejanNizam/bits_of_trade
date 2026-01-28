@@ -2,7 +2,7 @@
 
 "use client";
 
-import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
+import { CheckOutlined } from "@ant-design/icons";
 import { Button, Card, Space, Tag, Typography } from "antd";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -82,7 +82,7 @@ export function DisciplineTestFlow() {
   //   const [submitTest, { isLoading }] = useSubmitDisciplineTestMutation();
 
   const currentQuestion = disciplineQuestions[currentStep];
-  const progress = ((currentStep + 1) / disciplineQuestions.length) * 100;
+  // const progress = ((currentStep + 1) / disciplineQuestions.length) * 100;
 
   const handleSelect = (value: string) => {
     if (currentQuestion.type === "multiple") {
@@ -113,11 +113,11 @@ export function DisciplineTestFlow() {
     }
   };
 
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
+  // const handleBack = () => {
+  //   if (currentStep > 0) {
+  //     setCurrentStep(currentStep - 1);
+  //   }
+  // };
 
   const isSelected = (value: string) => {
     if (currentQuestion.type === "multiple") {
@@ -134,7 +134,7 @@ export function DisciplineTestFlow() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Top Bar */}
-      <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
+      {/* <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1">
             <Button
@@ -162,7 +162,7 @@ export function DisciplineTestFlow() {
 
           <Button type="link">Logout</Button>
         </div>
-      </div>
+      </div> */}
 
       {/* Question Card */}
       <div className="flex-1 flex items-center justify-center p-4">
