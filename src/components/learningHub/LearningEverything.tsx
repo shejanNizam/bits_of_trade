@@ -182,8 +182,7 @@ export default function LearningEverything() {
 
   return (
     <div className="py-12 bg-white dark:bg-gray-900 transition-colors">
-      <div className="container mx-auto max-w-6xl px-4">
-        {/* ==================== HEADER ==================== */}
+      <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3 transition-colors">
             {"Everything you'll learn inside the Learning Hub"}
@@ -194,7 +193,6 @@ export default function LearningEverything() {
           </p>
         </div>
 
-        {/* ==================== MARKET BASICS & FOUNDATIONS ==================== */}
         <div className="mb-12">
           <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 hover:shadow-xl transition-all duration-300 hover:scale-[1.01]">
             <div className="flex items-center gap-3 mb-6">
@@ -220,7 +218,6 @@ export default function LearningEverything() {
           </div>
         </div>
 
-        {/* ==================== MODULES ==================== */}
         <div className="space-y-8">
           {modules.map((module) => (
             <div key={module.id}>

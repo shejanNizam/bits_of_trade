@@ -56,7 +56,7 @@ export default function LearningHub() {
         subtitle="Risk, execution, and behavioral control."
       />
 
-      <div className="container mx-auto max-w-7xl px-4">
+      <div className="container mx-auto max-w-7xl px-2">
         {/* ==================== LEARNING FEATURES ==================== */}
         <div className="py-12">
           <div className="grid md:grid-cols-3 gap-6">
@@ -90,9 +90,9 @@ export default function LearningHub() {
 
         <LearningEverything />
 
-        <WhyDifferent />
-
         <WhatActuallyGain />
+
+        <WhyDifferent />
 
         {/* ==================== BUTTON SECTION ==================== */}
         <div className="py-12 flex justify-center">
