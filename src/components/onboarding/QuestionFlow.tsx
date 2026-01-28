@@ -1,18 +1,25 @@
 // 02
-
 "use client";
 
-import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
-import { Button, Card, Space, Tag, Typography } from "antd";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-// import { useSubmitOnboardingAnswersMutation } from '@/lib/redux/features/onboarding/onboardingApi';
-
-const { Title, Text } = Typography;
+import { IoMdArrowBack, IoMdCheckmark } from "react-icons/io";
+import CustomPrimaryButton from "../shared/CustomPrimaryButton";
 
 const questions = [
   {
     id: "q1",
+    title: "How long you been trading?",
+    type: "single" as const,
+    options: [
+      "Less than 6 months",
+      "6 months to 1 year",
+      "1-3 years",
+      "3+ years",
+    ],
+  },
+  {
+    id: "q2",
     title: "What is your primary trading goal?",
     type: "single" as const,
     options: [
@@ -23,7 +30,7 @@ const questions = [
     ],
   },
   {
-    id: "q2",
+    id: "q3",
     title: "Which trading styles interest you?",
     subtitle: "Select all that apply",
     type: "multiple" as const,
@@ -36,7 +43,7 @@ const questions = [
     ],
   },
   {
-    id: "q3",
+    id: "q4",
     title: "How much time can you dedicate to trading daily?",
     type: "single" as const,
     options: [
@@ -47,7 +54,7 @@ const questions = [
     ],
   },
   {
-    id: "q4",
+    id: "q5",
     title: "What is your risk tolerance?",
     type: "single" as const,
     options: [
@@ -57,7 +64,7 @@ const questions = [
     ],
   },
   {
-    id: "q5",
+    id: "q6",
     title: "What challenges do you face in trading?",
     subtitle: "Select all that apply",
     type: "multiple" as const,
@@ -71,14 +78,11 @@ const questions = [
   },
 ];
 
-const isLoading = false;
-
 export function QuestionFlow() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
-
-  //   const [submitAnswers, { isLoading }] = useSubmitOnboardingAnswersMutation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const currentQuestion = questions[currentStep];
   const progress = ((currentStep + 1) / questions.length) * 100;
@@ -102,6 +106,7 @@ export function QuestionFlow() {
       setCurrentStep(currentStep + 1);
     } else {
       try {
+        setIsLoading(true);
         // 🔥 API Call - Uncomment when backend ready
         // await submitAnswers(answers).unwrap();
         console.log("Submitting answers:", answers);
@@ -109,6 +114,8 @@ export function QuestionFlow() {
         router.push("/onboarding?step=last");
       } catch (error) {
         console.error("Failed to submit answers:", error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -132,125 +139,104 @@ export function QuestionFlow() {
       : false;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-lineaar-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       {/* Top Progress Bar */}
-      <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button
-            type="text"
-            icon={<ArrowLeftOutlined />}
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10 shadow-sm dark:shadow-gray-900/50">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4 flex items-center gap-3 sm:gap-4">
+          {/* Back Button */}
+          <button
             onClick={handleBack}
-            style={{ padding: "4px 8px" }}
-          />
+            disabled={currentStep === 0}
+            className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <IoMdArrowBack className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 dark:text-gray-300" />
+          </button>
 
-          <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+          {/* Progress Bar */}
+          <div className="flex-1 h-2 sm:h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
             <div
-              className="h-full bg-blue-600 transition-all duration-300 ease-out"
+              className="h-full bg-blue-600 dark:bg-blue-500 transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
+          </div>
+
+          {/* Progress Text */}
+          <div className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap">
+            {currentStep + 1}/{questions.length}
           </div>
         </div>
       </div>
 
       {/* Question Card */}
-      <div className="flex-1 flex items-center justify-center p-4">
-        <Card
-          className="max-w-lg w-full shadow-xl"
-          style={{ borderRadius: 24 }}
-          bordered={false}
-        >
-          {/* Question Number */}
-          <div className="text-center mb-6">
-            <Tag
-              color="blue"
-              style={{ fontSize: 14, padding: "4px 16px", borderRadius: 20 }}
-            >
-              Question {currentStep + 1}/{questions.length}
-            </Tag>
+      <div className="flex-1 flex items-center justify-center p-3 sm:p-4 md:p-6">
+        <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl w-full bg-white dark:bg-gray-900 shadow-xl sm:shadow-2xl dark:shadow-gray-900/50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 border border-gray-200 dark:border-gray-800">
+          {/* Question Number Badge */}
+          <div className="text-center mb-4 sm:mb-6">
+            <span className="inline-block bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400 text-xs sm:text-sm font-medium px-4 sm:px-5 py-1.5 sm:py-2 rounded-full border border-blue-200 dark:border-blue-900/50">
+              Question {currentStep + 1} of {questions.length}
+            </span>
           </div>
 
-          {/* Title */}
-          <Title
-            level={4}
-            className="text-center mb-2"
-            style={{ fontWeight: 600 }}
-          >
+          {/* Question Title */}
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-center mb-2 sm:mb-3 text-gray-900 dark:text-white leading-tight">
             {currentQuestion.title}
-          </Title>
+          </h2>
 
+          {/* Subtitle */}
           {currentQuestion.subtitle && (
-            <Text
-              type="secondary"
-              className="block text-center mb-6"
-              style={{ fontSize: 14 }}
-            >
+            <p className="text-sm sm:text-base text-center mb-6 sm:mb-8 text-gray-600 dark:text-gray-400">
               {currentQuestion.subtitle}
-            </Text>
+            </p>
           )}
 
-          {/* Options - Custom Styled */}
-          <Space direction="vertical" size={12} className="w-full mb-6">
+          {/* Options */}
+          <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
             {currentQuestion.options.map((option) => {
               const selected = isSelected(option);
               return (
                 <button
                   key={option}
                   onClick={() => handleSelect(option)}
-                  className="w-full text-left transition-all"
-                  style={{
-                    height: 60,
-                    padding: "0 20px",
-                    borderRadius: 6,
-                    border: `2px solid ${selected ? "#2563EB" : "#e5e7eb"}`,
-                    backgroundColor: selected ? "#eff6ff" : "#ffffff",
-                    fontSize: 14,
-                    fontWeight: 500,
-                    color: selected ? "#1e40af" : "#374151",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    cursor: "pointer",
-                  }}
+                  className={`w-full text-left transition-all duration-200 flex items-center justify-between px-4 sm:px-5 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl text-sm sm:text-base font-medium border-2 ${
+                    selected
+                      ? "border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300"
+                      : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-750"
+                  }`}
                 >
-                  <span>{option}</span>
+                  <span className="pr-3">{option}</span>
 
+                  {/* Checkbox/Radio Circle */}
                   <div
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: "50%",
-                      border: `2px solid ${selected ? "#2563EB" : "#d1d5db"}`,
-                      backgroundColor: selected ? "#2563EB" : "transparent",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
+                    className={`shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                      selected
+                        ? "border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-500"
+                        : "border-gray-300 dark:border-gray-600 bg-transparent"
+                    }`}
                   >
                     {selected && (
-                      <CheckOutlined
-                        style={{ fontSize: 12, color: "#ffffff" }}
-                      />
+                      <IoMdCheckmark className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                     )}
                   </div>
                 </button>
               );
             })}
-          </Space>
+          </div>
 
           {/* Next Button (only for multiple answers) */}
           {currentQuestion.type === "multiple" && (
-            <Button
-              type="primary"
-              size="large"
-              block
+            <CustomPrimaryButton
               onClick={handleNext}
-              loading={isLoading}
-              disabled={!hasSelection}
+              disabled={!hasSelection || isLoading}
+              className="w-full"
             >
-              {currentStep === questions.length - 1 ? "Submit" : "Next"}
-            </Button>
+              {isLoading
+                ? "Submitting..."
+                : currentStep === questions.length - 1
+                  ? "Submit"
+                  : "Next"}
+            </CustomPrimaryButton>
           )}
-        </Card>
+        </div>
       </div>
     </div>
   );
