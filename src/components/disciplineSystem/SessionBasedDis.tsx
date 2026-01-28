@@ -14,23 +14,19 @@ export default function SessionBasedDis() {
   return (
     <div className="py-12">
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.01]">
-        {/* ==================== HEADER ==================== */}
         <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 transition-colors">
           Session-based discipline
         </h2>
 
-        {/* ==================== DESCRIPTION ==================== */}
         <p className="text-gray-700 dark:text-gray-300 mb-6 transition-colors">
           Every trading session in BitsOfTrade operates with predefined
           boundaries.
         </p>
 
-        {/* ==================== BOUNDARIES LABEL ==================== */}
         <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4 transition-colors">
           Session boundaries include:
         </h3>
 
-        {/* ==================== BOUNDARIES LIST ==================== */}
         <div className="space-y-3 mb-6">
           {sessionBoundaries.map((boundary) => (
             <div
@@ -49,7 +45,6 @@ export default function SessionBasedDis() {
           ))}
         </div>
 
-        {/* ==================== FOOTER NOTE ==================== */}
         <p className="text-xs text-gray-500 dark:text-gray-400 italic transition-colors">
           These boundaries define when trading should slow down or stop for
           review.
