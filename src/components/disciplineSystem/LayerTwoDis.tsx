@@ -42,7 +42,6 @@ export default function LayerTwoDis() {
   return (
     <div className="py-12">
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.01]">
-        {/* ==================== HEADER ==================== */}
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center transition-colors group-hover:scale-110">
             <FiTarget className="w-5 h-5 text-amber-600 dark:text-amber-400 transition-colors" />
@@ -52,13 +51,11 @@ export default function LayerTwoDis() {
           </h2>
         </div>
 
-        {/* ==================== DESCRIPTION ==================== */}
         <p className="text-gray-700 dark:text-gray-300 mb-8 transition-colors">
           Based on observed behavior, each session is continuously classified
           into one of three risk states.
         </p>
 
-        {/* ==================== RISK STATES ==================== */}
         <div className="space-y-6 mb-8">
           {riskStates.map((state) => (
             <div
@@ -72,7 +69,6 @@ export default function LayerTwoDis() {
                 {state.title}
               </h3>
 
-              {/* State Items */}
               <ul className="space-y-2">
                 {state.items.map((item, index) => (
                   <li
@@ -90,7 +86,6 @@ export default function LayerTwoDis() {
           ))}
         </div>
 
-        {/* ==================== FOOTER NOTE ==================== */}
         <p className="text-xs text-gray-500 dark:text-gray-400 italic transition-colors">
           Risk states describe behavior, not performance.
         </p>
