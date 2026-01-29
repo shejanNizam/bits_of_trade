@@ -21,61 +21,48 @@ const questions = [
   },
   {
     id: "q2",
-    title: "What is your primary trading goal?",
-    type: "single" as const,
-    options: [
-      "Generate consistent income",
-      "Build long-term wealth",
-      "Learn and improve skills",
-      "Supplement my main income",
-    ],
+    title: "Primary market you trade most often?",
+    subtitle: "(select all that apply)",
+    type: "multiple" as const,
+    options: ["Indian Equity / F&O", "Forex", "Crypto"],
   },
   {
     id: "q3",
-    title: "Which trading styles interest you?",
-    subtitle: "Select all that apply",
+    title: "How do you usually trade?",
+    subtitle: "(select all that apply)",
     type: "multiple" as const,
-    options: [
-      "Day Trading",
-      "Swing Trading",
-      "Scalping",
-      "Position Trading",
-      "Options Trading",
-    ],
+    options: ["Impulsive", "Mixed", "Rule-based", "Unsure"],
   },
   {
     id: "q4",
-    title: "How much time can you dedicate to trading daily?",
-    type: "single" as const,
+    title: "What do you want BitsOfTrade to help you control?",
+    subtitle: "(select all that apply)",
+    type: "multiple" as const,
     options: [
-      "Less than 1 hour",
-      "1-3 hours",
-      "3-6 hours",
-      "More than 6 hours",
+      "Reduce Overtrading ( identify when trade frequency, timing, or emotions start breaking your rules )",
+      "Enforce Trading Rules ( set limits on trades, losses, sites, and apps—and get evolved when you're close to breaking them )",
+      "Understand My Trading Behavior ( See patterns in your emotions, decisions, and mistakes — not just P&L. )",
+      "Build a Repeatable Process ( Move from impulsive decisions to a structured daily trading routine. )",
+      "Learn Risk-First Trading ( Access learning focused on risk management, discipline, and execution — not signals. )",
     ],
   },
   {
     id: "q5",
-    title: "What is your risk tolerance?",
-    type: "single" as const,
+    title: "How do you currently track trades?",
+    subtitle: "(select all that apply)",
+    type: "multiple" as const,
     options: [
-      "Conservative - Minimize losses",
-      "Moderate - Balanced approach",
-      "Aggressive - Higher risk for higher returns",
+      "I don't track consistently",
+      "Notes / Excel",
+      "Another Journal",
+      "Broker statements only",
     ],
   },
   {
     id: "q6",
-    title: "What challenges do you face in trading?",
-    subtitle: "Select all that apply",
-    type: "multiple" as const,
-    options: [
-      "Emotional decision making",
-      "Overtrading",
-      "Lack of strategy",
-      "Poor risk management",
-      "Inconsistent results",
-    ],
+    title: "How did you hear about us?",
+    type: "single" as const,
+    options: ["Instagram", "YouTube", "Google", "Other"],
   },
 ];
 
@@ -179,7 +166,7 @@ export function QuestionFlow() {
           </div>
 
           {/* Question Title */}
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-center mb-2 sm:mb-3 text-gray-900 dark:text-white leading-tight">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-center mb-2 sm:mb-3 text-gray-900 dark:text-white leading-tight">
             {currentQuestion.title}
           </h2>
 

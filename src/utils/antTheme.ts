@@ -79,7 +79,7 @@ export const mainTheme = {
       colorFillAlter: "transparent",
     },
     Modal: {
-      colorBgContainer: "#00321F",
+      colorBgContainer: "#000000",
       borderRadius: 8,
     },
     Tabs: {
