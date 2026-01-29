@@ -1,15 +1,17 @@
 // 08
-
 "use client";
 
-import { Tabs } from "antd";
+import { Form, Input, Modal, Tabs } from "antd";
 import { useState } from "react";
 import { AiOutlineWarning } from "react-icons/ai";
 import {
   IoMdCheckmarkCircleOutline,
+  IoMdClose,
   IoMdCloseCircleOutline,
 } from "react-icons/io";
-// import { useGetDisciplineReportQuery } from '@/lib/redux/features/onboarding/onboardingApi';
+import { MdEmail } from "react-icons/md";
+import CustomPrimaryButton from "../shared/CustomPrimaryButton";
+// import { useSendDisciplineReportMutation } from '@/lib/redux/features/onboarding/onboardingApi';
 
 type TabType = "low" | "moderate" | "high";
 
@@ -97,9 +99,12 @@ const mockReportData = {
 
 export function ReportTabs() {
   const [activeTab, setActiveTab] = useState<TabType>("low");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form] = Form.useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 🔥 RTK Query - Uncomment when backend ready
-  // const { data, isLoading } = useGetDisciplineReportQuery(activeTab);
+  // const [sendReport, { isLoading }] = useSendDisciplineReportMutation();
 
   const reportData = mockReportData[activeTab];
 
@@ -136,9 +141,50 @@ export function ReportTabs() {
     }
   };
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    form.resetFields();
+  };
+
+  const handleSubmit = async (values: { email: string }) => {
+    try {
+      setIsSubmitting(true);
+
+      // 🔥 API Call - Uncomment when backend ready
+      // await sendReport({ email: values.email, riskLevel: activeTab }).unwrap();
+
+      console.log("Sending report to:", values.email, "Risk Level:", activeTab);
+
+      // Simulate API call
+      // await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Success handling
+      // Modal.success({
+      //   title: "Success!",
+      //   content: "Your discipline profile has been sent to your email.",
+      //   centered: true,
+      // });
+
+      handleCloseModal();
+    } catch (error) {
+      console.error("Failed to send report:", error);
+      Modal.error({
+        title: "Error",
+        content: "Failed to send report. Please try again.",
+        centered: true,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-      {/* Tabs - Only Ant Design component */}
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors">
+      {/* Tabs */}
       <div className="font-bold">
         <div className="container mx-auto px-4">
           <Tabs
@@ -151,53 +197,47 @@ export function ReportTabs() {
         </div>
       </div>
 
-      {/* Content - All Tailwind */}
+      {/* Content */}
       <div className="flex-1 flex items-center justify-center p-4 py-12">
-        <div className="max-w-lg w-full bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8">
-          {/* Badge */}
+        <div className="max-w-lg w-full bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 transition-colors">
           <div className="text-center mb-6">
             <span
-              className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium border ${reportData.badgeColor}`}
+              className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium border ${reportData.badgeColor} transition-colors`}
             >
               {reportData.badgeIcon} {reportData.badge}
             </span>
           </div>
 
-          {/* Title */}
-          <h2 className="text-2xl font-semibold text-center mb-8 text-blue-600 dark:text-blue-400 leading-tight">
+          <h2 className="text-2xl font-semibold text-center mb-8 text-blue-600 dark:text-blue-400 leading-tight transition-colors">
             {reportData.title}
           </h2>
 
-          {/* Description */}
-          <p className="text-gray-600 dark:text-gray-400 mb-4 text-[15px]">
+          <p className="text-gray-600 dark:text-gray-400 mb-4 text-[15px] transition-colors">
             {reportData.description}
           </p>
 
-          {/* Points List */}
           <div className="space-y-3.5 mb-6">
             {reportData.points.map((point, index) => (
               <div key={index} className="flex items-start gap-3">
                 {getIcon()}
-                <span className="text-[15px] flex-1 text-gray-800 dark:text-gray-200 leading-relaxed">
+                <span className="text-[15px] flex-1 text-gray-800 dark:text-gray-200 leading-relaxed transition-colors">
                   {point}
                 </span>
               </div>
             ))}
           </div>
 
-          {/* Advice */}
-          <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
+          <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 transition-colors">
             {reportData.advice}
           </p>
 
-          {/* Info Box (Reality Check / Reframe / Normalize) */}
-          <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-5 mb-6">
-            <p className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-1">
+          <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-5 mb-6 transition-colors">
+            <p className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-1 transition-colors">
               {reportData.infoBox.title}
             </p>
 
             {reportData.infoBox.subtitle && (
-              <p className="text-[13px] text-gray-800 dark:text-gray-200 mb-3">
+              <p className="text-[13px] text-gray-800 dark:text-gray-200 mb-3 transition-colors">
                 {reportData.infoBox.subtitle}
               </p>
             )}
@@ -206,7 +246,7 @@ export function ReportTabs() {
               {reportData.infoBox.content.map((line, index) => (
                 <p
                   key={index}
-                  className="text-[13px] text-gray-600 dark:text-gray-400 leading-relaxed"
+                  className="text-[13px] text-gray-600 dark:text-gray-400 leading-relaxed transition-colors"
                 >
                   {line}
                 </p>
@@ -214,24 +254,94 @@ export function ReportTabs() {
             </div>
 
             {reportData.infoBox.footer && (
-              <p className="font-semibold text-[13px] text-gray-800 dark:text-gray-200 mt-3">
+              <p className="font-semibold text-[13px] text-gray-800 dark:text-gray-200 mt-3 transition-colors">
                 {reportData.infoBox.footer}
               </p>
             )}
           </div>
 
-          {/* Action Buttons */}
           <div className="space-y-2">
-            <button className="w-full h-12 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium text-[15px] rounded-lg transition-colors">
+            <CustomPrimaryButton className="w-full" onClick={handleOpenModal}>
               {reportData.buttonText}
-            </button>
+            </CustomPrimaryButton>
 
-            <p className="text-center text-xs text-gray-500 dark:text-gray-400 pt-1 pb-3">
+            <p className="text-center text-xs text-gray-500 dark:text-gray-400 pt-1 pb-3 transition-colors">
               {reportData.buttonSubtext}
             </p>
           </div>
         </div>
       </div>
+
+      {/* Email Modal */}
+      {/* Email Modal */}
+      <Modal
+        open={isModalOpen}
+        onCancel={handleCloseModal}
+        footer={null}
+        centered
+        width={500}
+        closeIcon={
+          <IoMdClose className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl" />
+        }
+      >
+        <div className="py-4">
+          {/* Icon */}
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+              <MdEmail className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+            </div>
+          </div>
+
+          {/* Title */}
+          <h3 className="text-2xl font-semibold text-center mb-2 text-gray-900 dark:text-white">
+            Want a copy of your discipline profile?
+          </h3>
+
+          {/* Description */}
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
+            {"We'll"} send your result breakdown and how traders at your level
+            usually slip.
+          </p>
+
+          {/* Form */}
+          <Form form={form} onFinish={handleSubmit} layout="vertical">
+            <Form.Item
+              name="email"
+              rules={[
+                { required: true, message: "Please enter your email" },
+                { type: "email", message: "Please enter a valid email" },
+              ]}
+            >
+              <Input
+                size="large"
+                placeholder="your@email.com"
+                className="rounded-lg"
+                style={{ height: 56 }}
+              />
+            </Form.Item>
+
+            <Form.Item className="mb-4">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full h-11 sm:h-12 md:h-14 rounded-full bg-primary hover:bg-secondary dark:bg-primary dark:hover:bg-secondary shadow-lg dark:shadow-blue-500/20 hover:shadow-sm text-white font-medium text-sm sm:text-base md:text-lg px-6 sm:px-8 transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-primary touch-manipulation"
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="animate-spin">⏳</span> Sending...
+                  </>
+                ) : (
+                  <>📧 Send My Results</>
+                )}
+              </button>
+            </Form.Item>
+
+            <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+              No signals. No spam. Ever.
+            </p>
+          </Form>
+        </div>
+      </Modal>
     </div>
   );
 }
