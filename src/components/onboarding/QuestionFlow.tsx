@@ -86,7 +86,7 @@ export function QuestionFlow() {
   const [isLoading, setIsLoading] = useState(false);
 
   const currentQuestion = questions[currentStep];
-  const progress = ((currentStep + 1) / questions.length) * 100;
+  const progress = (currentStep / questions.length) * 100;
 
   const handleSelect = (value: string) => {
     if (currentQuestion.type === "multiple") {
