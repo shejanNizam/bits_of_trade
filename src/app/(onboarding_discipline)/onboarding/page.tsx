@@ -1,5 +1,8 @@
+// 01
+
 "use client";
 
+import { BeforeYouBegin } from "@/components/onboarding/BeforeYouBegin";
 import { OneLastThing } from "@/components/onboarding/OneLastThing";
 import { QuestionFlow } from "@/components/onboarding/QuestionFlow";
 import { WelcomeCard } from "@/components/onboarding/WelcomeCard";
@@ -12,7 +15,7 @@ function OnboardingContent() {
   const step = searchParams.get("step");
 
   const [currentView, setCurrentView] = useState<
-    "welcome" | "questions" | "last"
+    "welcome" | "before-begin" | "questions" | "last"
   >("welcome");
 
   useEffect(() => {
@@ -21,12 +24,20 @@ function OnboardingContent() {
     }
   }, [step]);
 
-  const handleContinue = () => {
+  const handleWelcomeContinue = () => {
+    setCurrentView("before-begin");
+  };
+
+  const handleBeforeBeginContinue = () => {
     setCurrentView("questions");
   };
 
   if (currentView === "welcome") {
-    return <WelcomeCard onContinue={handleContinue} />;
+    return <WelcomeCard onContinue={handleWelcomeContinue} />;
+  }
+
+  if (currentView === "before-begin") {
+    return <BeforeYouBegin onContinue={handleBeforeBeginContinue} />;
   }
 
   if (currentView === "questions") {

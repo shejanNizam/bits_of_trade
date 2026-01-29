@@ -1,4 +1,4 @@
-// 05
+// 08
 
 "use client";
 
@@ -254,23 +254,6 @@ export function ReportTabs() {
             <p className="text-center text-xs text-gray-500 dark:text-gray-400 pt-1 pb-3">
               {reportData.buttonSubtext}
             </p>
-
-            <button className="w-full h-11 flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm transition-colors">
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
-              Or share this result and view later
-            </button>
           </div>
         </div>
       </div>
