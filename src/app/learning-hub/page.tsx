@@ -90,9 +90,9 @@ export default function LearningHub() {
 
         <LearningEverything />
 
-        <WhatActuallyGain />
-
         <WhyDifferent />
+
+        <WhatActuallyGain />
 
         {/* ==================== BUTTON SECTION ==================== */}
         <div className="py-12 flex justify-center">
