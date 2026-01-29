@@ -6,7 +6,6 @@ import DifferentHow from "@/components/home/DifferentHow";
 import DisciplineFails from "@/components/home/DisciplineFails";
 import Faqs from "@/components/home/Faqs";
 import HomeDisciplineSystem from "@/components/home/homeDisciplineSystem/HomeDisciplineSystem";
-import HowWorks from "@/components/home/HowWorks";
 import TradersReview from "@/components/home/TradersReview";
 import Pricing from "./pricing/page";
 
@@ -16,7 +15,7 @@ export default function Home() {
       <Banner />
       <DisciplineFails />
       <ActuallyDoes />
-      <HowWorks />
+      {/* <HowWorks /> */}
       <Capabilities />
       <HomeDisciplineSystem />
       <TradersReview />
