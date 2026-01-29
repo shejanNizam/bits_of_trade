@@ -13,10 +13,10 @@ const disciplineQuestions = [
     title: "After a losing trade, what usually happens next?",
     type: "single" as const,
     options: [
-      "I usually stop for the day",
-      'I take one more "setup"',
-      "I trade more aggressively",
-      "I don't really track this",
+      "⏸️ I usually stop for the day",
+      "🔁 I take one more “setup”",
+      "🔥 I trade more aggressively",
+      "❓ I don't really track this",
     ],
   },
   {
@@ -24,10 +24,10 @@ const disciplineQuestions = [
     title: "On a profitable day, how do you behave?",
     type: "single" as const,
     options: [
-      "I follow my usual rules",
-      "I increase trade frequency",
-      "I increase position size",
-      "It depends on how confident I feel",
+      "✅ I follow my usual rules",
+      "🔄 I increase trade frequency",
+      "📈 I increase position size",
+      "🧠 It depends on how confident I feel",
     ],
   },
   {
@@ -36,10 +36,10 @@ const disciplineQuestions = [
     subtitle: "(select all that apply)",
     type: "multiple" as const,
     options: [
-      "Number of trades per session",
-      "Daily loss",
-      "Time spent trading",
-      "I don't have fixed limits",
+      "🔢 Number of trades per session",
+      "💸 Daily loss",
+      "⏱️ Time spent trading",
+      "🚫 I don't have fixed limits",
     ],
   },
   {
@@ -47,17 +47,17 @@ const disciplineQuestions = [
     title: "When rules are broken, what usually causes it?",
     type: "single" as const,
     options: [
-      "Emotion (fear / greed)",
-      "Market volatility",
-      "I don't review rule breaks",
-      "Lack of clarity",
+      "😰 Emotion (fear / greed)",
+      "🌪️ Market volatility",
+      "📭 I don't review rule breaks",
+      "🧩 Lack of clarity",
     ],
   },
   {
     id: "dt5",
     title: "How often do you journal your trades?",
     type: "single" as const,
-    options: ["Daily", "Weekly", "Occasionally", "Almost never"],
+    options: ["📆 Daily", "🗓️ Weekly", "⏳ Occasionally", "🚫 Almost never"],
   },
 ];
 
@@ -176,7 +176,7 @@ export function DisciplineTestFlow() {
                 <button
                   key={option}
                   onClick={() => handleSelect(option)}
-                  className={`w-full text-left transition-all duration-200 flex items-center justify-between px-4 sm:px-5 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl text-sm sm:text-base font-medium border-2 ${
+                  className={`w-full text-center transition-all duration-200 flex items-center justify-between px-4 sm:px-5 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl text-sm sm:text-base font-medium border-2 ${
                     selected
                       ? "border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300"
                       : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-750"

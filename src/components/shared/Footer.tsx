@@ -102,11 +102,11 @@ export default function Footer() {
         {/* Divider */}
         <div className="border-t border-gray-800 mt-12 pt-6">
           {/* Disclaimer */}
-          <p className="text-gray-500 text-xs mb-4">
+          {/* <p className="text-gray-500 text-xs mb-4">
             BitsOfTrade does not provide investment advice. All content is
             educational and behavior-focused. Trading involves risk. Please
             trade responsibly.
-          </p>
+          </p> */}
 
           {/* Copyright */}
           <p className="text-gray-500 text-xs">

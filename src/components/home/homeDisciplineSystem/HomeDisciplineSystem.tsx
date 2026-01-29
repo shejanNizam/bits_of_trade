@@ -1,10 +1,6 @@
 import CustomHeading from "@/components/shared/CustomHeading";
 import ChasingOutcomes from "./ChasingOutcomes";
-import ControlsBehavior from "./ControlsBehavior";
 import DisciplineSystemWorks from "./DisciplineSystemWorks";
-import LayerOne from "./LayerOne";
-import LayerThree from "./LayerThree";
-import LayerTwo from "./LayerTwo";
 import NotAnotherTradingTools from "./NotAnotherTradingTools";
 
 export default function HomeDisciplineSystem() {
@@ -37,10 +33,10 @@ export default function HomeDisciplineSystem() {
         </div>
       </section>
 
-      <LayerOne />
+      {/* <LayerOne />
       <LayerTwo />
-      <LayerThree />
-      <ControlsBehavior />
+      <LayerThree /> */}
+      {/* <ControlsBehavior /> */}
       <ChasingOutcomes />
     </>
   );

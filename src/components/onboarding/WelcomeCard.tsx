@@ -28,7 +28,8 @@ export function WelcomeCard({ onContinue }: WelcomeCardProps) {
         {/* Info Box */}
         <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 border border-blue-100 dark:border-blue-900/50">
           <p className="text-center mb-0 mt-1 sm:mt-2 font-medium text-sm sm:text-base md:text-lg text-gray-900 dark:text-gray-100">
-            BitsOfTrade is not a trading platform.
+            “BitsofTrade is the only tool you need for your Longevity in
+            Trading”
           </p>
         </div>
 
