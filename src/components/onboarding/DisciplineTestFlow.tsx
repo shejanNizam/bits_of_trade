@@ -10,62 +10,54 @@ import CustomPrimaryButton from "../shared/CustomPrimaryButton";
 const disciplineQuestions = [
   {
     id: "dt1",
-    title: "How do you handle losing trades?",
+    title: "After a losing trade, what usually happens next?",
     type: "single" as const,
     options: [
-      "I immediately want to make it back",
-      "I take a break and reassess",
-      "I stick to my trading plan",
-      "I increase my position size",
+      "I usually stop for the day",
+      'I take one more "setup"',
+      "I trade more aggressively",
+      "I don't really track this",
     ],
   },
   {
     id: "dt2",
-    title: "What triggers you to overtrade?",
-    subtitle: "Select all that apply",
-    type: "multiple" as const,
+    title: "On a profitable day, how do you behave?",
+    type: "single" as const,
     options: [
-      "Seeing others profit",
-      "Consecutive losses",
-      "Market volatility",
-      "Boredom",
-      "Fear of missing out",
+      "I follow my usual rules",
+      "I increase trade frequency",
+      "I increase position size",
+      "It depends on how confident I feel",
     ],
   },
   {
     id: "dt3",
-    title: "How often do you follow your trading plan?",
-    type: "single" as const,
+    title: "Do you have fixed limits for?",
+    subtitle: "(select all that apply)",
+    type: "multiple" as const,
     options: [
-      "Always stick to it",
-      "Most of the time",
-      "Sometimes deviate",
-      "Rarely follow it",
+      "Number of trades per session",
+      "Daily loss",
+      "Time spent trading",
+      "I don't have fixed limits",
     ],
   },
   {
     id: "dt4",
-    title: "When do you feel most tempted to break rules?",
-    subtitle: "Select all that apply",
-    type: "multiple" as const,
+    title: "When rules are broken, what usually causes it?",
+    type: "single" as const,
     options: [
-      "After big wins",
-      "After big losses",
-      "During winning streaks",
-      "During losing streaks",
-      "When market is very active",
+      "Emotion (fear / greed)",
+      "Market volatility",
+      "I don't review rule breaks",
+      "Lack of clarity",
     ],
   },
   {
     id: "dt5",
-    title: "How do you manage risk?",
+    title: "How often do you journal your trades?",
     type: "single" as const,
-    options: [
-      "Set stop-loss every trade",
-      "Use mental stops",
-      "Risk a fixed percentage",
-      "Adjust based on feeling",
-    ],
+    options: ["Daily", "Weekly", "Occasionally", "Almost never"],
   },
 ];
 
@@ -165,7 +157,7 @@ export function DisciplineTestFlow() {
           </div>
 
           {/* Question Title */}
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-center mb-2 sm:mb-3 text-gray-900 dark:text-white leading-tight transition-colors">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-center mb-2 sm:mb-3 text-gray-900 dark:text-white leading-tight transition-colors">
             {currentQuestion.title}
           </h2>
 
