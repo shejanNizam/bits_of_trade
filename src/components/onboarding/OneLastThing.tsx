@@ -5,6 +5,7 @@
 import { useRouter } from "next/navigation";
 import { FaPlayCircle } from "react-icons/fa";
 import CustomPrimaryButton from "../shared/CustomPrimaryButton";
+import CustomSecondaryButton from "../shared/CustomSecondaryButton";
 
 export function OneLastThing() {
   const router = useRouter();
@@ -47,12 +48,19 @@ export function OneLastThing() {
           </CustomPrimaryButton>
 
           {/* Skip Button */}
-          <button
+
+          <CustomSecondaryButton
+            className="w-full"
+            onClick={() => router.push("/")}
+          >
+            Skip for now
+          </CustomSecondaryButton>
+          {/* <button
             onClick={() => router.push("/")}
             className="w-full text-sm sm:text-base md:text-lg font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-200 py-2 sm:py-3 active:scale-95 touch-manipulation"
           >
             Skip for now
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
