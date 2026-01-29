@@ -242,13 +242,14 @@ const LoginContent: React.FC = () => {
                 </span>
               </Checkbox>
             </Form.Item>
-
-            <Link
-              href="/forgot-password"
-              className="font-bold underline hover:opacity-80 transition-opacity text-blue-600 dark:text-blue-400"
-            >
-              Forgot password?
-            </Link>
+            <Form.Item>
+              <Link
+                href="/forgot-password"
+                className="font-bold underline hover:opacity-80 transition-opacity text-blue-600 dark:text-blue-400"
+              >
+                Forgot password?
+              </Link>
+            </Form.Item>
           </div>
 
           {/* ==================== SUBMIT BUTTON ==================== */}

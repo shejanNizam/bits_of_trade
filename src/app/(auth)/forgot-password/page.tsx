@@ -79,7 +79,7 @@ const ForgotPassword: React.FC = () => {
 
       // Mock redirect
       setTimeout(() => {
-        router.push(`/verify-email?email=${encodeURIComponent(values.email)}`);
+        router.push(`/verify-code?email=${encodeURIComponent(values.email)}`);
       }, 1000);
     } catch (error) {
       // ==================== ERROR HANDLING ====================
