@@ -137,8 +137,10 @@ export default function ActuallyDoesForWorks() {
           <CustomHeading>What BitsOfTrade actually does</CustomHeading>
 
           <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto mb-6">
-            You trade wherever you want — Zerodha, Binance, MT4, anywhere.
-            BitsOfTrade works before, during, and after your trading session to:
+            {/* You trade wherever you want — Zerodha, Binance, MT4, anywhere.
+            BitsOfTrade works before, during, and after your trading session to: */}
+            “Trade with any broker of your choice.BitsofTrade works before,
+            during, and after your trading session to:”
           </p>
 
           <div className="flex flex-wrap justify-center gap-3 mb-4">
@@ -152,11 +154,9 @@ export default function ActuallyDoesForWorks() {
             ))}
           </div>
 
-          <p className="text-gray-400 dark:text-gray-500 text-sm">
-            {/* It does not try to predict markets. */}
-            “Trade with any broker of your choice.BitsofTrade works before,
-            during, and after your trading session to:”
-          </p>
+          {/* <p className="text-gray-400 dark:text-gray-500 text-sm">
+            It does not try to predict markets.            
+          </p> */}
         </div>
 
         <div className="relative">

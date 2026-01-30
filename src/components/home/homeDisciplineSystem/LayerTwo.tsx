@@ -1,32 +1,32 @@
 import { BsCheckCircle, BsInfoCircle, BsShieldLock } from "react-icons/bs";
 
 export default function LayerTwo() {
-  const riskStates = [
-    {
-      id: 1,
-      name: "Normal",
-      color: "emerald",
-      borderColor: "border-l-emerald-500",
-      dotColor: "bg-emerald-500",
-      items: ["Behavior within defined limits", "No system intervention"],
-    },
-    {
-      id: 2,
-      name: "Caution",
-      color: "amber",
-      borderColor: "border-l-amber-500",
-      dotColor: "bg-amber-500",
-      items: ["Limits being approached", "System introduces warnings"],
-    },
-    {
-      id: 3,
-      name: "Breached",
-      color: "rose",
-      borderColor: "border-l-rose-500",
-      dotColor: "bg-rose-500",
-      items: ["Limits exceeded", "Review mandatory"],
-    },
-  ];
+  // const riskStates = [
+  //   {
+  //     id: 1,
+  //     name: "Normal",
+  //     color: "emerald",
+  //     borderColor: "border-l-emerald-500",
+  //     dotColor: "bg-emerald-500",
+  //     items: ["Behavior within defined limits", "No system intervention"],
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Caution",
+  //     color: "amber",
+  //     borderColor: "border-l-amber-500",
+  //     dotColor: "bg-amber-500",
+  //     items: ["Limits being approached", "System introduces warnings"],
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Breached",
+  //     color: "rose",
+  //     borderColor: "border-l-rose-500",
+  //     dotColor: "bg-rose-500",
+  //     items: ["Limits exceeded", "Review mandatory"],
+  //   },
+  // ];
 
   const outcomeMetrics = [
     "Net P&L",
@@ -49,7 +49,7 @@ export default function LayerTwo() {
     <section className="py-16 px-4 bg-gray-50 dark:bg-gray-900 transition-colors">
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
-        <div className="text-center mb-12">
+        {/* <div className="text-center mb-12">
           <span className="text-amber-600 dark:text-amber-400 text-sm font-semibold transition-colors">
             Layer 2
           </span>
@@ -60,10 +60,10 @@ export default function LayerTwo() {
             Based on observed behavior, each session is continuously classified
             into one of three risk states.
           </p>
-        </div>
+        </div> */}
 
         {/* Risk States Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        {/* <div className="grid md:grid-cols-3 gap-6 mb-8">
           {riskStates.map((state) => (
             <div
               key={state.id}
@@ -88,12 +88,12 @@ export default function LayerTwo() {
               </ul>
             </div>
           ))}
-        </div>
+        </div> */}
 
         {/* Risk States Note */}
-        <p className="text-center text-xs text-gray-400 dark:text-gray-500 mb-16 transition-colors">
+        {/* <p className="text-center text-xs text-gray-400 dark:text-gray-500 mb-16 transition-colors">
           Risk states describe behavior, not performance.
-        </p>
+        </p> */}
 
         {/* Metrics Framework Section */}
         <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
