@@ -21,7 +21,7 @@ export default function Pricing() {
             {/* Badge */}
             <div className="mb-6">
               <span className="inline-block bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-medium px-3 py-1.5 rounded-md transition-colors">
-                Behavior control & prevention
+                Behavior Control & Prevention
               </span>
             </div>
 
@@ -48,10 +48,10 @@ export default function Pricing() {
             <ul className="space-y-3 mb-8">
               {[
                 "Discipline Guard",
-                "Behavior-first Journal",
-                "Session & rule monitoring",
-                "Behavior-based reports",
-                "Strategy frameworks",
+                "Behavior-First Journal",
+                "Session & Rule Monitoring",
+                "Behavior-Based Reports",
+                "Strategy Frameworks",
                 "AI Based Insights",
               ].map((item, index) => (
                 <li key={index} className="flex items-start gap-3">
@@ -89,7 +89,7 @@ export default function Pricing() {
             {/* Badge */}
             <div className="mb-6">
               <span className="inline-block bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium px-3 py-1.5 rounded-md transition-colors">
-                Structured trading education
+                Structured Trading Education
               </span>
             </div>
 
@@ -114,9 +114,9 @@ export default function Pricing() {
             {/* Includes */}
             <ul className="space-y-3 mb-8">
               {[
-                "Full Learning Hub access",
-                "Risk & discipline modules",
-                "Structured curriculum",
+                "Full Learning Hub Access",
+                "Risk & Discipline Modules",
+                "Structured Curriculum",
                 "Access for 6 months",
               ].map((item, index) => (
                 <li key={index} className="flex items-start gap-3">

@@ -8,9 +8,9 @@ import StepCard from "./StepCard";
 
 export default function ActuallyDoesForWorks() {
   const tags = [
-    "observe behavior",
-    "introduce structure",
-    "prevent harmful repetition",
+    "Observe behavior",
+    "Introduce structure",
+    "Prevent harmful repetition",
   ];
 
   const steps = [
@@ -153,7 +153,9 @@ export default function ActuallyDoesForWorks() {
           </div>
 
           <p className="text-gray-400 dark:text-gray-500 text-sm">
-            It does not try to predict markets.
+            {/* It does not try to predict markets. */}
+            “Trade with any broker of your choice.BitsofTrade works before,
+            during, and after your trading session to:”
           </p>
         </div>
 
