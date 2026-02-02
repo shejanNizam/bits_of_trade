@@ -91,7 +91,8 @@ export default function DisciplineFails() {
             description="Retail traders are told:"
             colorScheme="red"
           >
-            <div className="border-l-4 border-red-400 pl-4 py-1 transition-all duration-300 group-hover:border-red-500 group-hover:bg-red-50 dark:group-hover:bg-red-500/20 group-hover:rounded-r-lg">
+            <div className="mt-auto border-l-4 border-red-400 pl-4 py-1 transition-all duration-300 group-hover:border-red-500 group-hover:bg-red-50 dark:group-hover:bg-red-500/20 group-hover:rounded-r-lg">
+              {/* ✅ Added mt-auto to align with Card 3 */}
               <p className="text-xl w-[90%] font-bold text-gray-900 dark:text-white">
                 {"If you lose money, you lack discipline."}
               </p>
@@ -105,7 +106,7 @@ export default function DisciplineFails() {
             description="Institutions don't rely on willpower. They rely on:"
             colorScheme="purple"
           >
-            <ul className="space-y-2">
+            <ul className="space-y-2 mt-auto">
               {realityPoints.map((point: string, index: number) => (
                 <li
                   key={index}
@@ -125,8 +126,8 @@ export default function DisciplineFails() {
             description="Retail traders were given charts, indicators, and strategies but no system to stop themselves."
             colorScheme="blue"
           >
-            <div className="mt-auto bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 transition-all duration-300 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 group-hover:shadow-md">
-              <p className="text-md font-bold text-gray-900 dark:text-white">
+            <div className="mt-auto bg-blue-50 dark:bg-blue-900/20 rounded-xl px-2 py-1 transition-all duration-300 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 group-hover:shadow-md">
+              <p className="text-xl font-bold text-gray-900 dark:text-white">
                 {
                   "Discipline was treated as a personal flaw. It's actually a system problem."
                 }
