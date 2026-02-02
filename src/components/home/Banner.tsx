@@ -89,7 +89,7 @@ export default function Banner() {
             </div>
 
             {/* Quote Card - Updated */}
-            <div className="bg-linear-to-br from-white to-blue-50/30 dark:from-slate-800 dark:to-slate-800/50 rounded-xl shadow-lg dark:shadow-slate-900/30 p-6 mt-6 border-l-[6px] border-blue-500 dark:border-blue-400 transition-all duration-300 hover:shadow-xl dark:hover:shadow-slate-900/50 hover:scale-[1.02]">
+            <div className="relative z-10 bg-linear-to-br from-white to-blue-50/30 dark:from-slate-800 dark:to-slate-800/50 rounded-xl shadow-lg dark:shadow-slate-900/30 p-6 mt-6 border-l-[6px] border-blue-500 dark:border-blue-400 transition-all duration-300 hover:shadow-xl dark:hover:shadow-slate-900/50 hover:scale-[1.02]">
               <p className="text-sm md:text-base leading-relaxed mb-4 text-gray-800 dark:text-gray-200 italic transition-colors duration-300">
                 &quot;Most traders don&apos;t fail because they lack knowledge.
                 They fail because their behavior breaks under pressure.&quot;
