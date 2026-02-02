@@ -1,7 +1,7 @@
 export const mainTheme = {
   token: {
     colorPrimary: "#2563EB",
-    colorInfo: "#000000",
+    colorInfo: "#1183bd",
   },
   components: {
     Table: {
@@ -12,9 +12,9 @@ export const mainTheme = {
     },
     Menu: {
       colorBgContainer: "#ffffff",
-      colorText: "#DEAD35",
+      colorText: "#1183bd",
       colorItemHoverBg: "#e6f7ff",
-      colorItemSelectedBg: "#DEAD35",
+      colorItemSelectedBg: "#2563EB",
       colorItemSelectedText: "#ffffff",
       iconSize: 24,
     },
@@ -26,7 +26,7 @@ export const mainTheme = {
       colorBgContainerDisabled: "#ffffff",
       borderRadius: 6,
       fontSize: 14,
-      controlHeight: 60, // ✅ Changed from height to controlHeight
+      controlHeight: 60,
       boxShadow: "0 0px 0 rgba(5, 145, 255, 0.1)",
     },
     Progress: {
@@ -45,13 +45,13 @@ export const mainTheme = {
       inputLineHeight: 20,
     },
     Input: {
-      colorBorder: "#DEAD35",
+      colorBorder: "#2563EB",
       colorTextPlaceholder: "#666666",
       borderRadius: 4,
       controlHeight: 80,
     },
     InputPassword: {
-      colorBorder: "#DEAD35",
+      colorBorder: "#2563EB",
       borderRadius: 4,
       controlHeight: 80,
       colorTextPlaceholder: "#666666",
@@ -62,13 +62,13 @@ export const mainTheme = {
     Select: {
       colorBorder: "#2563EB",
       borderRadius: 8,
-      controlHeight: 80,
+      controlHeight: 40,
       colorTextPlaceholder: "#666666",
     },
     DatePicker: {
-      colorBorder: "#DEAD35",
+      colorBorder: "#2563EB",
       colorTextPlaceholder: "#000000",
-      colorIcon: "#DEAD35",
+      colorIcon: "#2563EB",
       activeBg: "rgba(255, 255, 255, 0)",
     },
     Collapse: {

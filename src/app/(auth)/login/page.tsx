@@ -245,7 +245,7 @@ const LoginContent: React.FC = () => {
             <Form.Item>
               <Link
                 href="/forgot-password"
-                className="font-bold underline hover:opacity-80 transition-opacity text-blue-600 dark:text-blue-400"
+                className="font-bold underline hover:opacity-80 transition-opacity text-blue-600 dark:text-white"
               >
                 Forgot password?
               </Link>
@@ -268,7 +268,7 @@ const LoginContent: React.FC = () => {
 
           {/* ==================== SIGNUP LINK ==================== */}
           <p className="text-center pt-4 text-gray-700 dark:text-gray-300 transition-colors">
-            {"Don't have an account?"}
+            {"Don't have an account? "}
             <Link
               href="/signup"
               className="font-bold underline hover:opacity-80 transition-opacity text-blue-600 dark:text-blue-400"

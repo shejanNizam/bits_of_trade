@@ -1,12 +1,16 @@
 "use client";
 
 import { MenuOutlined } from "@ant-design/icons";
-import { Drawer } from "antd";
+import { Drawer, Dropdown } from "antd";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import { TiArrowSortedDown } from "react-icons/ti";
+import Swal from "sweetalert2";
+import default_img from "../../assets/user_img_default.png";
 import CustomPrimaryButton from "./CustomPrimaryButton";
 import CustomSecondaryButton from "./CustomSecondaryButton";
 import ThemeToggle from "./ThemeToggle";
@@ -16,6 +20,10 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { theme } = useTheme();
+  const router = useRouter();
+
+  // const user = false; // Not logged in
+  const user = true; // Logged in
 
   useEffect(() => {
     setMounted(true);
@@ -38,6 +46,51 @@ export default function Navbar() {
   const drawerBg = isDark ? "#0f172a" : "#ffffff";
   const drawerText = isDark ? "#f1f5f9" : "#000000";
   const drawerBorder = isDark ? "#374151" : "#e5e7eb";
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to logout?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, logout!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Logged out",
+          text: "You have successfully logged out.",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          // dispatch(logout());
+          // localStorage.removeItem("user_token");
+          // localStorage.removeItem("selectedCategory");
+          router.push("/login");
+        });
+      }
+    });
+  };
+  // Profile menu items for Ant Design v5
+  const profileMenuItems = [
+    {
+      key: "1",
+      label: (
+        <Link className="font-bold text-primary" href="/user-dashboard">
+          My Dashboard
+        </Link>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <div className="font-bold text-red-600" onClick={handleLogout}>
+          Logout
+        </div>
+      ),
+    },
+  ];
 
   return (
     <nav className="sticky top-0 z-50 bg-white dark:bg-slate-900 transition-colors">
@@ -73,12 +126,34 @@ export default function Navbar() {
         {/* Right - Theme Toggle & Buttons (Desktop) */}
         <div className="hidden md:flex items-center gap-3">
           <ThemeToggle />
-          <Link href="/login">
-            <CustomSecondaryButton>Login</CustomSecondaryButton>
-          </Link>
           <Link href="/">
             <CustomPrimaryButton>Get Started</CustomPrimaryButton>
           </Link>
+
+          {user ? (
+            // When user is logged in - show profile dropdown
+            <Dropdown
+              menu={{ items: profileMenuItems }}
+              trigger={["click"]}
+              placement="bottomRight"
+            >
+              <div className="flex justify-start items-center gap-2 cursor-pointer">
+                <Image
+                  width={1000}
+                  height={1000}
+                  className="w-12 h-12 rounded-full border-4 border-primary"
+                  src={default_img}
+                  alt="profile_image"
+                />
+                <TiArrowSortedDown />
+              </div>
+            </Dropdown>
+          ) : (
+            // When user is NOT logged in - show Login button
+            <Link href="/login">
+              <CustomSecondaryButton>Login</CustomSecondaryButton>
+            </Link>
+          )}
         </div>
 
         {/* Mobile - Theme Toggle & Menu Button */}
@@ -176,16 +251,46 @@ export default function Navbar() {
 
           {/* Drawer Buttons */}
           <div className="flex flex-col gap-3 mt-6">
-            <Link href="/login" onClick={toggleDrawer}>
-              <CustomSecondaryButton className="w-full">
-                Login
-              </CustomSecondaryButton>
-            </Link>
             <Link href="/" onClick={toggleDrawer}>
               <CustomPrimaryButton className="w-full">
                 Get Started
               </CustomPrimaryButton>
             </Link>
+
+            {user ? (
+              // When user is logged in - show profile dropdown (same as desktop)
+              <Dropdown
+                menu={{ items: profileMenuItems }}
+                trigger={["click"]}
+                placement="bottomLeft"
+              >
+                <div className="flex justify-center items-center gap-2 cursor-pointer w-full px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors">
+                  <Image
+                    width={1000}
+                    height={1000}
+                    className="w-10 h-10 rounded-full border-2 border-primary"
+                    src={default_img}
+                    alt="profile_image"
+                  />
+                  <span
+                    className="font-semibold"
+                    style={{ color: isDark ? "#f1f5f9" : "#111827" }}
+                  >
+                    My Account
+                  </span>
+                  <TiArrowSortedDown
+                    style={{ color: isDark ? "#f1f5f9" : "#111827" }}
+                  />
+                </div>
+              </Dropdown>
+            ) : (
+              // When user is NOT logged in - show Login button
+              <Link href="/login" onClick={toggleDrawer}>
+                <CustomSecondaryButton className="w-full">
+                  Login
+                </CustomSecondaryButton>
+              </Link>
+            )}
           </div>
         </div>
       </Drawer>
