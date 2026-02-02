@@ -1,6 +1,3 @@
-// app/layout.tsx
-import Footer from "@/components/shared/Footer";
-import Navbar from "@/components/shared/Navbar";
 import ThemeProvider from "@/Providers/ThemeProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import type { Metadata } from "next";
@@ -47,9 +44,7 @@ export default function RootLayout({
       >
         <AntdRegistry>
           <ThemeProvider>
-            <Navbar />
             <>{children}</>
-            <Footer />
           </ThemeProvider>
         </AntdRegistry>
       </body>

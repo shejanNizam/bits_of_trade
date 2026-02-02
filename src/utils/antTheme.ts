@@ -60,7 +60,7 @@ export const mainTheme = {
       colorBorder: "#666666",
     },
     Select: {
-      colorBorder: "#DEAD35",
+      colorBorder: "#2563EB",
       borderRadius: 8,
       controlHeight: 80,
       colorTextPlaceholder: "#666666",
