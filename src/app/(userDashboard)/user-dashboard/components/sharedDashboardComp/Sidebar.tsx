@@ -32,7 +32,7 @@ const navigation = [
       {
         name: "Trade Log",
         icon: MdDescription,
-        href: "/user-dashboard/trades",
+        href: "/user-dashboard/trade-log",
       },
       { name: "Journal", icon: MdBook, href: "/user-dashboard/journal" },
     ],
@@ -49,7 +49,7 @@ const navigation = [
       {
         name: "Trade Intelligent",
         icon: MdTrendingUp,
-        href: "/user-dashboard/intelligent",
+        href: "/user-dashboard/trade-intelligent",
       },
     ],
   },
@@ -59,12 +59,12 @@ const navigation = [
       {
         name: "Learning Hub",
         icon: MdSchool,
-        href: "/user-dashboard/learning",
+        href: "/user-dashboard/learning-hub",
       },
       {
         name: "Strategy Library",
         icon: MdLibraryBooks,
-        href: "/user-dashboard/strategy",
+        href: "/user-dashboard/strategy-library",
       },
     ],
   },
@@ -74,7 +74,7 @@ const navigation = [
       {
         name: "Rules & Limits",
         icon: MdBalance,
-        href: "/user-dashboard/rules",
+        href: "/user-dashboard/rules-limit",
       },
       {
         name: "Mistakes",
