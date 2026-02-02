@@ -22,12 +22,12 @@ export default function HomeDisciplineSystem() {
             </p>
 
             {/* Info Notice */}
-            <div className="flex items-start gap-3 p-4 bg-white dark:bg-gray-800 border-l-4 border-gray-300 dark:border-gray-600 rounded-r-lg max-w-3xl transition-colors shadow-sm">
+            {/* <div className="flex items-start gap-3 p-4 bg-white dark:bg-gray-800 border-l-4 border-gray-300 dark:border-gray-600 rounded-r-lg max-w-3xl transition-colors shadow-sm">
               <div className="text-gray-500 dark:text-gray-400 text-sm transition-colors">
                 This page explains system behavior. It does not provide trading
                 advice.
               </div>
-            </div>
+            </div> */}
           </div>
 
           <DisciplineSystemWorks />

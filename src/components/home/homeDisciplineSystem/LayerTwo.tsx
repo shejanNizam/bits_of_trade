@@ -1,33 +1,6 @@
 import { BsCheckCircle, BsInfoCircle, BsShieldLock } from "react-icons/bs";
 
 export default function LayerTwo() {
-  // const riskStates = [
-  //   {
-  //     id: 1,
-  //     name: "Normal",
-  //     color: "emerald",
-  //     borderColor: "border-l-emerald-500",
-  //     dotColor: "bg-emerald-500",
-  //     items: ["Behavior within defined limits", "No system intervention"],
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Caution",
-  //     color: "amber",
-  //     borderColor: "border-l-amber-500",
-  //     dotColor: "bg-amber-500",
-  //     items: ["Limits being approached", "System introduces warnings"],
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Breached",
-  //     color: "rose",
-  //     borderColor: "border-l-rose-500",
-  //     dotColor: "bg-rose-500",
-  //     items: ["Limits exceeded", "Review mandatory"],
-  //   },
-  // ];
-
   const outcomeMetrics = [
     "Net P&L",
     "Win Rate",
@@ -48,53 +21,6 @@ export default function LayerTwo() {
   return (
     <section className="py-16 px-4 bg-gray-50 dark:bg-gray-900 transition-colors">
       <div className="container mx-auto max-w-7xl">
-        {/* Header */}
-        {/* <div className="text-center mb-12">
-          <span className="text-amber-600 dark:text-amber-400 text-sm font-semibold transition-colors">
-            Layer 2
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mt-3 mb-4 transition-colors">
-            How risk states are determined
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-3xl mx-auto transition-colors">
-            Based on observed behavior, each session is continuously classified
-            into one of three risk states.
-          </p>
-        </div> */}
-
-        {/* Risk States Cards */}
-        {/* <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {riskStates.map((state) => (
-            <div
-              key={state.id}
-              className={`bg-white dark:bg-gray-800 rounded-2xl p-6 border-l-4 ${state.borderColor} shadow-sm transition-colors`}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white transition-colors">
-                  {state.name}
-                </h3>
-                <div className={`w-3 h-3 rounded-full ${state.dotColor}`}></div>
-              </div>
-              <ul className="space-y-2">
-                {state.items.map((item, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400 transition-colors"
-                  >
-                    <span className="text-gray-400 dark:text-gray-500">•</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div> */}
-
-        {/* Risk States Note */}
-        {/* <p className="text-center text-xs text-gray-400 dark:text-gray-500 mb-16 transition-colors">
-          Risk states describe behavior, not performance.
-        </p> */}
-
         {/* Metrics Framework Section */}
         <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
           {/* Framework Header */}
@@ -119,7 +45,8 @@ export default function LayerTwo() {
           {/* Metrics Grid */}
           <div className="grid md:grid-cols-2 gap-8 relative">
             {/* Outcome Metrics */}
-            <div>
+            <div className="flex flex-col">
+              {/* ✅ Added flex flex-col */}
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-base font-bold text-gray-900 dark:text-white transition-colors">
                   Outcome Metrics
@@ -139,7 +66,7 @@ export default function LayerTwo() {
                   </li>
                 ))}
               </ul>
-              <div className="flex items-start gap-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors">
+              <div className="flex items-start gap-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors mt-auto">
                 <BsInfoCircle className="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0 mt-0.5 transition-colors" />
                 <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors">
                   Useful for review. Never for permission.
@@ -148,7 +75,7 @@ export default function LayerTwo() {
             </div>
 
             {/* Discipline Metrics */}
-            <div>
+            <div className="flex flex-col">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-base font-bold text-gray-900 dark:text-white transition-colors">
                   Discipline Metrics
@@ -168,7 +95,8 @@ export default function LayerTwo() {
                   </li>
                 ))}
               </ul>
-              <div className="flex items-start gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-900/30 transition-colors">
+              <div className="flex items-start gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-900/30 transition-colors mt-auto">
+                {/* ✅ Added mt-auto */}
                 <BsShieldLock className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5 transition-colors" />
                 <p className="text-xs text-emerald-700 dark:text-emerald-300 transition-colors">
                   Used to monitor and control trading behavior.
