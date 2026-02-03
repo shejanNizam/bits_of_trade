@@ -22,7 +22,8 @@ export default function UserDashboard() {
 
           <Overview />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          {/* Session Health & Discipline Grid - 30% / 70% on Desktop */}
+          <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-4 sm:gap-6">
             <SessionHealth />
             <DisciplineVsPerformance />
           </div>
