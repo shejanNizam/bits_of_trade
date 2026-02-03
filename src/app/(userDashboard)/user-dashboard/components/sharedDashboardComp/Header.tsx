@@ -191,7 +191,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
           {/* Filters Dropdown - Mobile/Tablet */}
           <div className="xl:hidden">
             <Dropdown
-              dropdownRender={() => mobileFiltersContent}
+              popupRender={() => mobileFiltersContent}
               trigger={["click"]}
               open={mobileFiltersOpen}
               onOpenChange={setMobileFiltersOpen}
@@ -208,7 +208,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
         {/* Right: Search, Theme Toggle & User */}
         <div className="flex items-center gap-2 md:gap-3 shrink-0">
           {/* Search - Desktop */}
-          <div className=" relative">
+          <div className="relative">
             <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"

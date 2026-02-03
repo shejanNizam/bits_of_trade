@@ -62,7 +62,7 @@ export default function WhyDifferent() {
 
   return (
     <div className="py-16 bg-gray-50 dark:bg-gray-900 transition-colors">
-      <div className="container mx-auto max-w-7xl">
+      <div className="container mx-auto max-w-7xl px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 transition-colors">
             Why This Course Is Different
@@ -80,7 +80,9 @@ export default function WhyDifferent() {
             <div
               key={card.id}
               className={`bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer relative ${
-                card.id === 7 ? "lg:col-span-1" : ""
+                card.id === 7
+                  ? "md:col-span-2 lg:col-span-1 lg:col-start-2"
+                  : ""
               }`}
             >
               {/* Card Content */}

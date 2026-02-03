@@ -108,37 +108,6 @@ export default function JournalPage() {
           onClose={() => setIsCreateModalOpen(false)}
         />
       </div>
-
-      <style jsx global>{`
-        .journal-tabs .ant-tabs-nav {
-          margin-bottom: 24px;
-        }
-        .journal-tabs .ant-tabs-tab {
-          color: rgb(107 114 128);
-          font-weight: 500;
-        }
-        .dark .journal-tabs .ant-tabs-tab {
-          color: rgb(156 163 175);
-        }
-        .journal-tabs .ant-tabs-tab:hover {
-          color: rgb(59 130 246);
-        }
-        .dark .journal-tabs .ant-tabs-tab:hover {
-          color: rgb(96 165 250);
-        }
-        .journal-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
-          color: rgb(37 99 235) !important;
-        }
-        .dark .journal-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
-          color: rgb(59 130 246) !important;
-        }
-        .journal-tabs .ant-tabs-ink-bar {
-          background: rgb(37 99 235);
-        }
-        .dark .journal-tabs .ant-tabs-ink-bar {
-          background: rgb(59 130 246);
-        }
-      `}</style>
     </div>
   );
 }
