@@ -28,12 +28,10 @@ export default function CumulativePL() {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl lg:rounded-2xl p-4 sm:p-5 lg:p-6 border border-gray-200 dark:border-gray-700">
-      {/* Header */}
       <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6">
         Daily Net Cumulative P&L
       </h3>
 
-      {/* Chart */}
       <div className="w-full h-64 sm:h-72 lg:h-80">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
