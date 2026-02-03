@@ -1,13 +1,11 @@
 "use client";
 
+import ThemeToggle from "@/components/shared/ThemeToggle";
 import { Dropdown, Select } from "antd";
-import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import {
   MdCalendarToday,
-  MdDarkMode,
   MdFilterList,
-  MdLightMode,
   MdMenu,
   MdSearch,
 } from "react-icons/md";
@@ -17,7 +15,6 @@ interface HeaderProps {
 }
 
 export default function Header({ toggleSidebar }: HeaderProps) {
-  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -221,19 +218,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
           </div>
 
           {/* Theme Toggle */}
-          {mounted && (
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-700 dark:text-gray-300"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? (
-                <MdLightMode className="w-5 h-5 md:w-6 md:h-6" />
-              ) : (
-                <MdDarkMode className="w-5 h-5 md:w-6 md:h-6" />
-              )}
-            </button>
-          )}
+          {mounted && <ThemeToggle />}
         </div>
       </div>
     </header>
