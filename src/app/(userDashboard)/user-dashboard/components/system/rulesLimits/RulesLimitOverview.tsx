@@ -27,7 +27,7 @@ export default function RulesLimitOverview() {
         {stats.map((stat, index) => (
           <div
             key={index}
-            className="bg-white dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 p-6 rounded-2xl shadow-sm"
+            className="bg-white dark:bg-primary/10 border border-slate-200 dark:border-zinc-800 p-6 rounded-2xl shadow-sm"
           >
             <p className="text-sm font-medium text-slate-500 dark:text-zinc-400 mb-1">
               {stat.label}
@@ -43,7 +43,7 @@ export default function RulesLimitOverview() {
       </div>
 
       {/* Explanation Section */}
-      <div className="bg-white dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm">
+      <div className="bg-white dark:bg-primary/10 border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm">
         <div className="flex items-center gap-2 mb-6">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">
             Rule Type Explanation
