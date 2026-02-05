@@ -1,12 +1,14 @@
 import { Tabs } from "antd";
 import RuleCard, { RuleCardProps } from "./RuleCard";
 
-// Define the data structure for the entire ruleset
-type RulesData = {
-  [key in "risk" | "process" | "psychology"]: RuleCardProps[];
-};
+interface RulesTabsProps {
+  onEdit: (rule: RuleCardProps) => void;
+  onDelete: (rule: RuleCardProps) => void;
+}
 
-const rulesData: RulesData = {
+type RulesDataStore = Record<string, RuleCardProps[]>;
+
+const rulesData: RulesDataStore = {
   risk: [
     {
       title: "Max Daily Loss Limit",
@@ -22,7 +24,7 @@ const rulesData: RulesData = {
       title: "Position Size Limit",
       type: "Hard",
       category: "Risk",
-      desc: "Limit position size to percentage of capital",
+      desc: "Limit position size",
       stats: { "Per Trade": "maxPositionPercent: 2", Warn: "-" },
     },
   ],
@@ -31,7 +33,7 @@ const rulesData: RulesData = {
       title: "Max Trades Per Day",
       type: "Hard",
       category: "Process",
-      desc: "Prevent overtrading by limiting daily trades",
+      desc: "Prevent overtrading",
       stats: { "Per-Day": "maxTrades: 5", "Lock Testing": "-" },
     },
   ],
@@ -40,21 +42,27 @@ const rulesData: RulesData = {
       title: "Consecutive Loss Limit",
       type: "Soft",
       category: "Psychology",
-      desc: "Pause and reflect after losing streak",
+      desc: "Pause after losing streak",
       stats: {
         "Post-Trigger": "consecutiveLosses: 3",
         Action: "requiresJournal",
       },
     },
   ],
+  time: [],
+  others: [],
 };
 
-export default function RulesTabs() {
-  // Properly typed render helper
+export default function RulesTabs({ onEdit, onDelete }: RulesTabsProps) {
   const renderList = (data: RuleCardProps[]) => (
     <div className="space-y-4 pt-4">
       {data.map((rule, idx) => (
-        <RuleCard key={`${rule.title}-${idx}`} {...rule} />
+        <RuleCard
+          key={`${rule.title}-${idx}`}
+          {...rule}
+          onEdit={() => onEdit(rule)}
+          onDelete={() => onDelete(rule)}
+        />
       ))}
     </div>
   );
@@ -84,23 +92,23 @@ export default function RulesTabs() {
       key: "time",
       label: "Time",
       children: (
-        <div className="p-12 text-center text-zinc-400 dark:text-zinc-600 border-2 border-dashed border-slate-100 dark:border-zinc-800 rounded-2xl mt-4">
-          No time rules set.
-        </div>
+        <div className="p-8 text-center text-zinc-500">No time rules set.</div>
       ),
     },
     {
       key: "other",
       label: "Other",
       children: (
-        <div className="p-12 text-center text-zinc-400 dark:text-zinc-600 border-2 border-dashed border-slate-100 dark:border-zinc-800 rounded-2xl mt-4">
-          No other rules set.
-        </div>
+        <div className="p-8 text-center text-zinc-500">No other rules set.</div>
       ),
     },
   ];
 
   return (
-    <Tabs defaultActiveKey="all" items={items} className="custom-rules-tabs" />
+    <Tabs
+      defaultActiveKey="all"
+      items={items}
+      className="custom-rules-tabs dark:text-white"
+    />
   );
 }

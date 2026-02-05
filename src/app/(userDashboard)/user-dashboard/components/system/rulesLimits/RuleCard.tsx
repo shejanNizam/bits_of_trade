@@ -5,13 +5,16 @@ export interface RuleStats {
   [key: string]: string | number;
 }
 
-// Define the Props for the Card
+// RuleCard.tsx
 export interface RuleCardProps {
   title: string;
   type: "Hard" | "Soft";
   category: string;
   desc: string;
   stats: RuleStats;
+  // Add these two:
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 export default function RuleCard({
@@ -20,9 +23,11 @@ export default function RuleCard({
   category,
   desc,
   stats,
+  onEdit,
+  onDelete,
 }: RuleCardProps) {
   return (
-    <div className="bg-white dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm transition-all hover:border-slate-300 dark:hover:border-zinc-700">
+    <div className="bg-white dark:bg-primary/10 border border-slate-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm transition-all hover:border-slate-300 dark:hover:border-zinc-700">
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-3">
           {/* Status Indicator Dot */}
@@ -55,12 +60,18 @@ export default function RuleCard({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-1 text-slate-400 dark:text-zinc-500">
-          <button className="p-2 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg transition-colors hover:text-blue-500">
+        <div className="flex gap-1 text-slate-400">
+          <button
+            onClick={onEdit} // Trigger edit
+            className="p-2 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg"
+          >
             <FiEdit3 size={18} />
           </button>
-          <button className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors hover:text-red-500">
-            <FiTrash2 size={18} />
+          <button
+            onClick={onDelete} // Trigger delete
+            className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
+          >
+            <FiTrash2 size={18} className="hover:text-red-500" />
           </button>
         </div>
       </div>

@@ -1,18 +1,27 @@
 import { Col, Input, Modal, Row } from "antd";
+import { RuleCardProps } from "./RuleCard";
 
 interface AddRuleModalProps {
   open: boolean;
   onCancel: () => void;
+  initialData?: RuleCardProps | null;
 }
 
-export default function AddRuleModal({ open, onCancel }: AddRuleModalProps) {
+export default function AddRuleModal({
+  open,
+  onCancel,
+  initialData,
+}: AddRuleModalProps) {
+  const isEdit = !!initialData;
   return (
     <Modal
       title={
         <div className="pt-2">
-          <h2 className="text-xl font-bold dark:text-white">Add Custom Rule</h2>
+          <h2 className="text-xl font-bold dark:text-white">
+            {isEdit ? "Edit Rule" : "Add Custom Rule"}
+          </h2>
           <p className="text-sm font-normal text-slate-500">
-            Define a new trading rule or limit
+            Define rule parameters
           </p>
         </div>
       }
@@ -21,7 +30,6 @@ export default function AddRuleModal({ open, onCancel }: AddRuleModalProps) {
       footer={null}
       width={600}
       centered
-      rootClassName="custom-modal-root"
     >
       <div className="py-6 space-y-5">
         <div>
@@ -29,7 +37,7 @@ export default function AddRuleModal({ open, onCancel }: AddRuleModalProps) {
             Rule Name *
           </label>
           <Input
-            placeholder="e.g., Max Trades Per Day"
+            defaultValue={initialData?.title}
             className="h-12 rounded-xl dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
           />
         </div>
@@ -39,7 +47,7 @@ export default function AddRuleModal({ open, onCancel }: AddRuleModalProps) {
             Description *
           </label>
           <Input.TextArea
-            placeholder="Brief description of what this rule protects against..."
+            defaultValue={initialData?.desc}
             rows={3}
             className="rounded-xl dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
           />
@@ -48,37 +56,35 @@ export default function AddRuleModal({ open, onCancel }: AddRuleModalProps) {
         <Row gutter={16}>
           <Col span={12}>
             <label className="block text-sm font-bold mb-1.5 dark:text-zinc-300">
-              Category *
+              Category
             </label>
-            <Input className="h-11 rounded-xl dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" />
+            <Input
+              defaultValue={initialData?.category}
+              className="h-11 rounded-xl dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
+            />
           </Col>
           <Col span={12}>
             <label className="block text-sm font-bold mb-1.5 dark:text-zinc-300">
-              Rule Type *
+              Rule Type
             </label>
-            <Input className="h-11 rounded-xl dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" />
+            <Input
+              defaultValue={initialData?.type}
+              className="h-11 rounded-xl dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
+            />
           </Col>
         </Row>
-
-        <div>
-          <label className="block text-sm font-bold mb-1.5 dark:text-zinc-300">
-            Trigger Condition *
-          </label>
-          <Input
-            placeholder="e.g., maxTrades: 5 or maxLoss: ₹5000"
-            className="h-12 rounded-xl dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-          />
-        </div>
 
         <div className="flex gap-4 pt-4">
           <button
             onClick={onCancel}
-            className="flex-1 h-12 rounded-xl font-bold border border-slate-200 dark:border-zinc-700 dark:text-white hover:bg-slate-50 transition-colors"
+            className="flex-1 h-12 rounded-xl font-bold border dark:text-white dark:border-zinc-700"
           >
             Cancel
           </button>
-          <button className="flex-1 h-12 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20">
-            Add Rule
+          <button
+            className={`flex-1 h-12 rounded-xl font-bold text-white ${isEdit ? "bg-amber-600" : "bg-blue-600"}`}
+          >
+            {isEdit ? "Update Rule" : "Create Rule"}
           </button>
         </div>
       </div>
