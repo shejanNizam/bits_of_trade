@@ -7,6 +7,7 @@ import { IoWarningOutline } from "react-icons/io5";
 import AddRuleModal from "../components/system/rulesLimits/AddRuleModal";
 import DeleteConfirmationModal from "../components/system/rulesLimits/DeleteConfirmationModal";
 import { RuleCardProps } from "../components/system/rulesLimits/RuleCard";
+import RulesLimitOverview from "../components/system/rulesLimits/RulesLimitOverview";
 import RulesTabs from "../components/system/rulesLimits/RulesTabs";
 
 export default function RulesLimitPage() {
@@ -30,7 +31,7 @@ export default function RulesLimitPage() {
   };
 
   return (
-    <div className="min-h-screen transition-colors duration-300">
+    <div className="min-h-screen transition-colors duration-300 space-y-4">
       <div className="w-full mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -86,6 +87,9 @@ export default function RulesLimitPage() {
           onConfirm={() => setIsDeleteOpen(false)}
         />
       </div>
+
+      {/* overview  */}
+      <RulesLimitOverview />
     </div>
   );
 }
