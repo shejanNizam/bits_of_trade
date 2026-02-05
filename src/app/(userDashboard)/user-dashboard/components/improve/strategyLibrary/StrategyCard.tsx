@@ -29,7 +29,7 @@ const StrategyCard: React.FC<StrategyCardProps> = ({
   color,
 }) => {
   return (
-    <div className="bg-white dark:bg-zinc-900/50 rounded-2xl border border-slate-200 dark:border-zinc-800 p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+    <div className="bg-white dark:bg-primary/10 rounded-2xl border border-slate-200 dark:border-zinc-800 p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-all duration-300">
       {/* Header Area */}
       <div className="flex justify-between items-start">
         <div className="flex-1">

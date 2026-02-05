@@ -8,7 +8,7 @@ export default function MistakesPage() {
     <div className="space-y-4">
       <MistakeOverview />
 
-      <div className="grid grid-cols-1 lg:grid-cols-[50%_50%] gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <MistakeFrequency />
         <MistakeImpact />
       </div>
