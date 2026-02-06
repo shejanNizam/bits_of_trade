@@ -6,7 +6,7 @@ import TradeScorecard from "../components/analysis/insights/TradeScorecard";
 
 export default function InsightsPage() {
   return (
-    <div>
+    <div className="space-y-4">
       <BehavioralScoringSystem />
       <TradeScorecard />
       <InsightsCards />

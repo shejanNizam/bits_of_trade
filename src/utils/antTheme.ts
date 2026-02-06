@@ -80,7 +80,7 @@ export const mainTheme = {
     },
     Modal: {
       colorBgContainer: "#000000",
-      borderRadius: 8,
+      borderRadius: 20,
     },
     Tabs: {
       itemActiveColor: "#2563EB",
