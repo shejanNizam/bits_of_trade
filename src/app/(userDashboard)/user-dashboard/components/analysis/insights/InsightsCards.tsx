@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import EmotionsModal from "./EmotionsModal";
-import JournalModal from "./JournalModal";
-import LessonsModal from "./LessonsModal";
-import RulesModal from "./RulesModal";
+import EmotionsModal from "./cardsModals/EmotionsModal";
+import JournalModal from "./cardsModals/JournalModal";
+import LessonsModal from "./cardsModals/LessonsModal";
+import RulesModal from "./cardsModals/RulesModal";
 const detailedMetrics = [
   {
     id: "DIS*",
@@ -56,7 +56,7 @@ export default function InsightsCards() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mx-auto p-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mx-auto">
       {detailedMetrics.map((item, idx) => (
         <div
           key={idx}
