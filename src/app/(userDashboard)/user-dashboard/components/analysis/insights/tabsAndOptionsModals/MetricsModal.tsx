@@ -106,7 +106,7 @@ export default function MetricsModal({ open, onClose }: MetricsModalProps) {
           <FaBullseye className="w-4 h-4" />
           <div className="text-left">
             <div className="font-semibold">Discipline</div>
-            <div className="text-xs opacity-70">& Behaviour</div>
+            <div className="font-semibold">& Behaviour</div>
           </div>
           <span className="ml-2 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded text-xs">
             3
@@ -157,7 +157,7 @@ export default function MetricsModal({ open, onClose }: MetricsModalProps) {
           <IoGrid className="w-4 h-4" />
           <div className="text-left">
             <div className="font-semibold">Session</div>
-            <div className="text-xs opacity-70">& Control</div>
+            <div className="font-semibold">& Control</div>
           </div>
           <span className="ml-2 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded text-xs">
             3
@@ -208,7 +208,7 @@ export default function MetricsModal({ open, onClose }: MetricsModalProps) {
           <MdPsychology className="w-4 h-4" />
           <div className="text-left">
             <div className="font-semibold">Psychology</div>
-            <div className="text-xs opacity-70">× Performance</div>
+            <div className="font-semibold">× Performance</div>
           </div>
           <span className="ml-2 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded text-xs">
             3
@@ -265,7 +265,7 @@ export default function MetricsModal({ open, onClose }: MetricsModalProps) {
           <FaBrain className="w-4 h-4" />
           <div className="text-left">
             <div className="font-semibold">System</div>
-            <div className="text-xs opacity-70">Intelligence</div>
+            <div className="font-semibold">Intelligence</div>
           </div>
           <span className="ml-2 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded text-xs">
             3
