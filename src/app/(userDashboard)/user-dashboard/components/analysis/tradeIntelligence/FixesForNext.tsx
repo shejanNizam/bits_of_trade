@@ -53,20 +53,6 @@ const FIXES_DATA: FixItem[] = [
   },
 ];
 
-// --- Modal Components ---
-
-/**
- * Modal 2: Create Trading Rule (Form Mode)
- * Based on the middle modal in the image.
- */
-
-/**
- * Modal 3: Schedule Timeout (Specialized Form)
- * Based on the rightmost modal in the image.
- */
-
-// --- Main Component ---
-
 export default function FixesForNext() {
   const [activeModal, setActiveModal] = useState<
     "none" | "tradePlan" | "createRule" | "scheduleTimeout"

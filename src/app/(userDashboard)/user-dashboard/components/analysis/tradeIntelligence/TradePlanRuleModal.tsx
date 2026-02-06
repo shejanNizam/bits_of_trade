@@ -16,11 +16,10 @@ const TradePlanRuleModal = ({
       width={480}
       closable={false}
       className="custom-modal"
-      bodyStyle={{ padding: 0, borderRadius: "12px", overflow: "hidden" }}
     >
       <div className="bg-white dark:bg-slate-900">
         {/* Header */}
-        <div className="p-6 pb-2 flex justify-between items-start">
+        <div className=" flex justify-between items-start">
           <div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">
               Trading Plan Rule
