@@ -47,7 +47,7 @@ const navigation = [
         href: "/user-dashboard/insights",
       },
       {
-        name: "Trade Intelligent",
+        name: "Trade Intelligence",
         icon: MdTrendingUp,
         href: "/user-dashboard/trade-intelligent",
       },
