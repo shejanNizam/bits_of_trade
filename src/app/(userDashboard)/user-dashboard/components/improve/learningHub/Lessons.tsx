@@ -1,5 +1,11 @@
-// 1. Define the Interface for better type safety
-interface Lesson {
+"use client";
+
+import { PlayCircleFilled } from "@ant-design/icons";
+import { useState } from "react";
+import LessonModal from "./LessonModal";
+
+// 1. Interface definitions for type safety
+export interface Lesson {
   title: string;
   type: string;
   level: "Beginner" | "Intermediate" | "Advanced";
@@ -53,11 +59,13 @@ const LESSON_DATA: LessonCategory[] = [
 ];
 
 export default function Lessons() {
-  // Use the first category's lessons as a fallback for demo purposes
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+
+  // Use the first category's lessons as a fallback for empty sections
   const demoLessons = LESSON_DATA[0].lessons;
 
   return (
-    <div className="space-y-12">
+    <div className="p-6 space-y-12">
       {LESSON_DATA.map((section, idx) => (
         <section key={idx} className="space-y-6">
           <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
@@ -65,21 +73,36 @@ export default function Lessons() {
           </h2>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {/* If the section has lessons, map them; otherwise, use demo data */}
             {(section.lessons.length > 0 ? section.lessons : demoLessons).map(
               (lesson, lIdx) => (
-                <LessonCard key={`${idx}-${lIdx}`} lesson={lesson} />
+                <LessonCard
+                  key={`${idx}-${lIdx}`}
+                  lesson={lesson}
+                  onStart={() => setSelectedLesson(lesson)}
+                />
               ),
             )}
           </div>
         </section>
       ))}
+
+      {/* Separate Modal Component */}
+      <LessonModal
+        lesson={selectedLesson}
+        open={!!selectedLesson}
+        onClose={() => setSelectedLesson(null)}
+      />
     </div>
   );
 }
 
-// 2. Applied the Lesson interface to the props
-function LessonCard({ lesson }: { lesson: Lesson }) {
+function LessonCard({
+  lesson,
+  onStart,
+}: {
+  lesson: Lesson;
+  onStart: () => void;
+}) {
   return (
     <div className="flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
       <div className="flex items-center justify-between mb-4">
@@ -116,10 +139,11 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
         </div>
       </div>
 
-      <button className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-sm font-bold text-white transition-all hover:bg-indigo-700 active:scale-[0.98]">
-        <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
-          <path d="M8 5v14l11-7z" />
-        </svg>
+      <button
+        onClick={onStart}
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-sm font-bold text-white transition-all hover:bg-indigo-700 active:scale-[0.98]"
+      >
+        <PlayCircleFilled />
         Start Learning
       </button>
     </div>
