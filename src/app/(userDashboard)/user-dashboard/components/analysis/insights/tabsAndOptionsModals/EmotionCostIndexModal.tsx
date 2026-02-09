@@ -19,7 +19,7 @@ export default function EmotionCostIndexModal({ open, onCancel }: ModalProps) {
       centered
       styles={{ body: { padding: 0 } }}
     >
-      <div className="p-2 bg-white dark:bg-slate-900 rounded-3xl md:rounded-4xl overflow-hidden transition-all duration-300">
+      <div className="p-2 rounded-3xl md:rounded-4xl overflow-hidden transition-all duration-300">
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
           <div className="flex gap-4">

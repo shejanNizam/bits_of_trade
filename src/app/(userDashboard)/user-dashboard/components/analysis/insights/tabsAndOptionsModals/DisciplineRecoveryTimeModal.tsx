@@ -19,7 +19,7 @@ export default function DisciplineRecoveryTimeModal({
       <div className="py-2">
         {/* Header */}
         <div className="flex items-start gap-4 mb-6">
-          <div className="bg-cyan-100 dark:bg-cyan-900/30 p-3 rounded-2xl">
+          <div className="p-3 rounded-2xl">
             <FaClock className="w-7 h-7 text-cyan-600 dark:text-cyan-400" />
           </div>
           <div className="flex-1">

@@ -16,7 +16,7 @@ export default function ViolationMomentumModal({ open, onCancel }: ModalProps) {
       <div className="py-2">
         {/* Header */}
         <div className="flex items-start gap-4 mb-6">
-          <div className="bg-yellow-100 dark:bg-yellow-900/30 p-3 rounded-2xl">
+          <div className=" p-3 rounded-2xl">
             <FaChartLine className="w-7 h-7 text-yellow-600 dark:text-yellow-400" />
           </div>
           <div className="flex-1">

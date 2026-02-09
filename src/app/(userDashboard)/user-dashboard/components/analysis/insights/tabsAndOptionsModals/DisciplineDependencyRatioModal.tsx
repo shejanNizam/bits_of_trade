@@ -22,7 +22,7 @@ export default function DisciplineDependencyRatioModal({
       centered
       styles={{ body: { padding: 0 } }}
     >
-      <div className="p-2 bg-white dark:bg-slate-900 rounded-3xl md:rounded-4xl overflow-hidden transition-all duration-300">
+      <div className="p-2 rounded-3xl md:rounded-4xl overflow-hidden transition-all duration-300">
         <div className="flex justify-between items-start mb-8">
           <div className="flex gap-4">
             <div className="bg-yellow-100 dark:bg-yellow-900/30 p-3.5 rounded-2xl text-yellow-600 shrink-0">

@@ -105,8 +105,7 @@ export default function MetricsModal({ open, onClose }: MetricsModalProps) {
         <div className="flex items-center gap-2 px-2">
           <FaBullseye className="w-4 h-4" />
           <div className="text-left">
-            <div className="font-semibold">Discipline</div>
-            <div className="font-semibold">& Behaviour</div>
+            <div className="font-semibold">Discipline & Behaviour</div>
           </div>
           <span className="ml-2 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded text-xs">
             3
@@ -156,8 +155,7 @@ export default function MetricsModal({ open, onClose }: MetricsModalProps) {
         <div className="flex items-center gap-2 px-2">
           <IoGrid className="w-4 h-4" />
           <div className="text-left">
-            <div className="font-semibold">Session</div>
-            <div className="font-semibold">& Control</div>
+            <div className="font-semibold">Session & Control</div>
           </div>
           <span className="ml-2 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded text-xs">
             3
@@ -207,8 +205,7 @@ export default function MetricsModal({ open, onClose }: MetricsModalProps) {
         <div className="flex items-center gap-2 px-2">
           <MdPsychology className="w-4 h-4" />
           <div className="text-left">
-            <div className="font-semibold">Psychology</div>
-            <div className="font-semibold">× Performance</div>
+            <div className="font-semibold">Psychology × Performance</div>
           </div>
           <span className="ml-2 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded text-xs">
             3
@@ -264,8 +261,7 @@ export default function MetricsModal({ open, onClose }: MetricsModalProps) {
         <div className="flex items-center gap-2 px-2">
           <FaBrain className="w-4 h-4" />
           <div className="text-left">
-            <div className="font-semibold">System</div>
-            <div className="font-semibold">Intelligence</div>
+            <div className="font-semibold">System Intelligence</div>
           </div>
           <span className="ml-2 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded text-xs">
             3
