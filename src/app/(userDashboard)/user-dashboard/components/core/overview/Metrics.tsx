@@ -94,11 +94,8 @@ export default function Metrics() {
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8 sm:mb-10">
         <div className="flex-1">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
-            BitsOfTrade Exclusive
+            BitsOfTrade Exclusive Metrics
           </h2>
-          <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Metrics
-          </h3>
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             Proprietary metrics you {"won't"} find anywhere else
           </p>
