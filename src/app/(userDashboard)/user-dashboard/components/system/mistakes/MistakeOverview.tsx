@@ -76,11 +76,7 @@ export default function MistakeOverview() {
             Tag, track, and reduce. Mistakes are data — use them.
           </p>
         </div>
-        <Button
-          type="primary"
-          className="bg-blue-600 hover:bg-blue-700 h-10 rounded-lg flex items-center gap-2"
-          onClick={() => setIsModalOpen(true)}
-        >
+        <Button type="primary" onClick={() => setIsModalOpen(true)}>
           + Add Custom Mistake
         </Button>
       </div>

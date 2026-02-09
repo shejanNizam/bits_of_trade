@@ -47,7 +47,6 @@ export default function RulesLimitPage() {
             type="primary"
             icon={<HiOutlinePlus size={18} />}
             onClick={handleOpenAdd}
-            className="bg-blue-600 hover:bg-blue-700 h-10 rounded-lg font-semibold"
           >
             Add Custom Rule
           </Button>

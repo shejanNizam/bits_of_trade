@@ -36,7 +36,6 @@ export default function StrategyLibraryPage() {
             type="primary"
             icon={<CiSquarePlus size={18} />}
             onClick={() => setIsModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 h-10 flex items-center gap-2 w-full md:w-auto justify-center"
           >
             Create Strategy
           </Button>

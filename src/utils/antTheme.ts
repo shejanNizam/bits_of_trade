@@ -26,7 +26,7 @@ export const mainTheme = {
       colorBgContainerDisabled: "#ffffff",
       borderRadius: 6,
       fontSize: 14,
-      controlHeight: 60,
+      controlHeight: 40,
       boxShadow: "0 0px 0 rgba(5, 145, 255, 0.1)",
     },
     Progress: {
