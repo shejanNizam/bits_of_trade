@@ -66,7 +66,7 @@ export default function CumulativePL() {
               }}
               formatter={(value: number | undefined) => {
                 if (value === undefined) return ["N/A", "P&L"];
-                return [`$${value.toLocaleString()}`, "P&L"];
+                return [`₹${value.toLocaleString()}`, "P&L"];
               }}
               labelFormatter={(label) => `Day ${label}`}
             />
