@@ -191,7 +191,7 @@ export default function CurrentStatus() {
             onClick={() => setIsModalOpen(true)}
             className="w-full bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg py-3 px-4 font-semibold text-sm sm:text-base transition-colors"
           >
-            Complete Quick Check
+            Complete
           </button>
           <button className="w-full bg-white dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg py-3 px-4 font-medium text-sm sm:text-base transition-colors">
             Edit Rules & Limit
