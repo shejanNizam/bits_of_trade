@@ -48,7 +48,7 @@ export const mainTheme = {
       colorBorder: "#2563EB",
       colorTextPlaceholder: "#666666",
       borderRadius: 4,
-      controlHeight: 80,
+      controlHeight: 40,
     },
     InputPassword: {
       colorBorder: "#2563EB",
