@@ -1,5 +1,6 @@
 "use client";
 
+import { logout } from "@/redux/slices/authSlice";
 import { MenuOutlined } from "@ant-design/icons";
 import { Drawer, Dropdown } from "antd";
 import { useTheme } from "next-themes";
@@ -9,6 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { TiArrowSortedDown } from "react-icons/ti";
+import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import default_img from "../../assets/user_img_default.png";
 import CustomPrimaryButton from "./CustomPrimaryButton";
@@ -21,6 +23,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const { theme } = useTheme();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   // const user = false; // Not logged in
   const user = true; // Logged in
@@ -64,9 +67,8 @@ export default function Navbar() {
           icon: "success",
           confirmButtonColor: "#3085d6",
         }).then(() => {
-          // dispatch(logout());
-          // localStorage.removeItem("user_token");
-          // localStorage.removeItem("selectedCategory");
+          dispatch(logout());
+          localStorage.removeItem("token");
           router.push("/login");
         });
       }
@@ -258,7 +260,6 @@ export default function Navbar() {
             </Link>
 
             {user ? (
-              // When user is logged in - show profile dropdown (same as desktop)
               <Dropdown
                 menu={{ items: profileMenuItems }}
                 trigger={["click"]}

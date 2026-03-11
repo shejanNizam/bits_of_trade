@@ -2,7 +2,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
   token: string | null;
-  user: { id: string; name: string; email: string } | null;
+  user: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+  } | null;
 }
 
 const initialState: AuthState = {
@@ -17,11 +22,16 @@ const authSlice = createSlice({
     setCredentials: (
       state,
       action: PayloadAction<{
-        // token: string;
-        user: { id: string; name: string; email: string };
-      }>
+        token: string;
+        user: {
+          id: number;
+          first_name: string;
+          last_name: string;
+          email: string;
+        };
+      }>,
     ) => {
-      // state.token = action.payload.token;
+      state.token = action.payload.token;
       state.user = action.payload.user;
     },
     logout: (state) => {

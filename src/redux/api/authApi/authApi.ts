@@ -6,7 +6,7 @@ export const authApi = baseApi.injectEndpoints({
     signup: builder.mutation({
       query: (userData) => {
         return {
-          url: "/user/signup",
+          url: "/api/auth/register/",
           method: "POST",
           body: userData,
         };
@@ -18,7 +18,7 @@ export const authApi = baseApi.injectEndpoints({
     login: builder.mutation({
       query: (credentials) => {
         return {
-          url: "/user/login",
+          url: "/api/auth/login/",
           method: "POST",
           body: credentials,
         };
@@ -95,17 +95,6 @@ export const authApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["auth"],
     }),
-
-    // 09. logout api endpoint
-    logout: builder.mutation({
-      query: () => {
-        return {
-          url: "/logout",
-          method: "POST",
-        };
-      },
-      invalidatesTags: ["auth"],
-    }),
   }),
 });
 
@@ -118,5 +107,4 @@ export const {
   useResetPasswordMutation, // 06
   useVerifyEmailMutation, // 07
   useChangePasswordMutation, // 08
-  useLogoutMutation, // 09
 } = authApi;
