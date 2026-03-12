@@ -1,6 +1,7 @@
 "use client";
 
 import { logout } from "@/redux/slices/authSlice";
+import { RootState } from "@/redux/store";
 import { MenuOutlined } from "@ant-design/icons";
 import { Drawer, Dropdown } from "antd";
 import { useTheme } from "next-themes";
@@ -10,7 +11,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { TiArrowSortedDown } from "react-icons/ti";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import default_img from "../../assets/user_img_default.png";
 import CustomPrimaryButton from "./CustomPrimaryButton";
@@ -25,8 +26,7 @@ export default function Navbar() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  // const user = false; // Not logged in
-  const user = true; // Logged in
+  const { user } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     setMounted(true);
@@ -128,7 +128,7 @@ export default function Navbar() {
         {/* Right - Theme Toggle & Buttons (Desktop) */}
         <div className="hidden md:flex items-center gap-3">
           <ThemeToggle />
-          <Link href="/">
+          <Link href="/signup">
             <CustomPrimaryButton>Get Started</CustomPrimaryButton>
           </Link>
 
@@ -253,7 +253,7 @@ export default function Navbar() {
 
           {/* Drawer Buttons */}
           <div className="flex flex-col gap-3 mt-6">
-            <Link href="/" onClick={toggleDrawer}>
+            <Link href="/signup" onClick={toggleDrawer}>
               <CustomPrimaryButton className="w-full">
                 Get Started
               </CustomPrimaryButton>

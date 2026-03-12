@@ -34,12 +34,22 @@ interface LoginResponse {
   };
 }
 
+// interface ApiError {
+//   data?: {
+//     message?: string;
+//     detail?: string;
+//   };
+//   message?: string;
+// }
+
 interface ApiError {
-  data?: {
-    message?: string;
-    detail?: string;
+  success: boolean;
+  data: {
+    errors?: {
+      field?: string;
+      message?: string;
+    }[];
   };
-  message?: string;
 }
 
 // ==================== LOGIN CONTENT COMPONENT ====================
@@ -80,13 +90,12 @@ const LoginContent: React.FC = () => {
       }
     } catch (error) {
       const apiError = error as ApiError;
+
       ErrorSwal({
         title: "Login failed!",
         text:
-          apiError?.data?.message ||
-          apiError?.data?.detail ||
-          apiError?.message ||
-          "Invalid email or password.",
+          apiError?.data?.errors?.[0]?.message ||
+          "Login failed. Please try again.",
       });
     }
   };

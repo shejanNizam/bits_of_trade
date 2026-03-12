@@ -7,7 +7,6 @@ export const userApi = baseApi.injectEndpoints({
       query: () => {
         return {
           url: "/api/auth/profile/",
-          // url: "/user/my-profile",
           method: "GET",
         };
       },

@@ -9,8 +9,10 @@ const baseApi = createApi({
     baseUrl: BASE_URL,
     credentials: "include",
     prepareHeaders: (headers) => {
-      // const token = localStorage.getItem("user_token");
-      // headers.set("Authorization", `Bearer ${token}`);
+      const token = localStorage.getItem("token");
+      if (token) {
+        headers.set("Authorization", "Bearer " + token);
+      }
       return headers;
     },
   }),

@@ -36,12 +36,22 @@ interface SignupResponse {
   };
 }
 
+// interface ApiError {
+//   data?: {
+//     message?: string;
+//     detail?: string;
+//   };
+//   message?: string;
+// }
+
 interface ApiError {
-  data?: {
-    message?: string;
-    detail?: string; // Some Django/FastAPI backends use 'detail'
+  success: boolean;
+  data: {
+    errors?: {
+      field?: string;
+      message?: string;
+    }[];
   };
-  message?: string;
 }
 
 // ==================== COMPONENT ====================
@@ -85,14 +95,12 @@ const Signup: React.FC = () => {
       router.push("/login");
     } catch (error) {
       const apiError = error as ApiError;
-      console.error("Signup Error:", apiError);
+      console.log(apiError);
 
       ErrorSwal({
         title: "Signup failed!",
         text:
-          apiError?.data?.message ||
-          apiError?.data?.detail ||
-          apiError?.message ||
+          apiError?.data?.errors?.[0]?.message ||
           "Registration failed. Please try again.",
       });
     }
