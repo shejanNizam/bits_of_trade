@@ -173,12 +173,14 @@ const LoginContent: React.FC = () => {
             >
               <Checkbox className="dark:text-white">Remember me</Checkbox>
             </Form.Item>
-            <Link
-              href="/forgot-password"
-              className="text-blue-600 dark:text-blue-400 underline font-bold"
-            >
-              Forgot password?
-            </Link>
+            <Form.Item>
+              <Link
+                href="/forgot-password"
+                className="text-blue-600 dark:text-blue-400 underline font-bold"
+              >
+                Forgot password?
+              </Link>
+            </Form.Item>
           </div>
 
           <Form.Item>
