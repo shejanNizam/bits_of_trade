@@ -60,7 +60,7 @@ const LoginContent: React.FC = () => {
   const { token: antdToken } = theme.useToken();
   const dispatch = useDispatch();
 
-  const redirectPath = searchParams.get("from") || "/";
+  const redirectPath = searchParams.get("from") || "/onboarding";
 
   const [login, { isLoading }] = useLoginMutation();
 

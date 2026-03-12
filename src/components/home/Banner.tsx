@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import Link from "next/link";
 import bannerImage from "../../assets/banner_image.svg";
 import CustomPrimaryButton from "../shared/CustomPrimaryButton";
 import CustomSecondaryButton from "../shared/CustomSecondaryButton";
@@ -54,7 +55,9 @@ export default function Banner() {
 
             {/* CTA Buttons - Updated */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
-              <CustomPrimaryButton>Take Discipline Test</CustomPrimaryButton>
+              <Link href="/onboarding/discipline-test">
+                <CustomPrimaryButton>Take Discipline Test</CustomPrimaryButton>
+              </Link>
 
               <CustomSecondaryButton className="flex items-center gap-2">
                 <span className="w-6 h-6 flex items-center justify-center border border-gray-300 dark:border-gray-600 group-hover:border-white rounded-full transition-colors duration-300">

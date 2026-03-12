@@ -1,8 +1,10 @@
 "use client";
 
+import { logout } from "@/redux/slices/authSlice";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { IoIosLogOut } from "react-icons/io";
 import {
   MdBalance,
   MdBarChart,
@@ -18,6 +20,8 @@ import {
   MdTrendingUp,
   MdWarning,
 } from "react-icons/md";
+import { useDispatch } from "react-redux";
+import Swal from "sweetalert2";
 
 const navigation = [
   {
@@ -97,6 +101,8 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
   const pathname = usePathname();
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
@@ -118,6 +124,31 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to logout?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, logout!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Logged out",
+          text: "You have successfully logged out.",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          dispatch(logout());
+          localStorage.removeItem("token");
+          router.push("/login");
+        });
+      }
+    });
+  };
 
   return (
     <>
@@ -187,7 +218,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
 
         {/* User Profile - Fixed at bottom */}
         <div className="p-4 border-t border-gray-700 dark:border-gray-800 shrink-0">
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-gray-600 dark:bg-gray-700 flex items-center justify-center text-white font-semibold shrink-0">
               JD
             </div>
@@ -197,7 +228,14 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
               </p>
               <p className="text-xs text-gray-400 truncate">Pro Plan</p>
             </div>
-          </div>
+          </div> */}
+          <button
+            onClick={handleLogout}
+            className="w-full flex justify-center items-center gap-2 text-red-500 cursor-pointer bg-primary/20 px-3 py-3 rounded-lg transition-colors dark:bg-gray-800"
+          >
+            <IoIosLogOut size={24} />
+            Logout
+          </button>
         </div>
       </aside>
     </>

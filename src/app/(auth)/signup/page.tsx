@@ -36,14 +36,6 @@ interface SignupResponse {
   };
 }
 
-// interface ApiError {
-//   data?: {
-//     message?: string;
-//     detail?: string;
-//   };
-//   message?: string;
-// }
-
 interface ApiError {
   success: boolean;
   data: {
@@ -76,7 +68,6 @@ const Signup: React.FC = () => {
 
       const response: SignupResponse = await signup(payload).unwrap();
 
-      // Update Redux state with user and access token
       if (response?.tokens?.access) {
         dispatch(
           setCredentials({
