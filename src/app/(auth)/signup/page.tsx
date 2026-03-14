@@ -2,49 +2,13 @@
 
 import { useSignupMutation } from "@/redux/api/authApi/authApi";
 import { setCredentials } from "@/redux/slices/authSlice";
+import { ApiError, SignupFormValues, SignupResponse } from "@/types/auth";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import { Button, Form, Input, theme } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaArrowLeft } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-
-// ==================== TYPES (Aligned with your API) ====================
-interface SignupFormValues {
-  first_name: string;
-  last_name: string;
-  email: string;
-  password: string;
-  confirmPassword: string; // Used locally in AntD form
-  agree: boolean;
-}
-
-interface SignupResponse {
-  message: string;
-  user: {
-    id: number;
-    email: string;
-    first_name: string;
-    last_name: string;
-    subscription_type: string;
-    profile_picture: string | null;
-    created_at: string;
-  };
-  tokens: {
-    refresh: string;
-    access: string;
-  };
-}
-
-interface ApiError {
-  success: boolean;
-  data: {
-    errors?: {
-      field?: string;
-      message?: string;
-    }[];
-  };
-}
 
 // ==================== COMPONENT ====================
 const Signup: React.FC = () => {

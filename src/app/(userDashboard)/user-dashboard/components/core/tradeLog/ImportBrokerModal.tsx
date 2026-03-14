@@ -1,26 +1,14 @@
 "use client";
 
 import { useImportTradeMutation } from "@/redux/features/tradelog/tradelogApi";
+import { ApiError } from "@/types/auth";
+import { ImportBrokerModalProps } from "@/types/trade-log";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import type { UploadFile, UploadProps } from "antd";
 import { Modal, Upload, message } from "antd";
 import { useState } from "react";
 import { IoCloseOutline, IoInformationCircleOutline } from "react-icons/io5";
 import { MdOutlineFileUpload } from "react-icons/md";
-
-interface ImportBrokerModalProps {
-  open: boolean;
-  onClose: () => void;
-}
-
-interface ApiError {
-  data?: {
-    errors?: Array<{
-      message: string;
-    }>;
-    error?: string;
-  };
-}
 
 export default function ImportBrokerModal({
   open,

@@ -2,6 +2,7 @@
 
 import { useLoginMutation } from "@/redux/api/authApi/authApi";
 import { setCredentials } from "@/redux/slices/authSlice";
+import { ApiError, LoginFormValues, LoginResponse } from "@/types/auth";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import { Button, Checkbox, Form, Input, theme } from "antd";
 import Link from "next/link";
@@ -9,40 +10,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-
-// ==================== TYPES (Aligned with your API) ====================
-interface LoginFormValues {
-  email: string;
-  password: string;
-  remember?: boolean;
-}
-
-interface LoginResponse {
-  message: string;
-  user: {
-    id: number;
-    email: string;
-    first_name: string;
-    last_name: string;
-    subscription_type: string;
-    profile_picture: string | null;
-    created_at: string;
-  };
-  tokens: {
-    refresh: string;
-    access: string;
-  };
-}
-
-interface ApiError {
-  success: boolean;
-  data: {
-    errors?: {
-      field?: string;
-      message?: string;
-    }[];
-  };
-}
 
 // ==================== LOGIN CONTENT COMPONENT ====================
 const LoginContent: React.FC = () => {
