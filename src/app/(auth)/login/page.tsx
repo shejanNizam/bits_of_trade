@@ -34,14 +34,6 @@ interface LoginResponse {
   };
 }
 
-// interface ApiError {
-//   data?: {
-//     message?: string;
-//     detail?: string;
-//   };
-//   message?: string;
-// }
-
 interface ApiError {
   success: boolean;
   data: {

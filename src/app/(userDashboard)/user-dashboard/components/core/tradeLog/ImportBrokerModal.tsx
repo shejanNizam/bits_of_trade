@@ -1,6 +1,10 @@
 "use client";
 
-import { Modal, Upload } from "antd";
+import { useImportTradeMutation } from "@/redux/features/tradelog/tradelogApi";
+import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
+import type { UploadFile, UploadProps } from "antd";
+import { Modal, Upload, message } from "antd";
+import { useState } from "react";
 import { IoCloseOutline, IoInformationCircleOutline } from "react-icons/io5";
 import { MdOutlineFileUpload } from "react-icons/md";
 
@@ -9,17 +13,76 @@ interface ImportBrokerModalProps {
   onClose: () => void;
 }
 
+interface ApiError {
+  data?: {
+    errors?: Array<{
+      message: string;
+    }>;
+    error?: string;
+  };
+}
+
 export default function ImportBrokerModal({
   open,
   onClose,
 }: ImportBrokerModalProps) {
   const { Dragger } = Upload;
 
-  const uploadProps = {
+  // Replace 'any' with UploadFile type from antd
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const [importTrade, { isLoading }] = useImportTradeMutation();
+
+  const handleImport = async () => {
+    if (fileList.length === 0 || !fileList[0].originFileObj) {
+      message.error("Please select a CSV file first.");
+      return;
+    }
+
+    const formData = new FormData();
+    // originFileObj is the native File object
+    formData.append("file", fileList[0].originFileObj as File);
+
+    try {
+      const response = await importTrade(formData).unwrap();
+
+      SuccessSwal({
+        title: "Import successful!",
+        text:
+          response.message || "Your trades have been imported successfully.",
+      });
+
+      setFileList([]);
+      onClose();
+    } catch (error) {
+      const apiError = error as ApiError;
+      ErrorSwal({
+        title: "Import failed!",
+        text:
+          apiError?.data?.errors?.[0]?.message ||
+          apiError?.data?.error ||
+          "Failed to import trades. Please check your file format.",
+      });
+    }
+  };
+
+  // Explicitly type the upload props
+  const uploadProps: UploadProps = {
     name: "file",
     multiple: false,
     accept: ".csv",
-    beforeUpload: () => false,
+    fileList,
+    onChange: (info) => {
+      let newFileList = [...info.fileList];
+      newFileList = newFileList.slice(-1);
+      setFileList(newFileList);
+    },
+    beforeUpload: () => {
+      return false;
+    },
+    onRemove: () => {
+      setFileList([]);
+    },
   };
 
   return (
@@ -36,7 +99,6 @@ export default function ImportBrokerModal({
       title={null}
     >
       <div className="transition-colors duration-200">
-        {/* Header */}
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
             Import Trades from CSV
@@ -74,11 +136,13 @@ export default function ImportBrokerModal({
               <div className="py-6 sm:py-8 flex flex-col items-center justify-center">
                 <MdOutlineFileUpload className="text-4xl sm:text-5xl text-gray-400 dark:text-gray-500 mb-4 " />
                 <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base mb-4">
-                  Click to upload or drag and drop
+                  {fileList.length > 0
+                    ? fileList[0].name
+                    : "Click to upload or drag and drop"}
                 </p>
-                <button className="bg-gray-100 dark:bg-[#151F34] border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 px-4 sm:px-6 py-2 rounded-md text-sm font-medium hover:bg-gray-200 dark:hover:bg-[#1e2a47] transition-colors">
-                  Choose CSV File
-                </button>
+                <span className="bg-gray-100 dark:bg-[#151F34] border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 px-4 sm:px-6 py-2 rounded-md text-sm font-medium hover:bg-gray-200 dark:hover:bg-[#1e2a47] transition-colors cursor-pointer">
+                  {fileList.length > 0 ? "Change File" : "Choose CSV File"}
+                </span>
               </div>
             </Dragger>
           </div>
@@ -116,15 +180,21 @@ export default function ImportBrokerModal({
           <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
             <button
               onClick={onClose}
+              type="button"
               className="w-full sm:w-auto px-8 py-2.5 bg-gray-100 dark:bg-[#151F34] text-gray-800 dark:text-white rounded-md text-sm font-semibold hover:bg-gray-200 dark:hover:bg-[#1e2a47] transition-colors order-2 sm:order-1"
             >
               Cancel
             </button>
             <button
-              disabled
-              className="w-full sm:w-auto px-8 py-2.5 bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded-md text-sm font-semibold cursor-not-allowed order-1 sm:order-2"
+              onClick={handleImport}
+              disabled={isLoading || fileList.length === 0}
+              className={`w-full sm:w-auto px-8 py-2.5 rounded-md text-sm font-semibold transition-all order-1 sm:order-2 ${
+                isLoading || fileList.length === 0
+                  ? "bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                  : "bg-emerald-600 text-white hover:bg-emerald-700 active:scale-95 shadow-lg shadow-emerald-500/20"
+              }`}
             >
-              Import Trades
+              {isLoading ? "Importing..." : "Import Trades"}
             </button>
           </div>
         </div>

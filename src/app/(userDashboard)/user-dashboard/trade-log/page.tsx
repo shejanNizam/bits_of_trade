@@ -6,6 +6,7 @@ export default function TradeLogPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="w-full mx-auto">
         <TradeLogTable />
+        <hr />
         <TradeLogFooter />
       </div>
     </div>
