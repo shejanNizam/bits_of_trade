@@ -223,6 +223,7 @@
 // };
 
 // export default Signup;
+
 "use client";
 
 import { useSignupMutation } from "@/redux/api/authApi/authApi";
@@ -237,33 +238,30 @@ import {
 import { Button, Divider, Form, Input, theme } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useRef } from "react";
 import { FaArrowLeft } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import { useDispatch } from "react-redux";
 
 // ==================== GOOGLE BUTTON ====================
-// This uses GoogleLogin's onSuccess which gives credential = id_token directly ✅
 const GoogleLoginButton: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const googleButtonRef = useRef<HTMLDivElement>(null);
 
   const handleGoogleSuccess = async (
     credentialResponse: CredentialResponse,
   ) => {
     try {
-      const idToken = credentialResponse.credential; // ✅ This IS the id_token
-
+      const idToken = credentialResponse.credential;
       if (!idToken) throw new Error("No credential received from Google");
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google-login/`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token: idToken, // ✅ Exactly what your backend wants
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: idToken }),
         },
       );
 
@@ -281,16 +279,10 @@ const GoogleLoginButton: React.FC = () => {
       router.push("/dashboard");
     } catch (error) {
       const apiError = error as ApiError;
-      // ErrorSwal({
-      //   title: "Google Sign-in Failed",
-      //   text:
-      //     apiError?.data?.errors?.[0]?.message ||
-      //     "Could not sign in with Google.",
-      // });
       ErrorSwal({
         title: "Google Sign-in Failed",
         text:
-          apiError?.data?.error || // ✅ matches {"error": "..."}
+          apiError?.data?.error ||
           apiError?.data?.errors?.[0]?.message ||
           "Could not sign in with Google.",
       });
@@ -298,22 +290,43 @@ const GoogleLoginButton: React.FC = () => {
   };
 
   return (
-    // GoogleLogin renders Google's button internally.
-    // We wrap it to style it ourselves using a custom render via useGoogleLogin below.
-    // But for simplicity & correctness, we use a styled wrapper trick:
-    <div className="google-btn-wrapper w-full">
-      <GoogleLogin
-        onSuccess={handleGoogleSuccess}
-        onError={() =>
-          ErrorSwal({ title: "Error", text: "Google login failed." })
-        }
-        useOneTap={false}
-        width="100%"
-        text="continue_with"
-        shape="rectangular"
-        theme="outline"
+    <div className="relative w-full">
+      {/* Hidden real Google button */}
+      <div
+        ref={googleButtonRef}
+        className="absolute opacity-0 pointer-events-none w-full"
+        style={{ zIndex: -1 }}
+      >
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={() =>
+            ErrorSwal({ title: "Error", text: "Google login failed." })
+          }
+          useOneTap={false}
+          auto_select={false}
+          width="460"
+          text="continue_with"
+          shape="rectangular"
+          theme="outline"
+          size="large"
+        />
+      </div>
+
+      {/* Custom styled button */}
+      <Button
         size="large"
-      />
+        onClick={() => {
+          const btn = googleButtonRef.current?.querySelector(
+            "div[role=button]",
+          ) as HTMLElement;
+          btn?.click();
+        }}
+        className="w-full flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+        style={{ height: 50 }}
+        icon={<FcGoogle size={20} />}
+      >
+        Continue with Google
+      </Button>
     </div>
   );
 };
@@ -391,9 +404,9 @@ const Signup: React.FC = () => {
             className="space-y-2"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-              <Form.Item
+              <Form.Item<SignupFormValues>
                 label={
-                  <span className="font-semibold text-gray-900 dark:text-white">
+                  <span className="font-semibold text-gray-900 dark:text-white transition-colors">
                     First Name
                   </span>
                 }
@@ -403,9 +416,9 @@ const Signup: React.FC = () => {
                 <Input placeholder="John" size="large" />
               </Form.Item>
 
-              <Form.Item
+              <Form.Item<SignupFormValues>
                 label={
-                  <span className="font-semibold text-gray-900 dark:text-white">
+                  <span className="font-semibold text-gray-900 dark:text-white transition-colors">
                     Last Name
                   </span>
                 }
@@ -416,9 +429,9 @@ const Signup: React.FC = () => {
               </Form.Item>
             </div>
 
-            <Form.Item
+            <Form.Item<SignupFormValues>
               label={
-                <span className="font-semibold text-gray-900 dark:text-white">
+                <span className="font-semibold text-gray-900 dark:text-white transition-colors">
                   Email
                 </span>
               }
@@ -431,9 +444,9 @@ const Signup: React.FC = () => {
               <Input placeholder="example@mail.com" size="large" />
             </Form.Item>
 
-            <Form.Item
+            <Form.Item<SignupFormValues>
               label={
-                <span className="font-semibold text-gray-900 dark:text-white">
+                <span className="font-semibold text-gray-900 dark:text-white transition-colors">
                   Password
                 </span>
               }
@@ -447,9 +460,9 @@ const Signup: React.FC = () => {
               <Input.Password placeholder="••••••••" size="large" />
             </Form.Item>
 
-            <Form.Item
+            <Form.Item<SignupFormValues>
               label={
-                <span className="font-semibold text-gray-900 dark:text-white">
+                <span className="font-semibold text-gray-900 dark:text-white transition-colors">
                   Confirm Password
                 </span>
               }
@@ -483,15 +496,13 @@ const Signup: React.FC = () => {
               </Button>
             </Form.Item>
 
-            {/* ===== OR DIVIDER ===== */}
             <Divider className="dark:border-gray-600 my-2">
               <span className="text-gray-400 dark:text-gray-500 text-sm px-2">
                 or
               </span>
             </Divider>
 
-            {/* ===== GOOGLE BUTTON ===== */}
-            <Form.Item className="mb-0 w-full">
+            <Form.Item className="mb-0">
               <GoogleLoginButton />
             </Form.Item>
 
