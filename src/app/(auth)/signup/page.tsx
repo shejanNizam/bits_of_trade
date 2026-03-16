@@ -506,7 +506,7 @@ const Signup: React.FC = () => {
               name="first_name"
               rules={[{ required: true, message: "Required" }]}
             >
-              <Input placeholder="John" size="large" />
+              <Input placeholder="Enter your first name" size="large" />
             </Form.Item>
 
             <Form.Item<SignupFormValues>
@@ -518,7 +518,7 @@ const Signup: React.FC = () => {
               name="last_name"
               rules={[{ required: true, message: "Required" }]}
             >
-              <Input placeholder="Doe" size="large" />
+              <Input placeholder="Enter your last name" size="large" />
             </Form.Item>
           </div>
 
@@ -534,7 +534,7 @@ const Signup: React.FC = () => {
               { required: true, message: "Email is required" },
             ]}
           >
-            <Input placeholder="example@mail.com" size="large" />
+            <Input placeholder="Enter your email" size="large" />
           </Form.Item>
 
           <Form.Item<SignupFormValues>
@@ -550,7 +550,7 @@ const Signup: React.FC = () => {
             ]}
             hasFeedback
           >
-            <Input.Password placeholder="••••••••" size="large" />
+            <Input.Password placeholder="Enter your password" size="large" />
           </Form.Item>
 
           <Form.Item<SignupFormValues>
@@ -573,7 +573,7 @@ const Signup: React.FC = () => {
               }),
             ]}
           >
-            <Input.Password placeholder="••••••••" size="large" />
+            <Input.Password placeholder="Confirm your password" size="large" />
           </Form.Item>
 
           <Form.Item>
