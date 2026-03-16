@@ -383,7 +383,7 @@ const GoogleLoginButton: React.FC<{ redirectPath: string }> = ({
         onClick={handleClick}
         loading={isLoading}
         className="w-full flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-        style={{ height: 60 }}
+        style={{ height: 50 }}
         icon={!isLoading ? <FcGoogle size={20} /> : undefined}
       >
         {isLoading ? "Signing in..." : "Continue with Google"}
