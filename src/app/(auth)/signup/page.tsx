@@ -281,9 +281,16 @@ const GoogleLoginButton: React.FC = () => {
       router.push("/dashboard");
     } catch (error) {
       const apiError = error as ApiError;
+      // ErrorSwal({
+      //   title: "Google Sign-in Failed",
+      //   text:
+      //     apiError?.data?.errors?.[0]?.message ||
+      //     "Could not sign in with Google.",
+      // });
       ErrorSwal({
         title: "Google Sign-in Failed",
         text:
+          apiError?.data?.error || // ✅ matches {"error": "..."}
           apiError?.data?.errors?.[0]?.message ||
           "Could not sign in with Google.",
       });
@@ -484,7 +491,7 @@ const Signup: React.FC = () => {
             </Divider>
 
             {/* ===== GOOGLE BUTTON ===== */}
-            <Form.Item className="mb-0">
+            <Form.Item className="mb-0 w-full">
               <GoogleLoginButton />
             </Form.Item>
 
