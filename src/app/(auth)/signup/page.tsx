@@ -223,47 +223,46 @@
 // };
 
 // export default Signup;
-
 "use client";
 
 import { useSignupMutation } from "@/redux/api/authApi/authApi";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { ApiError, SignupFormValues, SignupResponse } from "@/types/auth";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
-import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
+import {
+  CredentialResponse,
+  GoogleLogin,
+  GoogleOAuthProvider,
+} from "@react-oauth/google";
 import { Button, Divider, Form, Input, theme } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaArrowLeft } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
 import { useDispatch } from "react-redux";
 
-// ==================== GOOGLE BUTTON INNER ====================
+// ==================== GOOGLE BUTTON ====================
+// This uses GoogleLogin's onSuccess which gives credential = id_token directly ✅
 const GoogleLoginButton: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const handleGoogleSuccess = async (tokenResponse: {
-    access_token: string;
-  }) => {
+  const handleGoogleSuccess = async (
+    credentialResponse: CredentialResponse,
+  ) => {
     try {
-      // 1. Get user info from Google using the access token
-      const googleUserInfo = await fetch(
-        "https://www.googleapis.com/oauth2/v3/userinfo",
-        {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        },
-      ).then((res) => res.json());
+      const idToken = credentialResponse.credential; // ✅ This IS the id_token
 
-      // 2. Send the email (or token) to your backend
+      if (!idToken) throw new Error("No credential received from Google");
+
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/google/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google-login/`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
-            email: googleUserInfo.email,
-            // add more fields if your backend needs: first_name, last_name, google_token, etc.
+            token: idToken, // ✅ Exactly what your backend wants
           }),
         },
       );
@@ -291,29 +290,28 @@ const GoogleLoginButton: React.FC = () => {
     }
   };
 
-  const login = useGoogleLogin({
-    onSuccess: handleGoogleSuccess,
-    onError: () =>
-      ErrorSwal({
-        title: "Error",
-        text: "Google login was cancelled or failed.",
-      }),
-  });
-
   return (
-    <Button
-      size="large"
-      onClick={() => login()}
-      className="w-full flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
-      style={{ height: 50 }}
-      icon={<FcGoogle size={20} />}
-    >
-      Continue with Google
-    </Button>
+    // GoogleLogin renders Google's button internally.
+    // We wrap it to style it ourselves using a custom render via useGoogleLogin below.
+    // But for simplicity & correctness, we use a styled wrapper trick:
+    <div className="google-btn-wrapper w-full">
+      <GoogleLogin
+        onSuccess={handleGoogleSuccess}
+        onError={() =>
+          ErrorSwal({ title: "Error", text: "Google login failed." })
+        }
+        useOneTap={false}
+        width="100%"
+        text="continue_with"
+        shape="rectangular"
+        theme="outline"
+        size="large"
+      />
+    </div>
   );
 };
 
-// ==================== COMPONENT ====================
+// ==================== MAIN SIGNUP COMPONENT ====================
 const Signup: React.FC = () => {
   const router = useRouter();
   const [form] = Form.useForm<SignupFormValues>();
@@ -330,7 +328,9 @@ const Signup: React.FC = () => {
         first_name: values.first_name,
         last_name: values.last_name,
       };
+
       const response: SignupResponse = await signup(payload).unwrap();
+
       if (response?.tokens?.access) {
         dispatch(
           setCredentials({
@@ -339,10 +339,12 @@ const Signup: React.FC = () => {
           }),
         );
       }
+
       SuccessSwal({
         title: "Success!",
         text: response.message || "Account created successfully!",
       });
+
       router.push("/login");
     } catch (error) {
       const apiError = error as ApiError;
@@ -355,14 +357,12 @@ const Signup: React.FC = () => {
     }
   };
 
-  const handleBack = (): void => router.back();
-
   return (
     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
       <div className="min-h-screen w-full flex flex-col justify-center items-center px-4 bg-white dark:bg-gray-900 transition-colors pt-20">
         <div className="shadow-2xl dark:shadow-gray-800/50 rounded-2xl w-full max-w-xl p-8 md:p-16 -mt-25 relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <button
-            onClick={handleBack}
+            onClick={() => router.back()}
             className="absolute top-4 left-4 text-gray-600 dark:text-gray-400 hover:opacity-70 transition-opacity"
           >
             <FaArrowLeft size={24} />
@@ -395,6 +395,7 @@ const Signup: React.FC = () => {
               >
                 <Input placeholder="John" size="large" />
               </Form.Item>
+
               <Form.Item
                 label={
                   <span className="font-semibold text-gray-900 dark:text-white">
@@ -475,17 +476,19 @@ const Signup: React.FC = () => {
               </Button>
             </Form.Item>
 
-            {/* ===== DIVIDER + GOOGLE BUTTON ===== */}
-            <Divider className="dark:border-gray-600">
-              <span className="text-gray-400 dark:text-gray-500 text-sm">
+            {/* ===== OR DIVIDER ===== */}
+            <Divider className="dark:border-gray-600 my-2">
+              <span className="text-gray-400 dark:text-gray-500 text-sm px-2">
                 or
               </span>
             </Divider>
 
-            <GoogleLoginButton />
-            {/* ===================================== */}
+            {/* ===== GOOGLE BUTTON ===== */}
+            <Form.Item className="mb-0">
+              <GoogleLoginButton />
+            </Form.Item>
 
-            <p className="text-center dark:text-gray-400 mt-4">
+            <p className="text-center dark:text-gray-400 mt-2">
               Already have an account?{" "}
               <Link href="/login" className="text-blue-600 font-bold underline">
                 Login
