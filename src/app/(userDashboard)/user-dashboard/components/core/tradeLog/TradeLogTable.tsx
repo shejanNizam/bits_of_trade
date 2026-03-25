@@ -30,6 +30,7 @@ export interface TradeData {
   psychology: string;
   mistakes: number | null;
   status: "completed" | "pending";
+  violation_modes?: string[]; // New field for violation modes
 }
 
 export default function TradeLogTable() {
@@ -365,36 +366,6 @@ export default function TradeLogTable() {
         }}
         editData={selectedTrade} // Pass existing trade if editing
       />
-
-      <style jsx global>{`
-        .custom-table .ant-table {
-          background: transparent;
-        }
-        .custom-table .ant-table-thead > tr > th {
-          background: transparent !important;
-          color: rgb(107 114 128);
-          font-size: 0.75rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          border-bottom: 1px solid rgb(229 231 235);
-        }
-        .dark .custom-table .ant-table-thead > tr > th {
-          color: rgb(156 163 175);
-          border-bottom: 1px solid rgb(55 65 81);
-        }
-        .custom-table .ant-table-tbody > tr > td {
-          border-bottom: 1px solid rgb(243 244 246);
-        }
-        .dark .custom-table .ant-table-tbody > tr > td {
-          border-bottom: 1px solid rgb(31 41 55);
-        }
-        .custom-table .ant-table-tbody > tr:hover > td {
-          background: rgb(249 250 251) !important;
-        }
-        .dark .custom-table .ant-table-tbody > tr:hover > td {
-          background: rgb(31 41 55) !important;
-        }
-      `}</style>
     </div>
   );
 }

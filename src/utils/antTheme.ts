@@ -5,9 +5,8 @@ export const mainTheme = {
   },
   components: {
     Table: {
-      colorTextHeading: "#DEAD35",
-      colorBgContainer: "#00321F",
-      colorText: "#ffffff",
+      colorTextHeading: "#2563EB",
+      colorText: "#000000",
       colorBorder: "#000000",
     },
     Menu: {
