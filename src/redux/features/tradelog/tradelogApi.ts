@@ -26,7 +26,7 @@ export const tradelogApi = baseApi.injectEndpoints({
     updateTradeManually: builder.mutation({
       query: ({ payload, id }) => ({
         url: `/api/tradelog/trades/${id}/`,
-        method: "PUT",
+        method: "PATCH",
         body: payload,
       }),
       invalidatesTags: ["tradelog"],

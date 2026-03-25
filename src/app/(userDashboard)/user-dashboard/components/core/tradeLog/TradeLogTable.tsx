@@ -1,6 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Table } from "antd";
+import {
+  useDeleteTradeMutation,
+  useGetAllTradeQuery,
+} from "@/redux/features/tradelog/tradelogApi";
+import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
+import { message, Pagination, Spin, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useState } from "react";
 import {
@@ -15,132 +22,152 @@ import AddTradeModal from "./AddTradeModal";
 import ImportBrokerModal from "./ImportBrokerModal";
 
 export interface TradeData {
-  key: string;
-  date: string;
-  time: string;
+  id: string;
+  trade_date: string;
+  trade_time: string;
   symbol: string;
-  market: string;
-  direction: "Long" | "Short";
-  qty: number | string;
-  entry: number;
-  exit: number;
-  pnl: number;
-  strategy: string;
-  rules: string;
-  psychology: string;
-  mistakes: number | null;
-  status: "completed" | "pending";
-  violation_modes?: string[]; // New field for violation modes
+  market_type: string;
+  direction: "long" | "short";
+  quantity: string;
+  entry_price: string;
+  exit_price: string;
+  fees: string;
+  total_pnl: string;
+  strategy: string | null;
+  entry_confidence: number | null;
+  satisfaction_rating: number | null;
+  emotional_state: string | null;
+  violation_modes: string[];
+  lessons_learned: string;
+  is_disciplined: boolean;
+  is_tagged_complete: boolean;
+  import_source: string;
+  broker_name: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export default function TradeLogTable() {
   const [activeTab, setActiveTab] = useState("all");
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-
-  // Unified state for Add/Edit
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<TradeData | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  const trades: TradeData[] = [
-    {
-      key: "1",
-      date: "2025-01-07",
-      time: "09:45:00",
-      symbol: "RELIANCE",
-      market: "Indian Stocks",
-      direction: "Long",
-      qty: 50,
-      entry: 2450.5,
-      exit: 2485.75,
-      pnl: 1637,
-      strategy: "Momentum Breakout",
-      rules: "-",
-      psychology: "-",
-      mistakes: null,
-      status: "completed",
-    },
-    {
-      key: "2",
-      date: "2025-01-07",
-      time: "11:30:00",
-      symbol: "NIFTY 25000 CE",
-      market: "Indian Stocks",
-      direction: "Long",
-      qty: 500,
-      entry: 145.25,
-      exit: 138.5,
-      pnl: -3625,
-      strategy: "Options Momentum",
-      rules: "-",
-      psychology: "-",
-      mistakes: 2,
-      status: "completed",
-    },
-    {
-      key: "3",
-      date: "2025-01-06",
-      time: "14:20:00",
-      symbol: "EURUSD",
-      market: "Forex",
-      direction: "Short",
-      qty: 10000,
-      entry: 1.0845,
-      exit: 1.082,
-      pnl: 235,
-      strategy: "Trend Following",
-      rules: "-",
-      psychology: "-",
-      mistakes: null,
-      status: "completed",
-    },
-    {
-      key: "4",
-      date: "2025-01-06",
-      time: "15:45:00",
-      symbol: "BTCUSDT",
-      market: "Crypto",
-      direction: "Long",
-      qty: 0.5,
-      entry: 65200,
-      exit: 64850,
-      pnl: -207.5,
-      strategy: "Scalping",
-      rules: "-",
-      psychology: "-",
-      mistakes: 1,
-      status: "completed",
-    },
-  ];
+  const { data, isLoading, error, refetch } = useGetAllTradeQuery({
+    page: currentPage,
+    limit: pageSize,
+  });
+
+  const [deleteTrade] = useDeleteTradeMutation();
+
+  const trades = data?.results || [];
+  const totalCount = data?.count || 0;
+
+  // Calculate statistics for tabs
+  const calculateTabCounts = () => {
+    const total = trades.length;
+    const wins = trades.filter(
+      (trade: TradeData) => parseFloat(trade.total_pnl) > 0,
+    ).length;
+    const losses = trades.filter(
+      (trade: TradeData) => parseFloat(trade.total_pnl) < 0,
+    ).length;
+    const disciplined = trades.filter(
+      (trade: TradeData) => trade.is_disciplined,
+    ).length;
+    const violations = trades.filter(
+      (trade: TradeData) => trade.violation_modes?.length > 0,
+    ).length;
+
+    return { total, wins, losses, disciplined, violations };
+  };
+
+  const tabCounts = calculateTabCounts();
 
   const tabs = [
-    { key: "all", label: "All Trades", count: 5 },
-    { key: "wins", label: "Wins" },
-    { key: "losses", label: "Losses" },
-    { key: "disciplined", label: "Disciplined" },
-    { key: "violations", label: "Violations" },
+    { key: "all", label: "All Trades", count: tabCounts.total },
+    { key: "wins", label: "Wins", count: tabCounts.wins },
+    { key: "losses", label: "Losses", count: tabCounts.losses },
+    { key: "disciplined", label: "Disciplined", count: tabCounts.disciplined },
+    { key: "violations", label: "Violations", count: tabCounts.violations },
   ];
 
-  // Helper to open modal for adding
+  // Filter trades based on active tab
+  const getFilteredTrades = () => {
+    switch (activeTab) {
+      case "wins":
+        return trades.filter(
+          (trade: TradeData) => parseFloat(trade.total_pnl) > 0,
+        );
+      case "losses":
+        return trades.filter(
+          (trade: TradeData) => parseFloat(trade.total_pnl) < 0,
+        );
+      case "disciplined":
+        return trades.filter((trade: TradeData) => trade.is_disciplined);
+      case "violations":
+        return trades.filter(
+          (trade: TradeData) => trade.violation_modes?.length > 0,
+        );
+      default:
+        return trades;
+    }
+  };
+
+  const filteredTrades = getFilteredTrades();
+
   const handleOpenAddModal = () => {
     setSelectedTrade(null);
     setIsTradeModalOpen(true);
   };
 
-  // Helper to open modal for editing
   const handleOpenEditModal = (trade: TradeData) => {
     setSelectedTrade(trade);
     setIsTradeModalOpen(true);
   };
 
+  const handleDeleteTrade = async (trade: TradeData) => {
+    const result = await ErrorSwal({
+      title: "Delete Trade?",
+      text: `Are you sure you want to delete trade for ${trade.symbol}? This action cannot be undone.`,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteTrade(trade.id).unwrap();
+        SuccessSwal({
+          title: "Deleted!",
+          text: "Trade has been deleted successfully.",
+        });
+        refetch();
+      } catch (error: any) {
+        ErrorSwal({
+          title: "Error!",
+          text: error?.data?.message || "Failed to delete trade.",
+        });
+      }
+    }
+  };
+
+  const handleCopyTrade = (trade: TradeData) => {
+    // Copy trade data to clipboard or create a new trade with same details
+    navigator.clipboard.writeText(JSON.stringify(trade, null, 2));
+    message.success("Trade details copied to clipboard!");
+  };
+
   const columns: ColumnsType<TradeData> = [
     {
       title: "Trade Date",
-      dataIndex: "date",
-      key: "date",
+      dataIndex: "trade_date",
+      key: "trade_date",
       render: (_, record) => (
         <div className="text-[12px]">
-          <div className="font-bold text-gray-300">{record.date}</div>
-          <div className="text-gray-500 text-[10px]">{record.time}</div>
+          <div className="font-bold text-gray-900 dark:text-gray-100">
+            {record.trade_date}
+          </div>
+          <div className="text-gray-500 text-[10px]">{record.trade_time}</div>
         </div>
       ),
     },
@@ -149,15 +176,19 @@ export default function TradeLogTable() {
       dataIndex: "symbol",
       key: "symbol",
       render: (symbol) => (
-        <span className="font-bold text-white text-[12px]">{symbol}</span>
+        <span className="font-bold text-gray-900 dark:text-white text-[12px]">
+          {symbol}
+        </span>
       ),
     },
     {
       title: "Market",
-      dataIndex: "market",
-      key: "market",
+      dataIndex: "market_type",
+      key: "market_type",
       render: (market) => (
-        <span className="text-gray-400 text-[12px]">{market}</span>
+        <span className="text-gray-600 dark:text-gray-400 text-[12px] capitalize">
+          {market.replace("_", " ")}
+        </span>
       ),
     },
     {
@@ -167,7 +198,7 @@ export default function TradeLogTable() {
       render: (direction) => (
         <div
           className={`px-2 py-0.5 rounded text-[10px] font-bold w-fit border ${
-            direction === "Long"
+            direction === "long"
               ? "bg-teal-500/10 border-teal-500/50 text-teal-500"
               : "bg-orange-500/10 border-orange-500/50 text-orange-500"
           }`}
@@ -178,85 +209,91 @@ export default function TradeLogTable() {
     },
     {
       title: "Qty",
-      dataIndex: "qty",
-      key: "qty",
-      render: (qty) => <span className="text-gray-300 text-[12px]">{qty}</span>,
+      dataIndex: "quantity",
+      key: "quantity",
+      render: (qty) => (
+        <span className="text-gray-700 dark:text-gray-300 text-[12px]">
+          {parseFloat(qty).toLocaleString()}
+        </span>
+      ),
     },
     {
       title: "Entry",
-      dataIndex: "entry",
-      key: "entry",
+      dataIndex: "entry_price",
+      key: "entry_price",
       render: (val) => (
-        <span className="text-gray-300 text-[12px]">
-          ₹{val.toLocaleString()}
+        <span className="text-gray-700 dark:text-gray-300 text-[12px]">
+          ₹{parseFloat(val).toLocaleString()}
         </span>
       ),
     },
     {
       title: "Exit",
-      dataIndex: "exit",
-      key: "exit",
+      dataIndex: "exit_price",
+      key: "exit_price",
       render: (val) => (
-        <span className="text-gray-300 text-[12px]">
-          ₹{val.toLocaleString()}
+        <span className="text-gray-700 dark:text-gray-300 text-[12px]">
+          ₹{parseFloat(val).toLocaleString()}
         </span>
       ),
     },
     {
       title: "P&L",
-      dataIndex: "pnl",
-      key: "pnl",
-      render: (pnl) => (
-        <span
-          className={`font-bold text-[12px] ${pnl >= 0 ? "text-green-500" : "text-red-500"}`}
-        >
-          {pnl >= 0 ? "+" : ""}₹{pnl.toLocaleString()}
-        </span>
-      ),
+      dataIndex: "total_pnl",
+      key: "total_pnl",
+      render: (pnl) => {
+        const pnlNum = parseFloat(pnl);
+        return (
+          <span
+            className={`font-bold text-[12px] ${pnlNum >= 0 ? "text-green-500" : "text-red-500"}`}
+          >
+            {pnlNum >= 0 ? "+" : ""}₹{pnlNum.toLocaleString()}
+          </span>
+        );
+      },
     },
     {
       title: "Strategy",
       dataIndex: "strategy",
       key: "strategy",
       render: (strategy) => (
-        <span className="text-gray-400 text-[12px]">{strategy}</span>
+        <span className="text-gray-500 dark:text-gray-400 text-[12px]">
+          {strategy || "-"}
+        </span>
       ),
     },
     {
-      title: "Rules",
-      dataIndex: "rules",
-      key: "rules",
+      title: "Violations",
+      dataIndex: "violation_modes",
+      key: "violation_modes",
       align: "center",
-      render: (val) => <span className="text-gray-600 text-[12px]">{val}</span>,
-    },
-    {
-      title: "Psychology",
-      dataIndex: "psychology",
-      key: "psychology",
-      align: "center",
-      render: (val) => <span className="text-gray-600 text-[12px]">{val}</span>,
-    },
-    {
-      title: "Mistakes",
-      dataIndex: "mistakes",
-      key: "mistakes",
-      align: "center",
-      render: (val) =>
-        val ? (
-          <div className="bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded flex items-center justify-center">
-            {val}
-          </div>
-        ) : (
-          <span className="text-gray-600">-</span>
-        ),
+      render: (violations) => (
+        <div className="flex gap-1 flex-wrap">
+          {violations?.length > 0 ? (
+            <span className="text-red-500 text-[10px] font-medium">
+              {violations.length}
+            </span>
+          ) : (
+            <span className="text-gray-400">-</span>
+          )}
+        </div>
+      ),
     },
     {
       title: "Status",
-      dataIndex: "status",
       key: "status",
       align: "center",
-      render: () => (
-        <div className="w-3 h-3 rounded-full bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.6)]" />
+      render: (_, record) => (
+        <div
+          className={`w-3 h-3 rounded-full ${
+            record.is_tagged_complete
+              ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
+              : "bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.6)]"
+          }`}
+          title={
+            record.is_tagged_complete ? "Tagged Complete" : "Pending Tagging"
+          }
+        />
       ),
     },
     {
@@ -265,16 +302,35 @@ export default function TradeLogTable() {
       align: "right",
       render: (_, record) => (
         <div className="flex items-center justify-end gap-3 text-gray-500">
-          <IoEyeOutline className="text-lg cursor-pointer transition-colors" />
+          <IoEyeOutline className="text-lg cursor-pointer hover:text-blue-500 transition-colors" />
           <IoCreateOutline
-            className="text-lg cursor-pointer  transition-colors"
+            className="text-lg cursor-pointer hover:text-green-500 transition-colors"
             onClick={() => handleOpenEditModal(record)}
           />
-          <IoCopyOutline className="text-lg cursor-pointer transition-colors" />
+          <IoCopyOutline
+            className="text-lg cursor-pointer hover:text-purple-500 transition-colors"
+            onClick={() => handleCopyTrade(record)}
+          />
         </div>
       ),
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12 text-red-500">
+        Failed to load trades. Please try again.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -334,7 +390,7 @@ export default function TradeLogTable() {
                   : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
               }`}
             >
-              {tab.label} {tab.count ? `(${tab.count})` : ""}
+              {tab.label} ({tab.count})
             </button>
           ))}
         </div>
@@ -344,27 +400,49 @@ export default function TradeLogTable() {
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
         <Table
           columns={columns}
-          dataSource={trades}
+          dataSource={filteredTrades}
           pagination={false}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 1200 }}
           className="custom-table"
+          rowKey="id"
         />
       </div>
+
+      {/* Pagination */}
+      {totalCount > 0 && (
+        <div className="flex justify-end py-4">
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={totalCount}
+            onChange={(page, size) => {
+              setCurrentPage(page);
+              if (size !== pageSize) setPageSize(size);
+            }}
+            showSizeChanger
+            showTotal={(total) => `Total ${total} trades`}
+            className="dark:text-gray-300"
+          />
+        </div>
+      )}
 
       {/* Modals */}
       <ImportBrokerModal
         open={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
+        onClose={() => {
+          setIsImportModalOpen(false);
+          refetch();
+        }}
       />
 
-      {/* Unified Add/Edit Modal */}
       <AddTradeModal
         open={isTradeModalOpen}
         onClose={() => {
           setIsTradeModalOpen(false);
           setSelectedTrade(null);
+          refetch();
         }}
-        editData={selectedTrade} // Pass existing trade if editing
+        editData={selectedTrade}
       />
     </div>
   );

@@ -1,4 +1,9 @@
-import { useImportTradeManuallyMutation } from "@/redux/features/tradelog/tradelogApi";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  useImportTradeManuallyMutation,
+  useUpdateTradeManuallyMutation,
+} from "@/redux/features/tradelog/tradelogApi";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import type { FormInstance } from "antd";
 import { Form, Input, Modal, Select, Slider, Tabs } from "antd";
@@ -15,9 +20,10 @@ interface AddTradeModalProps {
 type TradeFormValues = Partial<TradeData> & {
   emotional_state?: string;
   violation_modes?: string[];
+  stop_loss?: number | null;
+  target?: number | null;
 };
 
-// 1. Define list outside to prevent re-reference issues
 const VIOLATION_MODES_LIST = [
   "Standard Mode",
   "Overtrading",
@@ -28,6 +34,14 @@ const VIOLATION_MODES_LIST = [
   "No Clear Entry",
 ];
 
+// Helper function to format time in HH:MM:SS format
+const formatTime = (date: Date): string => {
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}`;
+};
+
 export default function AddTradeModal({
   open,
   onClose,
@@ -36,69 +50,113 @@ export default function AddTradeModal({
   const [activeTab, setActiveTab] = useState("general");
   const [form] = Form.useForm<TradeFormValues>();
 
-  const [importTradeManually, { isLoading }] = useImportTradeManuallyMutation();
+  const [importTradeManually, { isLoading: isCreating }] =
+    useImportTradeManuallyMutation();
+  const [updateTradeManually, { isLoading: isUpdating }] =
+    useUpdateTradeManuallyMutation();
+
+  const isLoading = isCreating || isUpdating;
 
   useEffect(() => {
     if (open) {
       if (editData) {
+        // Transform editData to form values
         form.setFieldsValue({
-          ...editData,
+          market_type: editData.market_type,
+          symbol: editData.symbol,
+          entry_price: editData.entry_price,
+          quantity: editData.quantity,
+          exit_price: editData.exit_price,
+          fees: editData.fees,
+          direction: editData.direction,
+          trade_date: editData.trade_date,
+          stop_loss: null,
+          target: null,
+          strategy: editData.strategy,
+          entry_confidence: editData.entry_confidence || 50,
+          satisfaction_rating: editData.satisfaction_rating || 50,
+          emotional_state: editData.emotional_state ?? undefined,
           violation_modes: editData.violation_modes || [],
+          lessons_learned: editData.lessons_learned,
         });
       } else {
         form.resetFields();
+        form.setFieldsValue({
+          entry_confidence: 50,
+          satisfaction_rating: 50,
+          violation_modes: [],
+        });
       }
     }
   }, [editData, open, form]);
 
-  // const handleFinish = (values: TradeFormValues) => {
-  //   console.log("Submitted Form Values:", values);
-  //   onClose();
-  // };
-
   const handleFinish = async (values: TradeFormValues) => {
     try {
-      // const payload = {
-      //   market_type: values.market_type,
-      //   symbol: values.symbol,
-      //   entry_price: values.entry_price,
-      //   quantity: values.quantity,
-      //   exit_price: values.exit_price,
-      //   fees: values.fees,
-      //   direction: values.direction,
-      //   trade_date: values.trade_date,
-      //   stop_loss: values.stop_loss,
-      //   target: values.target,
-      //   strategy: values.strategy,
-      //   // Psychology fields
-      //   entry_confidence: values.entry_confidence,
-      //   satisfaction_rating: values.satisfaction_rating,
-      //   emotional_state: values.emotional_state,
-      //   violation_modes: values.violation_modes,
-      //   lessons_learned: values.lessons_learned,
-      //   // If editing, include the ID
-      //   ...(editData && { id: editData.id }),
-      // };
+      // Format current time in HH:MM:SS format
+      const currentTime = formatTime(new Date());
 
-      const payload = values;
+      const payload = {
+        trade_date: values.trade_date,
+        trade_time: currentTime,
+        symbol: values.symbol,
+        market_type: values.market_type,
+        direction: values.direction,
+        quantity: values.quantity,
+        entry_price: values.entry_price,
+        exit_price: values.exit_price,
+        fees: values.fees || 0,
+        stop_loss: values.stop_loss || null,
+        target: values.target || null,
+        strategy: values.strategy,
+        entry_confidence: values.entry_confidence,
+        satisfaction_rating: values.satisfaction_rating,
+        emotional_state: values.emotional_state,
+        violation_modes: values.violation_modes || [],
+        lessons_learned: values.lessons_learned,
+        rules_followed: [],
+        is_disciplined: values.violation_modes?.length === 0,
+        is_tagged_complete: true,
+        import_source: "manual",
+      };
 
-      // Call the mutation
-      const result = await importTradeManually(payload).unwrap();
-      console.log(result);
-
-      SuccessSwal({
-        title: "",
-        text: "manual import successfully!",
-      });
+      if (editData?.id) {
+        // Update existing trade
+        await updateTradeManually({
+          id: editData.id,
+          payload,
+        }).unwrap();
+        SuccessSwal({
+          title: "Success!",
+          text: "Trade updated successfully!",
+        });
+      } else {
+        // Create new trade
+        await importTradeManually(payload).unwrap();
+        SuccessSwal({
+          title: "Success!",
+          text: "Trade added successfully!",
+        });
+      }
 
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to save trade:", error);
 
-      ErrorSwal({
-        title: "",
-        text: "",
-      });
+      // Handle validation errors
+      if (error?.data) {
+        const errorMessages = Object.values(error.data).flat();
+        ErrorSwal({
+          title: "Error!",
+          text:
+            errorMessages.join(", ") ||
+            "Failed to save trade. Please try again.",
+        });
+      } else {
+        ErrorSwal({
+          title: "Error!",
+          text: "Failed to save trade. Please try again.",
+        });
+      }
     }
   };
 
@@ -108,7 +166,7 @@ export default function AddTradeModal({
       onCancel={onClose}
       footer={null}
       width={650}
-      destroyOnHidden
+      destroyOnClose
       closeIcon={
         <IoCloseOutline className="text-xl text-gray-500 hover:text-gray-700 dark:text-gray-400" />
       }
@@ -155,10 +213,17 @@ export default function AddTradeModal({
             Reset
           </button>
           <button
+            disabled={isLoading}
             type="submit"
-            className="px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors text-sm"
+            className="px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {editData ? "Update Trade" : "Save Trade"}
+            {isLoading
+              ? editData
+                ? "Updating..."
+                : "Saving..."
+              : editData
+                ? "Update Trade"
+                : "Save Trade"}
           </button>
         </div>
       </Form>
@@ -221,7 +286,7 @@ function GeneralTab({ editData }: { editData?: TradeData | null }) {
           rules={[{ required: true, message: "Please enter the entry price" }]}
           className="mb-0"
         >
-          <Input placeholder="0.00" size="large" type="number" />
+          <Input placeholder="0.00" size="large" type="number" step="0.01" />
         </Form.Item>
         <Form.Item
           name="quantity"
@@ -233,7 +298,7 @@ function GeneralTab({ editData }: { editData?: TradeData | null }) {
           rules={[{ required: true, message: "Please enter the quantity" }]}
           className="mb-0"
         >
-          <Input placeholder="0" size="large" type="number" />
+          <Input placeholder="0" size="large" type="number" step="1" />
         </Form.Item>
       </div>
 
@@ -247,18 +312,18 @@ function GeneralTab({ editData }: { editData?: TradeData | null }) {
           }
           className="mb-0"
         >
-          <Input placeholder="0.00" size="large" type="number" />
+          <Input placeholder="0.00" size="large" type="number" step="0.01" />
         </Form.Item>
         <Form.Item
           name="fees"
           label={
             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
-              Fees (₹)*
+              Fees (₹)
             </span>
           }
           className="mb-0"
         >
-          <Input placeholder="0.00" size="large" type="number" />
+          <Input placeholder="0.00" size="large" type="number" step="0.01" />
         </Form.Item>
       </div>
 
@@ -285,21 +350,6 @@ function GeneralTab({ editData }: { editData?: TradeData | null }) {
           />
         </Form.Item>
         <Form.Item
-          name="pnl"
-          label={
-            <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
-              Total P&L (₹)
-            </span>
-          }
-          className="mb-0"
-        >
-          <Input
-            placeholder="Auto calculated"
-            size="large"
-            disabled={!editData}
-          />
-        </Form.Item>
-        <Form.Item
           name="trade_date"
           label={
             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
@@ -311,6 +361,8 @@ function GeneralTab({ editData }: { editData?: TradeData | null }) {
         >
           <Input type="date" size="large" />
         </Form.Item>
+        <div className="col-span-1"></div>{" "}
+        {/* Empty div to maintain grid layout */}
       </div>
 
       <div className="grid grid-cols-3 gap-4">
@@ -323,7 +375,7 @@ function GeneralTab({ editData }: { editData?: TradeData | null }) {
           }
           className="mb-0"
         >
-          <Input placeholder="0.00" size="large" type="number" min={0} />
+          <Input placeholder="0.00" size="large" type="number" step="0.01" />
         </Form.Item>
         <Form.Item
           name="target"
@@ -334,13 +386,13 @@ function GeneralTab({ editData }: { editData?: TradeData | null }) {
           }
           className="mb-0"
         >
-          <Input placeholder="0.00" size="large" type="number" min={0} />
+          <Input placeholder="0.00" size="large" type="number" step="0.01" />
         </Form.Item>
         <Form.Item
           name="strategy"
           label={
             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
-              Strategy*
+              Strategy
             </span>
           }
           className="mb-0"
@@ -355,7 +407,6 @@ function GeneralTab({ editData }: { editData?: TradeData | null }) {
 function PsychologyTab({ form }: { form: FormInstance<TradeFormValues> }) {
   return (
     <div className="space-y-6 py-4">
-      {/* Hidden Form.Item to capture violation_modes in form submission */}
       <Form.Item name="violation_modes" noStyle>
         <input type="hidden" />
       </Form.Item>
@@ -393,6 +444,7 @@ function PsychologyTab({ form }: { form: FormInstance<TradeFormValues> }) {
         <Select
           placeholder="How did you feel?"
           size="large"
+          allowClear
           options={[
             { value: "calm", label: "Calm" },
             { value: "anxious", label: "Anxious" },
@@ -410,7 +462,6 @@ function PsychologyTab({ form }: { form: FormInstance<TradeFormValues> }) {
         <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3">
           Violation Modes (Select Multiple)
         </label>
-        {/* The shouldUpdate ensures the render prop triggers when violation_modes changes */}
         <Form.Item
           noStyle
           shouldUpdate={(prev, curr) =>
