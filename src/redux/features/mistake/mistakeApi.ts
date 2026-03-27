@@ -40,6 +40,19 @@ export const mistakeApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["mistake"],
     }),
+
+    //  more analytics api call below
+    // /api/mistakes/analytics/
+
+    // GET api --> get all mistake
+    getAllAnalytics: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: "/api/mistakes/analytics/",
+        method: "GET",
+        params: { page, limit },
+      }),
+      providesTags: ["mistake"],
+    }),
   }),
 });
 
@@ -48,4 +61,5 @@ export const {
   useUpdateMistakeMutation,
   useGetAllMistakeQuery,
   useDeleteMistakeMutation,
+  useGetAllAnalyticsQuery,
 } = mistakeApi;

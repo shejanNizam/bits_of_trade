@@ -2,9 +2,8 @@
 
 import { Button, Input, Tabs } from "antd";
 import { useState } from "react";
-import { CiBoxList, CiSquarePlus } from "react-icons/ci";
+import { CiSquarePlus } from "react-icons/ci";
 import { FaSearch } from "react-icons/fa";
-import { LuLayoutGrid } from "react-icons/lu";
 import CommunityTab from "../components/improve/strategyLibrary/CommunityTab";
 import CreateStrategyModal from "../components/improve/strategyLibrary/CreateStrategyModal";
 import MyStrategiesTab from "../components/improve/strategyLibrary/MyStrategiesTab";
@@ -52,7 +51,7 @@ export default function StrategyLibraryPage() {
 
         {/* Tabs Section */}
         <div className="relative">
-          <div className="absolute right-0 top-1 z-10 hidden md:flex items-center gap-2">
+          {/* <div className="absolute right-0 top-1 z-10 hidden md:flex items-center gap-2">
             <div className="flex bg-slate-100 dark:bg-zinc-800 p-1 rounded-lg border border-slate-200 dark:border-zinc-700">
               <button className="p-1.5 rounded bg-white dark:bg-zinc-700 shadow-sm">
                 <LuLayoutGrid size={16} className="dark:text-white" />
@@ -61,7 +60,7 @@ export default function StrategyLibraryPage() {
                 <CiBoxList size={16} />
               </button>
             </div>
-          </div>
+          </div> */}
 
           <Tabs
             defaultActiveKey="1"

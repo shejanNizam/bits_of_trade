@@ -16,7 +16,15 @@ const baseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["auth", "user", "tradelog", "rules", "mistake", "settings"],
+  tagTypes: [
+    "auth",
+    "user",
+    "tradelog",
+    "rules",
+    "mistake",
+    "strategy",
+    "settings",
+  ],
   endpoints: () => ({}),
 });
 
