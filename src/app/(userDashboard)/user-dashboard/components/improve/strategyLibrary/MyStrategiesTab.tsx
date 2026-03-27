@@ -166,14 +166,6 @@ export default function MyStrategiesTab({
     }
   };
 
-  const calculateProgress = (strategy: Strategy) => {
-    if (strategy.sample_size_threshold === 0) return 0;
-    const progress =
-      ((strategy.sample_size_progress || 0) / strategy.sample_size_threshold) *
-      100;
-    return Math.min(Math.round(progress), 100);
-  };
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -208,7 +200,7 @@ export default function MyStrategiesTab({
             title={strategy.strategy_name}
             description={strategy.description}
             status={getStatus(strategy.maturity_status)}
-            progress={calculateProgress(strategy)}
+            progress={strategy.sample_size_threshold}
             color={getStatusColor(strategy.maturity_status)}
             segment={strategy.market_types?.[0] || "General"}
             tags={strategy.tags || []}
@@ -216,7 +208,7 @@ export default function MyStrategiesTab({
               "Win Rate": `${strategy.win_rate || 0}%`,
               Trades: `${strategy.total_trades || 0}`,
               "Total P&L": `${strategy.total_pnl || 0 >= 0 ? "+" : ""}₹${Math.abs(strategy.total_pnl || 0).toLocaleString()}`,
-              "Avg Return": `${((strategy.total_pnl || 0) / (strategy.total_trades || 1)).toFixed(2)}%`,
+              "Avg Return": `${((strategy.profit_factor || 0) / (strategy.total_trades || 1)).toFixed(2)}%`,
             }}
             tradeType={strategy.trade_type}
             onEdit={() => handleEdit(strategy)}
