@@ -33,7 +33,7 @@ export const mainTheme = {
       colorSuccess: "#2563EB",
     },
     Form: {
-      labelColor: "#FFEB3B",
+      labelColor: "#000000",
       labelFontFamily: "'Raleway', sans-serif",
       labelFontWeight: 700,
       labelFontSize: 16,

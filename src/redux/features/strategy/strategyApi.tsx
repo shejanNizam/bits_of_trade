@@ -43,4 +43,9 @@ export const strategyApi = baseApi.injectEndpoints({
   }),
 });
 
-export const {} = strategyApi;
+export const {
+  useCreateStrategyMutation,
+  useUpdateStrategyMutation,
+  useGetAllStrategyQuery,
+  useDeleteStrategyMutation,
+} = strategyApi;
