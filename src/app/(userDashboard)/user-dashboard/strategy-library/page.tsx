@@ -114,7 +114,6 @@ export default function StrategyLibraryPage() {
 
   const handleModalSuccess = () => {
     handleModalClose();
-    // Trigger refresh in MyStrategiesTab
     setRefreshTrigger((prev) => prev + 1);
   };
 
@@ -125,7 +124,7 @@ export default function StrategyLibraryPage() {
       children: (
         <MyStrategiesTab
           onEditStrategy={handleEditStrategy}
-          key={refreshTrigger} // This will force re-render when refreshTrigger changes
+          key={refreshTrigger}
         />
       ),
     },

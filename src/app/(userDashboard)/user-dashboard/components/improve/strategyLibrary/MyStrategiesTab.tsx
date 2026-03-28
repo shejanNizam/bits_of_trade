@@ -112,7 +112,6 @@ export default function MyStrategiesTab({
   }, [data]);
 
   const handleEdit = (strategy: Strategy) => {
-    // Only call the parent's edit handler - no local modal
     if (onEditStrategy) {
       onEditStrategy(strategy);
     }

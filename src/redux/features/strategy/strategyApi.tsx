@@ -40,6 +40,26 @@ export const strategyApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["strategy"],
     }),
+
+    //  GET api --> get strategy for community tab
+    getAllStrategyForCommunity: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: "/api/strategies/community/",
+        method: "GET",
+        params: { page, limit },
+      }),
+      providesTags: ["strategy"],
+    }),
+
+    //  GET api --> get strategy for community tab
+    getAllStrategyForTemplates: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: "/api/strategies/templates/",
+        method: "GET",
+        params: { page, limit },
+      }),
+      providesTags: ["strategy"],
+    }),
   }),
 });
 
@@ -48,4 +68,10 @@ export const {
   useUpdateStrategyMutation,
   useGetAllStrategyQuery,
   useDeleteStrategyMutation,
+
+  // for community
+  useGetAllStrategyForCommunityQuery,
+
+  // for templates
+  useGetAllStrategyForTemplatesQuery,
 } = strategyApi;
