@@ -47,10 +47,10 @@ export const strategyApi = baseApi.injectEndpoints({
 
     //  GET api --> get strategy for community tab
     getAllStrategyForCommunity: builder.query({
-      query: ({ page = 1, limit = 10 }) => ({
+      query: ({ page = 1, limit = 10, search = "" }) => ({
         url: "/api/strategies/community/",
         method: "GET",
-        params: { page, limit },
+        params: { page, limit, search: search || undefined },
       }),
       providesTags: ["strategy"],
     }),

@@ -100,8 +100,10 @@ import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import { Button } from "antd";
 import { FaCopy } from "react-icons/fa";
 
-export default function CommunityTab() {
-  const { data, isLoading, error } = useGetAllStrategyForCommunityQuery({});
+export default function CommunityTab({ searchTerm }: { searchTerm: string }) {
+  const { data, isLoading, error } = useGetAllStrategyForCommunityQuery({
+    search: searchTerm,
+  });
   const strategies: Strategy[] = data || [];
 
   const [addToMine] = useAddToMineStrategyMutation();

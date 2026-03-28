@@ -262,11 +262,11 @@ export default function TradeLogTable() {
     },
     {
       title: "Strategy",
-      dataIndex: "strategy",
-      key: "strategy",
-      render: (strategy) => (
+      dataIndex: "strategy_name",
+      key: "strategy_name",
+      render: (strategy_name) => (
         <span className="text-gray-500 dark:text-gray-400 text-[12px]">
-          {strategy || "-"}
+          {strategy_name || "-"}
         </span>
       ),
     },

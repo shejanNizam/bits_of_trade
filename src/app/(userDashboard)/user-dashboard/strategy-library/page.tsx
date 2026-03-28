@@ -129,7 +129,11 @@ export default function StrategyLibraryPage() {
         />
       ),
     },
-    { key: "2", label: "Community", children: <CommunityTab /> },
+    {
+      key: "2",
+      label: "Community",
+      children: <CommunityTab searchTerm={searchTerm} />,
+    },
     { key: "3", label: "Templates", children: <TemplatesTab /> },
   ];
 
