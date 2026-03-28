@@ -5,6 +5,7 @@
 import {
   useDeleteTradeMutation,
   useGetAllTradeQuery,
+  useGetStrategyForTradeQuery,
 } from "@/redux/features/tradelog/tradelogApi";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import { message, Pagination, Spin, Table } from "antd";
@@ -59,6 +60,13 @@ export default function TradeLogTable() {
     page: currentPage,
     limit: pageSize,
   });
+  console.log(data);
+
+  const { data: strategiesData } = useGetStrategyForTradeQuery({
+    page: 1,
+    limit: 100,
+  });
+  console.log(strategiesData);
 
   const [deleteTrade] = useDeleteTradeMutation();
 
@@ -443,6 +451,7 @@ export default function TradeLogTable() {
           refetch();
         }}
         editData={selectedTrade}
+        strategiesData={strategiesData}
       />
     </div>
   );

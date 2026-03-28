@@ -59,6 +59,15 @@ export const tradelogApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["tradelog"],
     }),
+
+    //  get strategy id and title for dropdown in strategy selection step of trade import
+    getStrategyForTrade: builder.query({
+      query: () => ({
+        url: `/api/strategies/names/`,
+        method: "GET",
+      }),
+      providesTags: ["tradelog"],
+    }),
   }),
 });
 
@@ -69,4 +78,7 @@ export const {
   useGetAllTradeQuery,
   useGetSingleTradeQuery,
   useDeleteTradeMutation,
+
+  //  get strategy id and title for dropdown in strategy selection step of trade import
+  useGetStrategyForTradeQuery,
 } = tradelogApi;

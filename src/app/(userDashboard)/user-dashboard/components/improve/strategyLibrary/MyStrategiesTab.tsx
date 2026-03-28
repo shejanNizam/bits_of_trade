@@ -206,9 +206,11 @@ export default function MyStrategiesTab({
             stats={{
               "Win Rate": `${strategy.win_rate || 0}%`,
               Trades: `${strategy.total_trades || 0}`,
-              "Total P&L": `${strategy.total_pnl || 0 >= 0 ? "+" : ""}₹${Math.abs(strategy.total_pnl || 0).toLocaleString()}`,
-              "Avg Return": `${((strategy.profit_factor || 0) / (strategy.total_trades || 1)).toFixed(2)}%`,
+              "Total P&L": `${strategy.total_pnl || 0}`,
+              "Avg Return": `${(strategy.avg_return || 0).toFixed(1)}%`,
             }}
+            max_drawdown={strategy.max_drawdown}
+            profit_factor={strategy.profit_factor}
             tradeType={strategy.trade_type}
             onEdit={() => handleEdit(strategy)}
             onDelete={() => handleDelete(strategy)}

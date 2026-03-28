@@ -361,6 +361,7 @@ const CreateStrategyModal: React.FC<CreateStrategyModalProps> = ({
       form.resetFields();
       form.setFieldsValue({
         is_public: false,
+        is_template: false,
         sample_size_threshold: 30,
         maturity_status: "testing",
         trade_type: "intraday",
@@ -533,7 +534,7 @@ const CreateStrategyModal: React.FC<CreateStrategyModalProps> = ({
           </Form.Item>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <Form.Item
             name="sample_size_threshold"
             label="Sample Size Threshold"
@@ -541,12 +542,19 @@ const CreateStrategyModal: React.FC<CreateStrategyModalProps> = ({
               { required: true, message: "Please enter sample size threshold" },
             ]}
           >
-            <InputNumber min={1} max={1000} className="w-full" />
+            <InputNumber min={1} max={100} className="w-full" />
           </Form.Item>
 
           <Form.Item
             name="is_public"
-            label="Make Public"
+            label="Make Community"
+            valuePropName="checked"
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item
+            name="is_template"
+            label="Make Template"
             valuePropName="checked"
           >
             <Switch />

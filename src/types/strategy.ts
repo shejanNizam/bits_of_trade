@@ -21,6 +21,8 @@ export interface Strategy {
   deleted_at: string | null;
   created_at: string;
   updated_at: string;
+  avg_return: number;
+  max_drawdown: number;
   user: number;
   created_by_admin: null | string;
   source_strategy: null | string;

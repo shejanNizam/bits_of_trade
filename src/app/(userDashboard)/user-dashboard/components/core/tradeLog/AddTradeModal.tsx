@@ -15,6 +15,7 @@ interface AddTradeModalProps {
   open: boolean;
   onClose: () => void;
   editData?: TradeData | null;
+  strategiesData?: { id: number; strategy_name: string }[] | null;
 }
 
 type TradeFormValues = Partial<TradeData> & {
@@ -46,6 +47,7 @@ export default function AddTradeModal({
   open,
   onClose,
   editData,
+  strategiesData,
 }: AddTradeModalProps) {
   const [activeTab, setActiveTab] = useState("general");
   const [form] = Form.useForm<TradeFormValues>();
@@ -166,7 +168,7 @@ export default function AddTradeModal({
       onCancel={onClose}
       footer={null}
       width={650}
-      destroyOnClose
+      destroyOnHidden
       closeIcon={
         <IoCloseOutline className="text-xl text-gray-500 hover:text-gray-700 dark:text-gray-400" />
       }
@@ -194,7 +196,12 @@ export default function AddTradeModal({
             {
               key: "general",
               label: "General",
-              children: <GeneralTab editData={editData} />,
+              children: (
+                <GeneralTab
+                  editData={editData}
+                  strategiesData={strategiesData}
+                />
+              ),
             },
             {
               key: "psychology",
@@ -231,7 +238,13 @@ export default function AddTradeModal({
   );
 }
 
-function GeneralTab({ editData }: { editData?: TradeData | null }) {
+function GeneralTab({
+  editData,
+  strategiesData,
+}: {
+  editData?: TradeData | null;
+  strategiesData?: { id: number; strategy_name: string }[] | null;
+}) {
   return (
     <div className="space-y-5 py-4">
       <div className="grid grid-cols-2 gap-4">
@@ -388,6 +401,7 @@ function GeneralTab({ editData }: { editData?: TradeData | null }) {
         >
           <Input placeholder="0.00" size="large" type="number" step="0.01" />
         </Form.Item>
+
         <Form.Item
           name="strategy"
           label={
@@ -397,7 +411,16 @@ function GeneralTab({ editData }: { editData?: TradeData | null }) {
           }
           className="mb-0"
         >
-          <Input placeholder="Strategy" size="large" />
+          <Select
+            placeholder="Select a strategy"
+            size="large"
+            options={strategiesData?.map((strategy) => ({
+              label: strategy.strategy_name,
+              value: strategy.id,
+            }))}
+            showSearch
+            notFoundContent="No strategies found"
+          />
         </Form.Item>
       </div>
     </div>

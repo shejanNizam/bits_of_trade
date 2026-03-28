@@ -91,66 +91,14 @@
 // }
 
 import { useGetAllStrategyForCommunityQuery } from "@/redux/features/strategy/strategyApi";
+import { Strategy } from "@/types/strategy";
 import { Button } from "antd";
-import { FaCopy, FaStar } from "react-icons/fa";
-
-interface Strategy {
-  id: string;
-  total_trades: number;
-  win_rate: number;
-  total_pnl: number;
-  profit_factor: number;
-  sample_size_progress: number;
-  strategy_name: string;
-  description: string;
-  tags: string[];
-  market_types: string[];
-  trade_type: string;
-  entry_rules: string[];
-  exit_rules: string[];
-  risk_management_rules: string[];
-  is_public: boolean;
-  is_template: boolean;
-  maturity_status: string;
-  sample_size_threshold: number;
-  deleted_at: string | null;
-  created_at: string;
-  updated_at: string;
-  user: number;
-  created_by_admin: string | null;
-  source_strategy: string | null;
-  max_drawdown: number;
-  max_drawdown_pct: number;
-  avg_return: number;
-  closed_trades?: number;
-}
+import { FaCopy } from "react-icons/fa";
 
 export default function CommunityTab() {
   const { data, isLoading, error } = useGetAllStrategyForCommunityQuery({});
   const strategies: Strategy[] = data || [];
 
-  // Helper function to format win rate
-  const formatWinRate = (winRate: number): string => {
-    return `${winRate.toFixed(1)}%`;
-  };
-
-  // Helper function to get author name (using user ID or you can map to actual names)
-  const getAuthorName = (userId: number): string => {
-    // You can implement a mapping of user IDs to names here
-    // For now, returning "User " + userId
-    return `User ${userId}`;
-  };
-
-  // Helper function to calculate rating (you can use win_rate or other metrics)
-  const calculateRating = (winRate: number, totalTrades: number): number => {
-    if (totalTrades === 0) return 0;
-    // Simple rating calculation based on win rate and trade count
-    let rating = winRate / 20; // Convert win rate to a 5-star scale
-    rating = Math.min(5, Math.max(0, rating));
-    return parseFloat(rating.toFixed(1));
-  };
-
-  // Helper function to get status badge color
   const getStatusBadge = (status: string) => {
     const statusColors = {
       mature: "bg-green-600",
@@ -211,10 +159,8 @@ export default function CommunityTab() {
                 </span>
               )}
             </div>
-            <p className="text-sm text-slate-500 mb-2">
-              by {getAuthorName(strategy.user)}
-            </p>
-            {strategy.description && strategy.description !== "sss" && (
+
+            {strategy.description && (
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-2">
                 {strategy.description}
               </p>
@@ -225,18 +171,16 @@ export default function CommunityTab() {
                 <p
                   className={`font-bold text-lg ${strategy.win_rate > 0 ? "text-teal-500" : "text-slate-500"}`}
                 >
-                  {strategy.total_trades > 0
-                    ? formatWinRate(strategy.win_rate)
-                    : "N/A"}
+                  {`${strategy.win_rate.toFixed(1)}%` || "N/A"}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-slate-400">Trades</p>
                 <p className="font-bold dark:text-white text-lg">
-                  {strategy.closed_trades || strategy.total_trades}
+                  {strategy.total_trades}
                 </p>
               </div>
-              <div>
+              {/* <div>
                 <p className="text-xs text-slate-400">Rating</p>
                 <p className="font-bold dark:text-white text-lg flex items-center gap-1">
                   <FaStar
@@ -245,7 +189,7 @@ export default function CommunityTab() {
                   />{" "}
                   {calculateRating(strategy.win_rate, strategy.total_trades)}
                 </p>
-              </div>
+              </div> */}
               <div>
                 <p className="text-xs text-slate-400">Segment</p>
                 <p className="font-bold dark:text-white text-lg">
@@ -254,17 +198,19 @@ export default function CommunityTab() {
                     : "All Markets"}
                 </p>
               </div>
-              {strategy.total_pnl !== 0 && (
-                <div>
-                  <p className="text-xs text-slate-400">Total P&L</p>
-                  <p
-                    className={`font-bold text-lg ${strategy.total_pnl > 0 ? "text-green-500" : "text-red-500"}`}
-                  >
-                    ₹{Math.abs(strategy.total_pnl).toLocaleString()}
-                    {strategy.total_pnl < 0 && " (Loss)"}
-                  </p>
-                </div>
-              )}
+
+              <div>
+                <p className="text-xs text-slate-400">Total P&L</p>
+                <p
+                  className={`font-bold text-lg ${strategy.total_pnl >= 0 ? "text-green-500" : "text-red-500"}`}
+                >
+                  ₹
+                  {strategy.total_pnl < 0
+                    ? `${strategy.total_pnl}(Loss)`
+                    : `${strategy.total_pnl} (Profit)`}
+                </p>
+              </div>
+
               {strategy.tags && strategy.tags.length > 0 && (
                 <div>
                   <p className="text-xs text-slate-400">Tags</p>
@@ -286,32 +232,27 @@ export default function CommunityTab() {
                 </div>
               )}
             </div>
-            {strategy.sample_size_progress > 0 && (
-              <div className="mt-4">
-                <div className="flex justify-between text-xs text-slate-500 mb-1">
-                  <span>Sample Size Progress</span>
-                  <span>
-                    {strategy.sample_size_progress}% ({strategy.total_trades}/
-                    {strategy.sample_size_threshold})
-                  </span>
-                </div>
-                <div className="w-full bg-slate-200 dark:bg-zinc-700 rounded-full h-1.5">
-                  <div
-                    className="bg-purple-600 h-1.5 rounded-full transition-all duration-300"
-                    style={{
-                      width: `${Math.min(100, strategy.sample_size_progress)}%`,
-                    }}
-                  />
-                </div>
+
+            <div className="mt-4">
+              <div className="flex justify-between text-xs text-slate-500 mb-1">
+                <span>Sample Size Progress</span>
+                <span>{strategy.sample_size_threshold}%</span>
               </div>
-            )}
+              <div className="w-full bg-slate-200 dark:bg-zinc-700 rounded-full h-1.5">
+                <div
+                  className="bg-purple-600 h-1.5 rounded-full transition-all duration-300"
+                  style={{
+                    width: `${Math.min(100, strategy.sample_size_threshold)}%`,
+                  }}
+                />
+              </div>
+            </div>
           </div>
           <div className="flex flex-col sm:flex-row lg:flex-col gap-3 justify-center min-w-50">
             <Button
               type="primary"
               className="bg-purple-600 h-11 font-semibold hover:bg-purple-700"
               onClick={() => {
-                // Handle view strategy
                 console.log("View strategy:", strategy.id);
               }}
             >
@@ -321,7 +262,6 @@ export default function CommunityTab() {
               icon={<FaCopy size={16} />}
               className="h-11 dark:bg-zinc-800 dark:text-white dark:border-zinc-700 hover:border-purple-500"
               onClick={() => {
-                // Handle clone strategy
                 console.log("Clone strategy:", strategy.id);
               }}
             >

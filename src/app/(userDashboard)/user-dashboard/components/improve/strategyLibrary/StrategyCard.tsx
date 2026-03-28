@@ -184,6 +184,8 @@ interface StrategyCardProps {
   tags: string[];
   segment: string;
   progress: number;
+  max_drawdown: number;
+  profit_factor: number;
   color: string;
   tradeType?: string;
   onEdit?: () => void;
@@ -198,6 +200,8 @@ const StrategyCard: React.FC<StrategyCardProps> = ({
   description,
   status,
   stats,
+  max_drawdown,
+  profit_factor,
   tags,
   segment,
   progress,
@@ -263,17 +267,18 @@ const StrategyCard: React.FC<StrategyCardProps> = ({
         <div>
           <p className="text-[10px] text-slate-400">Risk:Reward</p>
           <p className="text-xs font-bold text-slate-700 dark:text-white">
+            {/* dynamic later */}
             1:2
           </p>
         </div>
         <div>
           <p className="text-[10px] text-slate-400">Max DD</p>
-          <p className="text-xs font-bold text-red-500">-₹1,000</p>
+          <p className="text-xs font-bold text-red-500">₹{max_drawdown} </p>
         </div>
         <div>
           <p className="text-[10px] text-slate-400">Profit Factor</p>
           <p className="text-xs font-bold text-slate-700 dark:text-white">
-            {stats["Total P&L"]}
+            {profit_factor}
           </p>
         </div>
       </div>
