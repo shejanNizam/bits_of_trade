@@ -86,9 +86,11 @@ import StrategyCard from "./StrategyCard";
 
 interface MyStrategiesTabProps {
   onEditStrategy?: (strategy: Strategy) => void;
+  searchTerm: string;
 }
 
 export default function MyStrategiesTab({
+  searchTerm,
   onEditStrategy,
 }: MyStrategiesTabProps) {
   const [strategies, setStrategies] = useState<Strategy[]>([]);
@@ -100,6 +102,7 @@ export default function MyStrategiesTab({
   const { data, isLoading, isError, refetch } = useGetAllStrategyQuery({
     page: 1,
     limit: 100,
+    search: searchTerm,
   });
   const [deleteStrategy] = useDeleteStrategyMutation();
 

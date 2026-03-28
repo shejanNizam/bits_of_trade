@@ -22,12 +22,16 @@ export const strategyApi = baseApi.injectEndpoints({
       invalidatesTags: ["strategy"],
     }),
 
-    // GET api --> get all mistake
+    // GET api --> get all strategies
     getAllStrategy: builder.query({
-      query: ({ page = 1, limit = 10 }) => ({
+      query: ({ page = 1, limit = 10, search = "" }) => ({
         url: "/api/strategies/",
         method: "GET",
-        params: { page, limit },
+        params: {
+          page,
+          limit,
+          search: search || undefined,
+        },
       }),
       providesTags: ["strategy"],
     }),
@@ -60,6 +64,15 @@ export const strategyApi = baseApi.injectEndpoints({
       }),
       providesTags: ["strategy"],
     }),
+
+    // Add Community Strategy to Mine
+    addToMineStrategy: builder.mutation({
+      query: (id) => ({
+        url: `/api/strategies/${id}/add-to-mine/`,
+        method: "POST",
+      }),
+      invalidatesTags: ["strategy"],
+    }),
   }),
 });
 
@@ -74,4 +87,7 @@ export const {
 
   // for templates
   useGetAllStrategyForTemplatesQuery,
+
+  // add to mine strategy
+  useAddToMineStrategyMutation,
 } = strategyApi;

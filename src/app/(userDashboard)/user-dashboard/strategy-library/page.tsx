@@ -125,6 +125,7 @@ export default function StrategyLibraryPage() {
         <MyStrategiesTab
           onEditStrategy={handleEditStrategy}
           key={refreshTrigger}
+          searchTerm={searchTerm}
         />
       ),
     },

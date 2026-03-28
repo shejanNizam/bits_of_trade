@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import { useGetAllStrategyForCommunityQuery } from "@/redux/features/strategy/strategyApi";
 // import { Button } from "antd";
 // import { FaCopy, FaStar } from "react-icons/fa";
@@ -90,14 +91,36 @@
 //   );
 // }
 
-import { useGetAllStrategyForCommunityQuery } from "@/redux/features/strategy/strategyApi";
+import {
+  useAddToMineStrategyMutation,
+  useGetAllStrategyForCommunityQuery,
+} from "@/redux/features/strategy/strategyApi";
 import { Strategy } from "@/types/strategy";
+import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import { Button } from "antd";
 import { FaCopy } from "react-icons/fa";
 
 export default function CommunityTab() {
   const { data, isLoading, error } = useGetAllStrategyForCommunityQuery({});
   const strategies: Strategy[] = data || [];
+
+  const [addToMine] = useAddToMineStrategyMutation();
+
+  const handleAddToMine = async (id: string) => {
+    try {
+      await addToMine(id).unwrap();
+
+      SuccessSwal({
+        title: "",
+        text: "Strategy added to your collection successfully!",
+      });
+    } catch (error: any) {
+      ErrorSwal({
+        title: "",
+        text: error.message || error.data.message || " Add to mine failed! ",
+      });
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     const statusColors = {
@@ -261,9 +284,7 @@ export default function CommunityTab() {
             <Button
               icon={<FaCopy size={16} />}
               className="h-11 dark:bg-zinc-800 dark:text-white dark:border-zinc-700 hover:border-purple-500"
-              onClick={() => {
-                console.log("Clone strategy:", strategy.id);
-              }}
+              onClick={() => handleAddToMine(strategy.id)}
             >
               Clone to My Strategies
             </Button>
