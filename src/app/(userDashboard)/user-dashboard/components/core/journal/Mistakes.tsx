@@ -1,18 +1,18 @@
-import { Button, Checkbox, Input } from "antd";
+import { Button, Input } from "antd";
 
 const { TextArea } = Input;
 
 export default function Mistakes() {
-  const mistakesModes = [
-    "Overtrading",
-    "Revenge Trading",
-    "FOMO",
-    "Early Exit",
-    "Ignored Stop Loss",
-    "Late Exit",
-    "No Plan",
-    "Oversized Position",
-  ];
+  // const mistakesModes = [
+  //   "Overtrading",
+  //   "Revenge Trading",
+  //   "FOMO",
+  //   "Early Exit",
+  //   "Ignored Stop Loss",
+  //   "Late Exit",
+  //   "No Plan",
+  //   "Oversized Position",
+  // ];
 
   return (
     <div className="space-y-6">
@@ -27,7 +27,7 @@ export default function Mistakes() {
       </div>
 
       {/* Select Mistakes Mode */}
-      <div>
+      {/* <div>
         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
           Select Mistakes Mode
         </label>
@@ -44,7 +44,7 @@ export default function Mistakes() {
             </label>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* What Triggered This? */}
       <div>

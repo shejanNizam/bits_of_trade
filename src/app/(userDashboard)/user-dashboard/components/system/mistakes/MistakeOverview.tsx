@@ -20,6 +20,7 @@ interface Mistake {
   id: string;
   mistake_name: string;
   category: string;
+  mistake_mode: string;
   description: string;
   severity_weight: number;
   is_custom: boolean;

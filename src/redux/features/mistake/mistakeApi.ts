@@ -42,8 +42,6 @@ export const mistakeApi = baseApi.injectEndpoints({
     }),
 
     //  more analytics api call below
-    // /api/mistakes/analytics/
-
     // GET api --> get all mistake
     getAllAnalytics: builder.query({
       query: ({ page = 1, limit = 10 }) => ({

@@ -19,7 +19,7 @@ export default function MistakesPage() {
   const { data: analyticsData, isLoading: isAnalyticsLoading } =
     useGetAllAnalyticsQuery({});
 
-  console.log(analyticsData, isAnalyticsLoading);
+  console.log(analyticsData);
 
   if (isLoading) {
     return (
@@ -45,18 +45,18 @@ export default function MistakesPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <MistakeFrequency
-        // analyticsData={analyticsData}
-        // isAnalyticsLoading={isAnalyticsLoading}
+          analyticsData={analyticsData}
+          isLoading={isAnalyticsLoading}
         />
         <MistakeImpact
-        // analyticsData={analyticsData}
-        // isAnalyticsLoading={isAnalyticsLoading}
+          analyticsData={analyticsData}
+          isLoading={isAnalyticsLoading}
         />
       </div>
 
       <SeverityDistribution
-      // analyticsData={analyticsData}
-      // isAnalyticsLoading={isAnalyticsLoading}
+        analyticsData={analyticsData}
+        isLoading={isAnalyticsLoading}
       />
     </div>
   );
