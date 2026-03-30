@@ -21,6 +21,7 @@ const baseApi = createApi({
     "overview",
     "user",
     "tradelog",
+    "journal",
     "rules",
     "mistake",
     "strategy",
