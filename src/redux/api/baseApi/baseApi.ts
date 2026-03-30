@@ -19,6 +19,7 @@ const baseApi = createApi({
   tagTypes: [
     "auth",
     "overview",
+    "discipline",
     "user",
     "tradelog",
     "journal",

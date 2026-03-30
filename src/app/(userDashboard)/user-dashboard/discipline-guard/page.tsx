@@ -1,3 +1,5 @@
+"use client";
+
 import ActiveSessionRules from "../components/core/disciplineGuard/ActiveSessionRules";
 import CurrentStatus from "../components/core/disciplineGuard/CurrentStatus";
 import ViolationsTimeline from "../components/core/disciplineGuard/ViolationsTimeline";
