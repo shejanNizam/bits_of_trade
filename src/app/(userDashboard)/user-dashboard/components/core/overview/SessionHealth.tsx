@@ -1,12 +1,24 @@
+//
+
 import { IoCheckmarkCircle, IoCloseCircle } from "react-icons/io5";
 
-export default function SessionHealth() {
-  // This data will come from backend later
-  const healthData = {
-    status: "green", // Can be: "green", "yellow", "red"
-    tradesToday: 2,
-    rulesViolated: 1,
-    mistakesLogged: 1,
+interface SessionHealthProps {
+  sessionHealth?: {
+    status: string;
+    color: string;
+    tradesToday: number;
+    rulesViolated: number;
+    mistakesLogged: number;
+    journalCompleted: boolean;
+  };
+}
+
+export default function SessionHealth({ sessionHealth }: SessionHealthProps) {
+  const healthData = sessionHealth || {
+    status: "green",
+    tradesToday: 0,
+    rulesViolated: 0,
+    mistakesLogged: 0,
     journalCompleted: false,
   };
 
@@ -28,7 +40,9 @@ export default function SessionHealth() {
     },
   };
 
-  const config = statusConfig[healthData.status as keyof typeof statusConfig];
+  const config =
+    statusConfig[healthData.status as keyof typeof statusConfig] ||
+    statusConfig.green;
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl lg:rounded-2xl p-5 sm:p-6 border border-gray-200 dark:border-gray-700">
