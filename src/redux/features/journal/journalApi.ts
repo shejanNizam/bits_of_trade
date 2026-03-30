@@ -51,6 +51,8 @@ export const journalApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["rules"],
     }),
+
+    // for psychology log tab ------------------------------>>
   }),
 });
 
@@ -62,4 +64,6 @@ export const {
   useUpdateAddNoteMutation,
   useGetAllAddNoteQuery,
   useDeleteAddNoteMutation,
+
+  // for psychology log tab
 } = journalApi;
