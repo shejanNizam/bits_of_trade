@@ -58,8 +58,21 @@ export const disciplineApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["rules"],
     }),
+
+    //  unlock the journal
+    // /api/discipline/unlock/
+    unlockJournal: builder.mutation({
+      query: () => ({
+        url: "/api/discipline/unlock/",
+        method: "POST",
+      }),
+      invalidatesTags: ["discipline"],
+    }),
   }),
 });
 
-export const { useGetCurrentSessionQuery, useGetViolationsTimelineQuery } =
-  disciplineApi;
+export const {
+  useGetCurrentSessionQuery,
+  useGetViolationsTimelineQuery,
+  useUnlockJournalMutation,
+} = disciplineApi;

@@ -22,6 +22,7 @@ export default function DisciplineGuard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-4 sm:gap-6">
+        {/* here is current status */}
         <CurrentStatus />
         <div className="space-y-4 sm:space-y-6">
           <ViolationsTimeline />
