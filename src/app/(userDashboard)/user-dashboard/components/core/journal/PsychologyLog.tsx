@@ -7,7 +7,7 @@ import {
   useGetAllPsychologyLogQuery,
   useUpdatePsychologyLogMutation,
 } from "@/redux/features/journal/journalApi";
-import { useGetTradeQuery } from "@/redux/features/tradelog/tradelogApi";
+import { useGetTradeQuery } from "@/redux/features/utils/utilsApi";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, DatePicker, message, Popconfirm, Select, Slider } from "antd";
 import dayjs from "dayjs";

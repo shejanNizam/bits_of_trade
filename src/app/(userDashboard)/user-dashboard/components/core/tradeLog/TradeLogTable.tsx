@@ -5,8 +5,8 @@
 import {
   useDeleteTradeMutation,
   useGetAllTradeQuery,
-  useGetStrategyForTradeQuery,
 } from "@/redux/features/tradelog/tradelogApi";
+import { useGetStrategyForTradeQuery } from "@/redux/features/utils/utilsApi";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import { message, Pagination, Spin, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";

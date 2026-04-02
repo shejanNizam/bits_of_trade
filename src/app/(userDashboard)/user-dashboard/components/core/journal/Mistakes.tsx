@@ -86,8 +86,10 @@
 "use client";
 
 import { useTradeLinkWithMistakeMutation } from "@/redux/features/journal/journalApi";
-import { useGetMistakeQuery } from "@/redux/features/mistake/mistakeApi";
-import { useGetTradeQuery } from "@/redux/features/tradelog/tradelogApi";
+import {
+  useGetMistakeQuery,
+  useGetTradeQuery,
+} from "@/redux/features/utils/utilsApi";
 import { Button, Input, Select, message } from "antd";
 import { useState } from "react";
 
