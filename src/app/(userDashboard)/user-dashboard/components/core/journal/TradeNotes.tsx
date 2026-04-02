@@ -1,33 +1,93 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Tag } from "antd";
+import {
+  useDeleteAddNoteMutation,
+  useGetAllAddNoteQuery,
+} from "@/redux/features/journal/journalApi";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { message, Popconfirm, Tag } from "antd";
 import { useState } from "react";
 import { IoAddOutline } from "react-icons/io5";
 import AddTradeNoteModal from "./AddTradeNoteModal";
 
+interface TradeNote {
+  id: string;
+  trade_type: "win" | "loss" | null;
+  symbol: string | null;
+  trade_date: string | null;
+  trade_time: string | null;
+  pnl_amount: string | null;
+  description: string;
+  tags: string[];
+  created_at: string;
+  updated_at: string;
+  user: number;
+}
+
 export default function TradeNotes() {
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
+  const [editingNote, setEditingNote] = useState<TradeNote | null>(null);
 
-  const notes = [
-    {
-      type: "Win",
-      symbol: "RELIANCE",
-      date: "2025-01-07",
-      time: "14:30 AM",
-      pnl: "+₹1,637",
-      description: "Clean breakout setup. Volume confirmed. Followed the plan.",
-      tags: ["Momentum Breakout", "#breakout", "#high-volume"],
-    },
-    {
-      type: "Loss",
-      symbol: "NIFTY 25000 CE",
-      date: "2025-01-07",
-      time: "02:15 PM",
-      pnl: "-₹3,625",
-      description: "Entered without waiting for confirmation. Got impatient.",
-      tags: ["Option Momentum", "#FOMO", "#impatient"],
-    },
-  ];
+  // Fetch all trade notes
+  const {
+    data: notesData,
+    isLoading,
+    refetch,
+  } = useGetAllAddNoteQuery({
+    page: 1,
+    limit: 100,
+  });
+  const [deleteAddNote, { isLoading: isDeleting }] = useDeleteAddNoteMutation();
+
+  const notes = notesData?.results || [];
+
+  const handleEdit = (note: TradeNote) => {
+    setEditingNote(note);
+    setIsAddNoteModalOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteAddNote(id).unwrap();
+      message.success("Trade note deleted successfully!");
+      refetch();
+    } catch (error: any) {
+      message.error(error?.data?.message || "Failed to delete trade note");
+      console.error("Failed to delete trade note:", error);
+    }
+  };
+
+  const handleModalClose = () => {
+    setIsAddNoteModalOpen(false);
+    setEditingNote(null);
+    refetch();
+  };
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const formatTime = (timeString: string | null) => {
+    if (!timeString) return "N/A";
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+  };
+
+  const formatPnl = (pnl: string | null, type: string | null) => {
+    if (!pnl) return "N/A";
+    const isWin = type === "win";
+    const prefix = isWin ? "+" : "-";
+    return `${prefix}${pnl}`;
+  };
 
   return (
     <div className="space-y-6">
@@ -42,7 +102,10 @@ export default function TradeNotes() {
           </p>
         </div>
         <button
-          onClick={() => setIsAddNoteModalOpen(true)}
+          onClick={() => {
+            setEditingNote(null);
+            setIsAddNoteModalOpen(true);
+          }}
           className="flex items-center gap-2 px-4 py-2 bg-green-600 dark:bg-green-500 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors font-medium text-sm"
         >
           <IoAddOutline className="text-lg" />
@@ -50,69 +113,120 @@ export default function TradeNotes() {
         </button>
       </div>
 
+      {/* Loading State */}
+      {isLoading && (
+        <div className="text-center py-8">
+          <p className="text-gray-500 dark:text-gray-400">
+            Loading trade notes...
+          </p>
+        </div>
+      )}
+
       {/* Notes List */}
-      <div className="space-y-4">
-        {notes.map((note, index) => (
-          <div
-            key={index}
-            className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 border border-gray-200 dark:border-gray-700"
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <Tag
-                  color={note.type === "Win" ? "green" : "red"}
-                  className="text-xs font-bold"
-                >
-                  {note.type}
-                </Tag>
-                <div>
-                  <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">
-                    {note.symbol}
-                  </h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {note.date} • {note.time}
-                  </p>
+      {!isLoading && notes.length > 0 && (
+        <div className="space-y-4">
+          {notes.map((note: TradeNote) => (
+            <div
+              key={note.id}
+              className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 border border-gray-200 dark:border-gray-700"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <Tag
+                    color={
+                      note.trade_type === "win"
+                        ? "green"
+                        : note.trade_type === "loss"
+                          ? "red"
+                          : "default"
+                    }
+                    className="text-xs font-bold"
+                  >
+                    {note.trade_type ? note.trade_type.toUpperCase() : "N/A"}
+                  </Tag>
+                  <div>
+                    <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">
+                      {note.symbol || "No Symbol"}
+                    </h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {formatDate(note.trade_date)} •{" "}
+                      {formatTime(note.trade_time)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-base font-bold ${
+                      note.trade_type === "win"
+                        ? "text-green-600 dark:text-green-400"
+                        : note.trade_type === "loss"
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-gray-600 dark:text-gray-400"
+                    }`}
+                  >
+                    {formatPnl(note.pnl_amount, note.trade_type)}
+                  </span>
+                  <button
+                    onClick={() => handleEdit(note)}
+                    className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                    disabled={isDeleting}
+                  >
+                    <EditOutlined className="text-gray-500 dark:text-gray-400" />
+                  </button>
+                  <Popconfirm
+                    title="Delete Trade Note"
+                    description="Are you sure you want to delete this trade note?"
+                    onConfirm={() => handleDelete(note.id)}
+                    okText="Yes"
+                    cancelText="No"
+                    okButtonProps={{ loading: isDeleting }}
+                  >
+                    <button
+                      className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                      disabled={isDeleting}
+                    >
+                      <DeleteOutlined className="text-red-500 dark:text-red-400" />
+                    </button>
+                  </Popconfirm>
                 </div>
               </div>
-              <span
-                className={`text-base font-bold ${
-                  note.type === "Win"
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-red-600 dark:text-red-400"
-                }`}
-              >
-                {note.pnl}
-              </span>
-            </div>
 
-            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-              {note.description}
-            </p>
+              {note.description && (
+                <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                  {note.description}
+                </p>
+              )}
 
-            <div className="flex flex-wrap gap-2">
-              {note.tags.map((tag, tagIndex) => (
-                <span
-                  key={tagIndex}
-                  className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs font-medium"
-                >
-                  {tag}
-                </span>
-              ))}
+              {note.tags && note.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {note.tags.map((tag, tagIndex) => (
+                    <span
+                      key={tagIndex}
+                      className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs font-medium"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Empty State */}
-      <div className="text-center py-8 bg-gray-50 dark:bg-gray-900/30 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Add a new trade note to track your execution and thought process
-        </p>
-      </div>
+      {!isLoading && notes.length === 0 && (
+        <div className="text-center py-8 bg-gray-50 dark:bg-gray-900/30 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Add a new trade note to track your execution and thought process
+          </p>
+        </div>
+      )}
 
       <AddTradeNoteModal
         open={isAddNoteModalOpen}
-        onClose={() => setIsAddNoteModalOpen(false)}
+        onClose={handleModalClose}
+        editingNote={editingNote}
       />
     </div>
   );
