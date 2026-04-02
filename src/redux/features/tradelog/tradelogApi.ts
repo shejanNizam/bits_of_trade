@@ -68,6 +68,15 @@ export const tradelogApi = baseApi.injectEndpoints({
       }),
       providesTags: ["tradelog"],
     }),
+
+    // get trade id and symbol for dropdown in trade link with others
+    getTrade: builder.query({
+      query: () => ({
+        url: `/api/tradelog/trades/symbols/`,
+        method: "GET",
+      }),
+      providesTags: ["tradelog"],
+    }),
   }),
 });
 
@@ -81,4 +90,7 @@ export const {
 
   //  get strategy id and title for dropdown in strategy selection step of trade import
   useGetStrategyForTradeQuery,
+
+  // get trade id and symbol for dropdown in trade link with others
+  useGetTradeQuery,
 } = tradelogApi;

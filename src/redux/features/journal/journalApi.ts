@@ -53,9 +53,40 @@ export const journalApi = baseApi.injectEndpoints({
     }),
 
     // for psychology log tab ------------------------------>>
-    // apis
-    // apis
-    // apis
+    createPsychologyLog: builder.mutation({
+      query: (payload) => ({
+        url: "/api/journal/psychology/",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["journal"],
+    }),
+
+    updatePsychologyLog: builder.mutation({
+      query: ({ payload, id }) => ({
+        url: `/api/journal/psychology/${id}/`,
+        method: "PATCH",
+        body: payload,
+      }),
+      invalidatesTags: ["rules"],
+    }),
+
+    getAllPsychologyLog: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: "/api/journal/psychology/",
+        method: "GET",
+        params: { page, limit },
+      }),
+      providesTags: ["rules"],
+    }),
+
+    deletePsychologyLog: builder.mutation({
+      query: (id) => ({
+        url: `/api/journal/psychology/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["rules"],
+    }),
 
     // for mistakes tab ------------------------------>>
     // apis
@@ -84,4 +115,8 @@ export const {
   useDeleteAddNoteMutation,
 
   // for psychology log tab
+  useCreatePsychologyLogMutation,
+  useUpdatePsychologyLogMutation,
+  useGetAllPsychologyLogQuery,
+  useDeletePsychologyLogMutation,
 } = journalApi;
