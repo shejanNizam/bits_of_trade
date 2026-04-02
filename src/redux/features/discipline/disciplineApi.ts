@@ -77,5 +77,5 @@ export const {
   useGetViolationsTimelineQuery,
 
   // unlock journal api
-  useUnlockJournalMutation,
+  useUnlockJournalMutation, // session_state === "red"
 } = disciplineApi;

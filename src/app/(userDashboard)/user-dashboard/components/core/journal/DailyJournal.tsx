@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useUnlockJournalMutation } from "@/redux/features/discipline/disciplineApi";
 import { useCreateDailyJournalEntryMutation } from "@/redux/features/journal/journalApi";
 import { ErrorSwal } from "@/utils/allSwal";
 import { Button, Input, message } from "antd";
@@ -15,14 +16,17 @@ interface JournalFormData {
 }
 
 export default function DailyJournal() {
-  const [createDailyJournalEntry, { isLoading }] =
+  const [createDailyJournalEntry, { isLoading: isCreating }] =
     useCreateDailyJournalEntryMutation();
+  const [unlockJournal, { isLoading: isUnlocking }] =
+    useUnlockJournalMutation();
 
   const [formData, setFormData] = useState<JournalFormData>({
     reflection: "",
     intention_next_session: "",
     limits_followed: "yes",
   });
+  const [sessionState, setSessionState] = useState<string | null>(null);
 
   // Get today's date in YYYY-MM-DD format
   const todayDate = new Date().toISOString().split("T")[0];
@@ -42,6 +46,19 @@ export default function DailyJournal() {
       ...prev,
       limits_followed: value,
     }));
+  };
+
+  const getSessionStateStyles = (state: string) => {
+    switch (state) {
+      case "green":
+        return "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800";
+      case "yellow":
+        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800";
+      case "red":
+        return "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800";
+      default:
+        return "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700";
+    }
   };
 
   const handleSubmit = async () => {
@@ -65,8 +82,29 @@ export default function DailyJournal() {
     };
 
     try {
-      await createDailyJournalEntry(payload).unwrap();
+      const response = await createDailyJournalEntry(payload).unwrap();
       message.success("Journal entry saved successfully!");
+
+      // Update session state from response
+      if (response.session_state) {
+        setSessionState(response.session_state);
+      }
+
+      // Check if session_state is "red" and call unlock API
+      if (response.session_state === "red") {
+        try {
+          await unlockJournal({ action: "complete_journal" }).unwrap();
+          message.success("Journal unlocked successfully!");
+        } catch (unlockError: any) {
+          ErrorSwal({
+            title: "",
+            text:
+              unlockError?.data?.message ||
+              "Failed to unlock journal. Please try again.",
+          });
+          console.error("Failed to unlock journal:", unlockError);
+        }
+      }
 
       // Reset form after successful submission
       setFormData({
@@ -85,6 +123,8 @@ export default function DailyJournal() {
     }
   };
 
+  const isLoading = isCreating || isUnlocking;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -97,15 +137,26 @@ export default function DailyJournal() {
             Macro reflection & habit formation
           </p>
         </div>
-        <div className="text-right">
-          <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium">
-            {new Date().toLocaleDateString("en-US", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </span>
+        <div className="text-right space-y-2">
+          <div>
+            <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium">
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
+          </div>
+          {sessionState && (
+            <div>
+              <span
+                className={`px-3 py-1 rounded-lg text-xs font-medium ${getSessionStateStyles(sessionState)}`}
+              >
+                Session State: {sessionState.toUpperCase()}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -228,7 +279,11 @@ export default function DailyJournal() {
         loading={isLoading}
         className="h-12! bg-blue-600! hover:bg-blue-700! dark:bg-blue-500! dark:hover:bg-blue-600! font-semibold! shadow-sm"
       >
-        {isLoading ? "Saving Entry..." : "Save Journal Entry"}
+        {isLoading
+          ? isCreating
+            ? "Saving Entry..."
+            : "Unlocking Journal..."
+          : "Save Journal Entry"}
       </Button>
     </div>
   );

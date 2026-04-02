@@ -53,6 +53,24 @@ export const journalApi = baseApi.injectEndpoints({
     }),
 
     // for psychology log tab ------------------------------>>
+    // apis
+    // apis
+    // apis
+
+    // for mistakes tab ------------------------------>>
+    // apis
+    // apis
+    // apis
+
+    // for session recape tab ------------------------------>>
+    // apis
+    // apis
+    // apis
+
+    // for learning notes tab ------------------------------>>
+    // apis
+    // apis
+    // apis
   }),
 });
 
