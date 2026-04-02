@@ -62,9 +62,10 @@ export const disciplineApi = baseApi.injectEndpoints({
     //  unlock the journal
     // /api/discipline/unlock/
     unlockJournal: builder.mutation({
-      query: () => ({
+      query: (payload) => ({
         url: "/api/discipline/unlock/",
         method: "POST",
+        body: payload,
       }),
       invalidatesTags: ["discipline"],
     }),
@@ -74,5 +75,7 @@ export const disciplineApi = baseApi.injectEndpoints({
 export const {
   useGetCurrentSessionQuery,
   useGetViolationsTimelineQuery,
+
+  // unlock journal api
   useUnlockJournalMutation,
 } = disciplineApi;
