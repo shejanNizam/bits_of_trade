@@ -30,7 +30,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: payload,
       }),
-      invalidatesTags: ["rules"],
+      invalidatesTags: ["journal"],
     }),
 
     // GET api --> get all trades (pagination)
@@ -40,7 +40,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "GET",
         params: { page, limit },
       }),
-      providesTags: ["rules"],
+      providesTags: ["journal"],
     }),
 
     // DELETE api --> delete trade
@@ -49,7 +49,7 @@ export const journalApi = baseApi.injectEndpoints({
         url: `/api/journal/trade-notes/${id}/`,
         method: "DELETE",
       }),
-      invalidatesTags: ["rules"],
+      invalidatesTags: ["journal"],
     }),
 
     // for psychology log tab ------------------------------>>
@@ -68,7 +68,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: payload,
       }),
-      invalidatesTags: ["rules"],
+      invalidatesTags: ["journal"],
     }),
 
     getAllPsychologyLog: builder.query({
@@ -77,7 +77,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "GET",
         params: { page, limit },
       }),
-      providesTags: ["rules"],
+      providesTags: ["journal"],
     }),
 
     deletePsychologyLog: builder.mutation({
@@ -85,13 +85,18 @@ export const journalApi = baseApi.injectEndpoints({
         url: `/api/journal/psychology/${id}/`,
         method: "DELETE",
       }),
-      invalidatesTags: ["rules"],
+      invalidatesTags: ["journal"],
     }),
 
     // for mistakes tab ------------------------------>>
-    // apis
-    // apis
-    // apis
+    tradeLinkWithMistake: builder.mutation({
+      query: (payload) => ({
+        url: "/api/mistakes/trade-links/",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["journal"],
+    }),
 
     // for session recape tab ------------------------------>>
     // apis
@@ -119,4 +124,6 @@ export const {
   useUpdatePsychologyLogMutation,
   useGetAllPsychologyLogQuery,
   useDeletePsychologyLogMutation,
+  // trade link with mistake
+  useTradeLinkWithMistakeMutation,
 } = journalApi;

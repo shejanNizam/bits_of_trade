@@ -51,6 +51,15 @@ export const mistakeApi = baseApi.injectEndpoints({
       }),
       providesTags: ["mistake"],
     }),
+
+    // get mistake id and title for tag with trade
+    getMistake: builder.query({
+      query: () => ({
+        url: `/api/mistakes/list/`,
+        method: "GET",
+      }),
+      providesTags: ["mistake"],
+    }),
   }),
 });
 
@@ -60,4 +69,7 @@ export const {
   useGetAllMistakeQuery,
   useDeleteMistakeMutation,
   useGetAllAnalyticsQuery,
+
+  //  get mistake id and title
+  useGetMistakeQuery,
 } = mistakeApi;
