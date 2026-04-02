@@ -88,9 +88,10 @@
 import { useTradeLinkWithMistakeMutation } from "@/redux/features/journal/journalApi";
 import { useGetMistakeQuery } from "@/redux/features/mistake/mistakeApi";
 import { useGetTradeQuery } from "@/redux/features/tradelog/tradelogApi";
-import { Button, Select, message } from "antd";
+import { Button, Input, Select, message } from "antd";
 import { useState } from "react";
 
+const { TextArea } = Input;
 const { Option } = Select;
 
 interface TradeOption {
@@ -106,6 +107,7 @@ interface MistakeOption {
 export default function Mistakes() {
   const [selectedMistake, setSelectedMistake] = useState<string | null>(null);
   const [selectedTrade, setSelectedTrade] = useState<string | null>(null);
+  const [description, setDescription] = useState<string>("");
 
   // API hooks
   const [tradeLinkWithMistake, { isLoading: isLinking }] =
@@ -140,8 +142,19 @@ export default function Mistakes() {
 
       setSelectedMistake(null);
       setSelectedTrade(null);
+      setDescription("");
     } catch (error: any) {
-      message.error(error?.data?.message || "Failed to link mistake");
+      if (error?.data?.non_field_errors) {
+        message.error(error.data.non_field_errors[0]);
+      } else if (error?.data?.trade) {
+        message.error(error.data.trade[0]);
+      } else if (error?.data?.mistake) {
+        message.error(error.data.mistake[0]);
+      } else if (error?.data?.message) {
+        message.error(error.data.message);
+      } else {
+        message.error("Failed to link mistake");
+      }
       console.error("Failed to link mistake:", error);
     }
   };
@@ -206,6 +219,26 @@ export default function Mistakes() {
             </Option>
           ))}
         </Select>
+      </div>
+
+      {/* What Triggered This? */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          What Triggered This? (Optional)
+        </label>
+        <TextArea
+          placeholder="Describe the trigger or context for this mistake..."
+          rows={4}
+          className="resize-none"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          disabled={isLinking}
+          showCount
+          maxLength={500}
+        />
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          Add notes about what led to this mistake
+        </p>
       </div>
 
       {/* Log Mistakes Button */}

@@ -99,14 +99,76 @@ export const journalApi = baseApi.injectEndpoints({
     }),
 
     // for session recape tab ------------------------------>>
-    // apis
-    // apis
-    // apis
+    createSessionRecap: builder.mutation({
+      query: (payload) => ({
+        url: "/api/journal/recaps/",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["journal"],
+    }),
+
+    updateSessionRecap: builder.mutation({
+      query: ({ payload, id }) => ({
+        url: `/api/journal/recaps/${id}/`,
+        method: "PATCH",
+        body: payload,
+      }),
+      invalidatesTags: ["journal"],
+    }),
+
+    getAllSessionRecap: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: "/api/journal/recaps/",
+        method: "GET",
+        params: { page, limit },
+      }),
+      providesTags: ["journal"],
+    }),
+
+    deleteSessionRecap: builder.mutation({
+      query: (id) => ({
+        url: `/api/journal/recaps/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["journal"],
+    }),
 
     // for learning notes tab ------------------------------>>
-    // apis
-    // apis
-    // apis
+    createLearningNotes: builder.mutation({
+      query: (payload) => ({
+        url: "/api/journal/learning-notes/",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["journal"],
+    }),
+
+    updateLearningNotes: builder.mutation({
+      query: ({ payload, id }) => ({
+        url: `/api/journal/learning-notes/${id}/`,
+        method: "PATCH",
+        body: payload,
+      }),
+      invalidatesTags: ["journal"],
+    }),
+
+    getAllLearningNotes: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: "/api/journal/learning-notes/",
+        method: "GET",
+        params: { page, limit },
+      }),
+      providesTags: ["journal"],
+    }),
+
+    deleteLearningNotes: builder.mutation({
+      query: (id) => ({
+        url: `/api/journal/learning-notes/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["journal"],
+    }),
   }),
 });
 
@@ -124,6 +186,19 @@ export const {
   useUpdatePsychologyLogMutation,
   useGetAllPsychologyLogQuery,
   useDeletePsychologyLogMutation,
+
   // trade link with mistake
   useTradeLinkWithMistakeMutation,
+
+  // for session recap tab
+  useCreateSessionRecapMutation,
+  useUpdateSessionRecapMutation,
+  useGetAllSessionRecapQuery,
+  useDeleteSessionRecapMutation,
+
+  // for learning notes
+  useCreateLearningNotesMutation,
+  useUpdateLearningNotesMutation,
+  useGetAllLearningNotesQuery,
+  useDeleteLearningNotesMutation,
 } = journalApi;
