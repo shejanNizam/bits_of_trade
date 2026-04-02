@@ -1,16 +1,32 @@
 "use client";
 
-import React from "react";
+interface TimeMetricsProps {
+  timeMetrics: {
+    trading_days: number;
+    consecutive_win_days: number;
+    consecutive_loss_days: number;
+    most_profitable_day: string;
+    least_profitable_day: string;
+  } | null;
+}
 
-const timeData = [
-  { label: "Trading Days", value: "10" },
-  { label: "Consecutive Win Days", value: "5" },
-  { label: "Consecutive Loss Days", value: "2" },
-  { label: "Most Profitable Day", value: "Jan 10" },
-  { label: "Least Profitable Day", value: "Jan 4" },
-];
+export default function TimeMetrics({ timeMetrics }: TimeMetricsProps) {
+  if (!timeMetrics) return null;
 
-export default function TimeMetrics() {
+  const timeData = [
+    { label: "Trading Days", value: timeMetrics.trading_days.toString() },
+    {
+      label: "Consecutive Win Days",
+      value: timeMetrics.consecutive_win_days.toString(),
+    },
+    {
+      label: "Consecutive Loss Days",
+      value: timeMetrics.consecutive_loss_days.toString(),
+    },
+    { label: "Most Profitable Day", value: timeMetrics.most_profitable_day },
+    { label: "Least Profitable Day", value: timeMetrics.least_profitable_day },
+  ];
+
   return (
     <div className="w-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm">
       <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">

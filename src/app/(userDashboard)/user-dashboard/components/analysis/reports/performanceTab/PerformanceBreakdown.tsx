@@ -1,26 +1,125 @@
 import { BarChartOutlined, ClockCircleOutlined } from "@ant-design/icons";
 
-const tradeMetrics = [
-  { label: "Total P&L", value: "₹15,800", color: "text-emerald-500" },
-  { label: "Average winning trade", value: "₹725" },
-  { label: "Average losing trade", value: "₹-385" },
-  { label: "Largest winning trade", value: "₹2,850" },
-  { label: "Largest losing trade", value: "₹-1,240" },
-  { label: "Profit factor", value: "2.8" },
-  { label: "Trade expectancy", value: "₹352" },
-];
+interface PerformanceBreakdownProps {
+  performanceBreakdown: {
+    trade_based_metrics: {
+      total_pnl: number;
+      average_winning_trade: number;
+      average_losing_trade: number;
+      largest_winning_trade: number;
+      largest_losing_trade: number;
+      profit_factor: number;
+      trade_expectancy: number;
+    };
+    day_based_metrics: {
+      total_trading_days: number;
+      winning_days: number;
+      losing_days: number;
+      breakeven_days: number;
+      avg_daily_pnl: number;
+      avg_daily_volume: number;
+      avg_holding_time: string;
+    };
+  } | null;
+}
 
-const dayMetrics = [
-  { label: "Total trading days", value: "10" },
-  { label: "Winning days", value: "8", color: "text-emerald-500" },
-  { label: "Losing days", value: "2", color: "text-rose-500" },
-  { label: "Breakeven days", value: "0" },
-  { label: "Avg daily P&L", value: "₹1,580" },
-  { label: "Avg daily volume", value: "₹1,25,000" },
-  { label: "Avg holding time", value: "2h 15m" },
-];
+export default function PerformanceBreakdown({
+  performanceBreakdown,
+}: PerformanceBreakdownProps) {
+  if (!performanceBreakdown) return null;
 
-export default function PerformanceBreakdown() {
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  const tradeMetrics = [
+    {
+      label: "Total P&L",
+      value: formatCurrency(performanceBreakdown.trade_based_metrics.total_pnl),
+      color:
+        performanceBreakdown.trade_based_metrics.total_pnl >= 0
+          ? "text-emerald-500"
+          : "text-rose-500",
+    },
+    {
+      label: "Average winning trade",
+      value: formatCurrency(
+        performanceBreakdown.trade_based_metrics.average_winning_trade,
+      ),
+    },
+    {
+      label: "Average losing trade",
+      value: formatCurrency(
+        performanceBreakdown.trade_based_metrics.average_losing_trade,
+      ),
+    },
+    {
+      label: "Largest winning trade",
+      value: formatCurrency(
+        performanceBreakdown.trade_based_metrics.largest_winning_trade,
+      ),
+    },
+    {
+      label: "Largest losing trade",
+      value: formatCurrency(
+        performanceBreakdown.trade_based_metrics.largest_losing_trade,
+      ),
+    },
+    {
+      label: "Profit factor",
+      value: performanceBreakdown.trade_based_metrics.profit_factor.toFixed(2),
+    },
+    {
+      label: "Trade expectancy",
+      value: formatCurrency(
+        performanceBreakdown.trade_based_metrics.trade_expectancy,
+      ),
+    },
+  ];
+
+  const dayMetrics = [
+    {
+      label: "Total trading days",
+      value:
+        performanceBreakdown.day_based_metrics.total_trading_days.toString(),
+    },
+    {
+      label: "Winning days",
+      value: performanceBreakdown.day_based_metrics.winning_days.toString(),
+      color: "text-emerald-500",
+    },
+    {
+      label: "Losing days",
+      value: performanceBreakdown.day_based_metrics.losing_days.toString(),
+      color: "text-rose-500",
+    },
+    {
+      label: "Breakeven days",
+      value: performanceBreakdown.day_based_metrics.breakeven_days.toString(),
+    },
+    {
+      label: "Avg daily P&L",
+      value: formatCurrency(
+        performanceBreakdown.day_based_metrics.avg_daily_pnl,
+      ),
+    },
+    {
+      label: "Avg daily volume",
+      value: formatCurrency(
+        performanceBreakdown.day_based_metrics.avg_daily_volume,
+      ),
+    },
+    {
+      label: "Avg holding time",
+      value: performanceBreakdown.day_based_metrics.avg_holding_time,
+    },
+  ];
+
   return (
     <div className="w-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 shadow-sm">
       <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-8">
@@ -28,7 +127,6 @@ export default function PerformanceBreakdown() {
       </h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-10">
-        {/* Left Column: Trade-based Metrics */}
         <div>
           <div className="flex items-center gap-2 mb-6">
             <BarChartOutlined className="text-gray-400" />
@@ -43,7 +141,6 @@ export default function PerformanceBreakdown() {
           </div>
         </div>
 
-        {/* Right Column: Day-based Metrics */}
         <div>
           <div className="flex items-center gap-2 mb-6">
             <ClockCircleOutlined className="text-gray-400" />

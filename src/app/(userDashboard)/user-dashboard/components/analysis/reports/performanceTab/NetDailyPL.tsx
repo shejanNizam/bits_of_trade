@@ -11,20 +11,28 @@ import {
   YAxis,
 } from "recharts";
 
-const dailyData = [
-  { name: "Jan 1", pnl: 0 },
-  { name: "Jan 2", pnl: 2500 },
-  { name: "Jan 3", pnl: 2300 },
-  { name: "Jan 4", pnl: -1600 },
-  { name: "Jan 5", pnl: 2400 },
-  { name: "Jan 6", pnl: 1600 },
-  { name: "Jan 7", pnl: 2600 },
-  { name: "Jan 8", pnl: 1700 },
-  { name: "Jan 9", pnl: 1700 },
-  { name: "Jan 10", pnl: 2600 },
-];
+interface NetDailyPLProps {
+  netDailyPnl: Array<{ date: string; pnl: number }>;
+}
 
-export default function NetDailyPL() {
+export default function NetDailyPL({ netDailyPnl }: NetDailyPLProps) {
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  const data = netDailyPnl.map((item) => ({
+    name: item.date,
+    pnl: item.pnl,
+  }));
+
+  const maxPnl = Math.max(...data.map((d) => Math.abs(d.pnl)), 1000);
+  const domain = [-maxPnl * 1.1, maxPnl * 1.1];
+
   return (
     <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm w-full h-full min-h-100">
       <div className="mb-6">
@@ -36,7 +44,7 @@ export default function NetDailyPL() {
       <div className="h-75 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={dailyData}
+            data={data}
             margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
           >
             <CartesianGrid
@@ -51,16 +59,21 @@ export default function NetDailyPL() {
               tickLine={false}
               tick={{ fontSize: 12, fill: "#9ca3af" }}
               dy={10}
+              interval={Math.floor(data.length / 10)}
             />
             <YAxis
               axisLine={true}
               tickLine={false}
               tick={{ fontSize: 12, fill: "#9ca3af" }}
-              domain={[-3000, 3000]}
-              ticks={[-3000, -1500, 0, 1500, 3000]}
+              domain={domain}
+              tickFormatter={(value) => formatCurrency(value)}
               dx={-10}
             />
             <Tooltip
+              formatter={(value: number | undefined) => [
+                formatCurrency(value ?? 0),
+                "P&L",
+              ]}
               cursor={{ fill: "transparent" }}
               contentStyle={{
                 borderRadius: "12px",
@@ -69,10 +82,10 @@ export default function NetDailyPL() {
               }}
             />
             <Bar dataKey="pnl" radius={[4, 4, 0, 0]}>
-              {dailyData.map((entry, index) => (
+              {data.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.pnl >= 0 ? "#14b8a6" : "#14b8a6"}
+                  fill={entry.pnl >= 0 ? "#14b8a6" : "#ef4444"}
                   fillOpacity={0.9}
                 />
               ))}

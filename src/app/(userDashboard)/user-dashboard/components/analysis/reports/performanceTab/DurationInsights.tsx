@@ -1,14 +1,34 @@
 "use client";
 
-const durationData = [
-  { label: "Avg Holding Duration", value: "2h 15m" },
-  { label: "Best Session", value: "Early" },
-  { label: "Best Hour", value: "10:00 AM" },
-  { label: "Most Common Duration", value: "1-2 Hours" },
-  { label: "Trades Count", value: "48" },
-];
+interface DurationInsightsProps {
+  durationInsights: {
+    avg_holding_duration: string;
+    best_session: string;
+    best_hour: string;
+    most_common_duration: string;
+    trades_count: number;
+  } | null;
+}
 
-export default function DurationInsights() {
+export default function DurationInsights({
+  durationInsights,
+}: DurationInsightsProps) {
+  if (!durationInsights) return null;
+
+  const durationData = [
+    {
+      label: "Avg Holding Duration",
+      value: durationInsights.avg_holding_duration,
+    },
+    { label: "Best Session", value: durationInsights.best_session },
+    { label: "Best Hour", value: durationInsights.best_hour },
+    {
+      label: "Most Common Duration",
+      value: durationInsights.most_common_duration,
+    },
+    { label: "Trades Count", value: durationInsights.trades_count.toString() },
+  ];
+
   return (
     <div className="w-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm">
       <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">

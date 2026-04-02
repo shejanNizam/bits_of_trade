@@ -1,14 +1,40 @@
 "use client";
 
-const symbolData = [
-  { label: "Most traded symbol", value: "RELIANCE" },
-  { label: "Most profitable symbol", value: "TCS" },
-  { label: "Least profitable symbol", value: "HDFC" },
-  { label: "Highest win-rate symbol", value: "INFY" },
-  { label: "Lowest win-rate symbol", value: "ICICI" },
-];
+interface SymbolFrequencyProps {
+  symbolFrequency: {
+    most_traded_symbol: string;
+    most_profitable_symbol: string;
+    least_profitable_symbol: string;
+    highest_win_rate_symbol: string;
+    lowest_win_rate_symbol: string;
+  } | null;
+}
 
-export default function SymbolFrequency() {
+export default function SymbolFrequency({
+  symbolFrequency,
+}: SymbolFrequencyProps) {
+  if (!symbolFrequency) return null;
+
+  const symbolData = [
+    { label: "Most traded symbol", value: symbolFrequency.most_traded_symbol },
+    {
+      label: "Most profitable symbol",
+      value: symbolFrequency.most_profitable_symbol,
+    },
+    {
+      label: "Least profitable symbol",
+      value: symbolFrequency.least_profitable_symbol,
+    },
+    {
+      label: "Highest win-rate symbol",
+      value: symbolFrequency.highest_win_rate_symbol,
+    },
+    {
+      label: "Lowest win-rate symbol",
+      value: symbolFrequency.lowest_win_rate_symbol,
+    },
+  ];
+
   return (
     <div className="w-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm mb-6">
       <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">

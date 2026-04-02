@@ -1,6 +1,7 @@
 "use client";
 
 import { Radio } from "antd";
+import { useState } from "react";
 import {
   Area,
   AreaChart,
@@ -11,27 +12,39 @@ import {
   YAxis,
 } from "recharts";
 
-const data = [
-  { name: "Jan 1", value: 0 },
-  { name: "Jan 2", value: 3000 },
-  { name: "Jan 3", value: 4800 },
-  { name: "Jan 4", value: 3200 },
-  { name: "Jan 5", value: 5500 },
-  { name: "Jan 6", value: 7000 },
-  { name: "Jan 7", value: 9500 },
-  { name: "Jan 8", value: 11500 },
-  { name: "Jan 9", value: 13000 },
-  { name: "Jan 10", value: 15800 },
-];
+interface NetPLProps {
+  netPnlCumulative: Array<{ date: string; pnl: number }>;
+}
 
-export default function NetPL() {
+export default function NetPL({ netPnlCumulative }: NetPLProps) {
+  const [viewType, setViewType] = useState<"daily" | "weekly">("daily");
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  const data = netPnlCumulative.map((item) => ({
+    name: item.date,
+    value: item.pnl,
+  }));
+
   return (
     <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm w-full h-full min-h-100">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
           Net P&L (Cumulative)
         </h3>
-        <Radio.Group defaultValue="daily" size="small" className="custom-radio">
+        <Radio.Group
+          value={viewType}
+          onChange={(e) => setViewType(e.target.value)}
+          size="small"
+          className="custom-radio"
+        >
           <Radio.Button value="daily">Daily</Radio.Button>
           <Radio.Button value="weekly">Weekly</Radio.Button>
         </Radio.Group>
@@ -61,14 +74,20 @@ export default function NetPL() {
               tickLine={false}
               tick={{ fontSize: 12, fill: "#9ca3af" }}
               dy={10}
+              interval={Math.floor(data.length / 10)}
             />
             <YAxis
               axisLine={true}
               tickLine={false}
               tick={{ fontSize: 12, fill: "#9ca3af" }}
               dx={-10}
+              tickFormatter={(value) => formatCurrency(value)}
             />
             <Tooltip
+              formatter={(value: number | undefined) => [
+                value !== undefined ? formatCurrency(value) : "N/A",
+                "P&L",
+              ]}
               contentStyle={{
                 borderRadius: "12px",
                 border: "none",
