@@ -138,7 +138,7 @@ export default function DailyJournal() {
           </p>
         </div>
         <div className="text-right space-y-2">
-          <div>
+          {/* <div>
             <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium">
               {new Date().toLocaleDateString("en-US", {
                 weekday: "long",
@@ -147,7 +147,7 @@ export default function DailyJournal() {
                 day: "numeric",
               })}
             </span>
-          </div>
+          </div> */}
           {sessionState && (
             <div>
               <span
