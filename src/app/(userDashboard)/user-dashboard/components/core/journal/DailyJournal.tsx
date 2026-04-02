@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useUnlockJournalMutation } from "@/redux/features/discipline/disciplineApi";
 import { useCreateDailyJournalEntryMutation } from "@/redux/features/journal/journalApi";
+import { useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
 import { ErrorSwal } from "@/utils/allSwal";
 import { Button, Input, message } from "antd";
 import { useState } from "react";
@@ -16,6 +19,9 @@ interface JournalFormData {
 }
 
 export default function DailyJournal() {
+  const { user } = useAppSelector((state: RootState) => state.auth);
+  const sessionState = (user as any)?.session_state || null;
+
   const [createDailyJournalEntry, { isLoading: isCreating }] =
     useCreateDailyJournalEntryMutation();
   const [unlockJournal, { isLoading: isUnlocking }] =
@@ -26,7 +32,6 @@ export default function DailyJournal() {
     intention_next_session: "",
     limits_followed: "yes",
   });
-  const [sessionState, setSessionState] = useState<string | null>(null);
 
   // Get today's date in YYYY-MM-DD format
   const todayDate = new Date().toISOString().split("T")[0];
@@ -85,13 +90,8 @@ export default function DailyJournal() {
       const response = await createDailyJournalEntry(payload).unwrap();
       message.success("Journal entry saved successfully!");
 
-      // Update session state from response
-      if (response.session_state) {
-        setSessionState(response.session_state);
-      }
-
       // Check if session_state is "red" and call unlock API
-      if (response.session_state === "red") {
+      if (sessionState === "red") {
         try {
           await unlockJournal({ action: "complete_journal" }).unwrap();
           message.success("Journal unlocked successfully!");
