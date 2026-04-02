@@ -169,6 +169,15 @@ export const journalApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["journal"],
     }),
+
+    // Journal Streak get api
+    getAllJournalStreak: builder.query({
+      query: () => ({
+        url: "/api/journal/streak/",
+        method: "GET",
+      }),
+      providesTags: ["journal"],
+    }),
   }),
 });
 
@@ -201,4 +210,7 @@ export const {
   useUpdateLearningNotesMutation,
   useGetAllLearningNotesQuery,
   useDeleteLearningNotesMutation,
+
+  //  get all journal streak
+  useGetAllJournalStreakQuery,
 } = journalApi;

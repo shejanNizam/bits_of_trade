@@ -61,6 +61,14 @@ export default function LearningNotes() {
     refetch();
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   const getTagColor = (linkedType: string) => {
     switch (linkedType) {
       case "mistake":
@@ -138,7 +146,7 @@ export default function LearningNotes() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
-                      {new Date(note.created_at).toLocaleDateString()}
+                      {formatDate(note.created_at)}
                     </p>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
                       {note.lesson_source}
