@@ -13,7 +13,6 @@ export const reportsApi = baseApi.injectEndpoints({
     }),
 
     //  get all report for risk and drawdown tab
-    // /api/reports/risk/
     getAllRisk: builder.query({
       query: ({ page = 1, limit = 10 }) => ({
         url: "/api/reports/risk/",
@@ -22,7 +21,22 @@ export const reportsApi = baseApi.injectEndpoints({
       }),
       providesTags: ["reports"],
     }),
+
+    // get all
+    // /api/reports/behavior/
+    getAllBehavior: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: "/api/reports/behavior/",
+        method: "GET",
+        params: { page, limit },
+      }),
+      providesTags: ["reports"],
+    }),
   }),
 });
 
-export const { useGetAllPerfomanceQuery, useGetAllRiskQuery } = reportsApi;
+export const {
+  useGetAllPerfomanceQuery,
+  useGetAllRiskQuery,
+  useGetAllBehaviorQuery,
+} = reportsApi;
