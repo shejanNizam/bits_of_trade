@@ -24,6 +24,7 @@ const baseApi = createApi({
     "tradelog",
     "journal",
     "reports",
+    "insights",
     "rules",
     "mistake",
     "strategy",
