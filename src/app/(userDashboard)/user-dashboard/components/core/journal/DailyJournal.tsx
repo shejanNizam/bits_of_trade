@@ -91,7 +91,7 @@ export default function DailyJournal() {
       message.success("Journal entry saved successfully!");
 
       // Check if session_state is "red" and call unlock API
-      if (sessionState === "red") {
+      if (sessionState === "red" || sessionState === "yellow") {
         try {
           await unlockJournal({ action: "complete_journal" }).unwrap();
           message.success("Journal unlocked successfully!");

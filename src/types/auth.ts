@@ -51,6 +51,7 @@ export interface LoginResponse {
 
 export interface ApiError {
   success: boolean;
+  message: string;
   data: {
     errors?: {
       field?: string;
