@@ -9,9 +9,20 @@ export const reportsApi = baseApi.injectEndpoints({
         method: "GET",
         params: { page, limit },
       }),
-      providesTags: ["mistake"],
+      providesTags: ["reports"],
+    }),
+
+    //  get all report for risk and drawdown tab
+    // /api/reports/risk/
+    getAllRisk: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: "/api/reports/risk/",
+        method: "GET",
+        params: { page, limit },
+      }),
+      providesTags: ["reports"],
     }),
   }),
 });
 
-export const { useGetAllPerfomanceQuery } = reportsApi;
+export const { useGetAllPerfomanceQuery, useGetAllRiskQuery } = reportsApi;
