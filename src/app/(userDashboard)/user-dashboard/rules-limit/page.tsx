@@ -106,6 +106,7 @@ import DeleteConfirmationModal from "../components/system/rulesLimits/DeleteConf
 import { RuleCardProps } from "../components/system/rulesLimits/RuleCard";
 import RulesLimitOverview from "../components/system/rulesLimits/RulesLimitOverview";
 import RulesTabs from "../components/system/rulesLimits/RulesTabs";
+import SystemDefaultRules from "../components/system/rulesLimits/SystemDefaultRules";
 
 export default function RulesLimitPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -116,6 +117,7 @@ export default function RulesLimitPage() {
     page: 1,
     limit: 100,
   });
+  // console.log(data);
 
   // Calculate statistics from the API data
   const calculateStats = () => {
@@ -241,6 +243,9 @@ export default function RulesLimitPage() {
             </p>
           </div>
         </div>
+
+        {/* system all 4 rules component here */}
+        <SystemDefaultRules />
 
         {/* Tab System */}
         <RulesTabs onEdit={handleEdit} onDelete={handleDeleteTrigger} />
