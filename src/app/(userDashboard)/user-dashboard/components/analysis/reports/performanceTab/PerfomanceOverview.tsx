@@ -20,8 +20,8 @@ export default function PerformanceOverview({
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(value);
   };
 
@@ -33,6 +33,7 @@ export default function PerformanceOverview({
     {
       label: "Net P&L",
       value: formatCurrency(performanceData.total_pnl),
+      // value: performanceData.total_pnl,
       change: "",
       trend: performanceData.total_pnl >= 0 ? "up" : "down",
     },

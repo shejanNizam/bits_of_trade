@@ -33,7 +33,7 @@ import RiskExposureAnalysis from "./RiskExposureAnalysis";
 import RiskStatistics from "./RiskStatistics";
 
 export default function RiskDrawdownTab() {
-  const { data } = useGetAllRiskQuery({});
+  const { data, isLoading } = useGetAllRiskQuery({});
 
   // Extract the relevant data from the API response
   const riskData = data || {};
@@ -41,6 +41,14 @@ export default function RiskDrawdownTab() {
   const averageDrawdown = riskData.average_drawdown || {};
   const riskStatistics = riskData.risk_statistics || {};
   const riskExposure = riskData.risk_exposure_analysis || {};
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div>
