@@ -9,9 +9,7 @@ interface RulesTabsProps {
   onDelete: (rule: RuleCardProps) => void;
 }
 
-// Helper function to transform API response to RuleCardProps
 const transformApiRuleToCard = (apiRule: any): RuleCardProps => {
-  // Transform trigger_condition object to stats format
   const stats: Record<string, string | number> = {};
 
   if (
@@ -19,7 +17,6 @@ const transformApiRuleToCard = (apiRule: any): RuleCardProps => {
     Object.keys(apiRule.trigger_condition).length > 0
   ) {
     Object.entries(apiRule.trigger_condition).forEach(([key, value]) => {
-      // Format the key for display (camelCase to readable format)
       const formattedKey = key
         .replace(/([A-Z])/g, " $1")
         .replace(/^./, (str) => str.toUpperCase());
@@ -43,7 +40,6 @@ const transformApiRuleToCard = (apiRule: any): RuleCardProps => {
     });
   }
 
-  // Add additional stats from other fields
   if (apiRule.trigger_scope) {
     stats["Trigger Scope"] = apiRule.trigger_scope.replace(/_/g, " ");
   }
@@ -78,10 +74,10 @@ const transformApiRuleToCard = (apiRule: any): RuleCardProps => {
     trigger_scope: apiRule.trigger_scope,
     action: apiRule.action,
     trigger_condition: apiRule.trigger_condition,
+    isSystemRule: apiRule.is_system_rule,
   };
 };
 
-// Group rules by category
 const groupRulesByCategory = (rules: RuleCardProps[]) => {
   const grouped: Record<string, RuleCardProps[]> = {
     risk: [],
@@ -108,21 +104,25 @@ export default function RulesTabs({ onEdit, onDelete }: RulesTabsProps) {
     page: 1,
     limit: 100,
   });
-  console.log(data);
 
-  // Transform and group the data
-  const rules: RuleCardProps[] =
+  const allRules: RuleCardProps[] =
     data?.results?.map(transformApiRuleToCard) || [];
-  console.log(rules);
 
-  const groupedRules = groupRulesByCategory(rules);
+  const userRules: RuleCardProps[] = allRules.filter(
+    (rule) => !rule.isSystemRule,
+  );
+
+  console.log("All rules (including system):", allRules);
+  console.log("User rules only (excluding system):", userRules);
+
+  const groupedRules = groupRulesByCategory(userRules);
 
   const renderList = (rulesList: RuleCardProps[]) => {
     if (rulesList.length === 0) {
       return (
         <div className="py-12 text-center">
           <Empty
-            description="No rules found in this category"
+            description="No custom rules found in this category. Click 'Add Custom Rule' to create one."
             className="dark:text-zinc-400"
           />
         </div>
@@ -131,7 +131,7 @@ export default function RulesTabs({ onEdit, onDelete }: RulesTabsProps) {
 
     return (
       <div className="space-y-4 pt-4">
-        {rulesList?.map((rule) => (
+        {rulesList.map((rule) => (
           <RuleCard
             key={rule.id}
             {...rule}
@@ -146,7 +146,7 @@ export default function RulesTabs({ onEdit, onDelete }: RulesTabsProps) {
   const items = [
     {
       key: "all",
-      label: "All Rules",
+      label: "All Custom Rules",
       children: isLoading ? (
         <div className="flex justify-center py-12">
           <Spin size="large" />
@@ -156,7 +156,7 @@ export default function RulesTabs({ onEdit, onDelete }: RulesTabsProps) {
           Failed to load rules. Please try again.
         </div>
       ) : (
-        renderList(rules)
+        renderList(userRules)
       ),
     },
     {
