@@ -44,6 +44,7 @@ interface TradeOption {
 export default function PsychologyLog() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const [formData, setFormData] = useState<PsychologyLogFormData>({
     log_date: dayjs().format("YYYY-MM-DD"),
     trade: null,
@@ -95,19 +96,30 @@ export default function PsychologyLog() {
     value: any,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    // Reset form submitted flag when user makes changes
+    if (formSubmitted) {
+      setFormSubmitted(false);
+    }
   };
 
   const handleEmotionalStateSelect = (state: string) => {
     setFormData((prev) => ({ ...prev, emotional_state: state }));
+    if (formSubmitted) {
+      setFormSubmitted(false);
+    }
   };
 
   const handlePressureSourceSelect = (source: string) => {
     setFormData((prev) => ({ ...prev, pressure_source: source }));
+    if (formSubmitted) {
+      setFormSubmitted(false);
+    }
   };
 
   const handleEdit = (log: PsychologyLog) => {
     setIsEditing(true);
     setEditingId(log.id);
+    setFormSubmitted(false);
     setFormData({
       log_date: log.log_date,
       trade: log.trade,
@@ -132,6 +144,7 @@ export default function PsychologyLog() {
   const resetForm = () => {
     setIsEditing(false);
     setEditingId(null);
+    setFormSubmitted(false);
     setFormData({
       log_date: dayjs().format("YYYY-MM-DD"),
       trade: null,
@@ -143,6 +156,8 @@ export default function PsychologyLog() {
   };
 
   const handleSubmit = async () => {
+    setFormSubmitted(true);
+
     // Validate required fields
     if (!formData.emotional_state) {
       message.error("Please select an emotional state");
@@ -274,6 +289,11 @@ export default function PsychologyLog() {
               </button>
             ))}
           </div>
+          {formSubmitted && !formData.emotional_state && (
+            <div className="text-red-500 text-xs mt-1">
+              Please select an emotional state
+            </div>
+          )}
         </div>
 
         {/* Confidence Before Trade */}
@@ -305,6 +325,12 @@ export default function PsychologyLog() {
               High
             </span>
           </div>
+          {formSubmitted &&
+            (!formData.confidence_before || formData.confidence_before < 1) && (
+              <div className="text-red-500 text-xs mt-1">
+                Please set confidence rating between 1 and 10
+              </div>
+            )}
         </div>
 
         {/* Satisfaction After Trade */}
@@ -336,6 +362,13 @@ export default function PsychologyLog() {
               High
             </span>
           </div>
+          {formSubmitted &&
+            (!formData.satisfaction_after ||
+              formData.satisfaction_after < 1) && (
+              <div className="text-red-500 text-xs mt-1">
+                Please set satisfaction rating between 1 and 10
+              </div>
+            )}
         </div>
 
         {/* Pressure Source */}
@@ -377,6 +410,7 @@ export default function PsychologyLog() {
             showSearch
             optionFilterProp="children"
             allowClear
+            status={formSubmitted && !formData.trade ? "error" : undefined}
           >
             {trades.map((trade: TradeOption) => (
               <Option key={trade.id} value={trade.id}>
@@ -384,6 +418,11 @@ export default function PsychologyLog() {
               </Option>
             ))}
           </Select>
+          {formSubmitted && !formData.trade && (
+            <div className="text-red-500 text-xs mt-1">
+              Please select a trade (required)
+            </div>
+          )}
         </div>
 
         {/* Action Buttons */}
