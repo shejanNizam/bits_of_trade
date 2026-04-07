@@ -32,6 +32,26 @@ export const reportsApi = baseApi.injectEndpoints({
       }),
       providesTags: ["reports"],
     }),
+
+    // get all strategy
+    getAllStrategies: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: "/api/reports/strategy/",
+        method: "GET",
+        params: { page, limit },
+      }),
+      providesTags: ["reports"],
+    }),
+
+    // get all strategy
+    getAllJournal: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: "/api/reports/journal/",
+        method: "GET",
+        params: { page, limit },
+      }),
+      providesTags: ["reports"],
+    }),
   }),
 });
 
@@ -39,4 +59,6 @@ export const {
   useGetAllPerfomanceQuery,
   useGetAllRiskQuery,
   useGetAllBehaviorQuery,
+  useGetAllStrategiesQuery,
+  useGetAllJournalQuery,
 } = reportsApi;

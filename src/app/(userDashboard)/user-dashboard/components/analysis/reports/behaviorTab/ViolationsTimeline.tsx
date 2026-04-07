@@ -1,85 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// "use client";
-
-// import {
-//   Bar,
-//   BarChart,
-//   CartesianGrid,
-//   ResponsiveContainer,
-//   Tooltip,
-//   XAxis,
-//   YAxis,
-// } from "recharts";
-
-// const data = [
-//   { name: "Jan 1", minor: 0, major: 0 },
-//   { name: "Jan 2", minor: 1, major: 0 },
-//   { name: "Jan 3", minor: 0, major: 0 },
-//   { name: "Jan 4", minor: 2, major: 1 },
-//   { name: "Jan 5", minor: 1, major: 0 },
-//   { name: "Jan 6", minor: 0, major: 0 },
-//   { name: "Jan 7", minor: 1, major: 0 },
-//   { name: "Jan 8", minor: 0, major: 0 },
-//   { name: "Jan 9", minor: 1, major: 0 },
-//   { name: "Jan 10", minor: 0, major: 0 },
-// ];
-
-// export default function ViolationsTimeline() {
-//   return (
-//     <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm w-full h-100 mb-6">
-//       <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">
-//         Violations Timeline
-//       </h3>
-//       <div className="h-75 w-full">
-//         <ResponsiveContainer width="100%" height="100%">
-//           <BarChart
-//             data={data}
-//             margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-//           >
-//             <CartesianGrid
-//               strokeDasharray="3 3"
-//               vertical={false}
-//               stroke="#e5e7eb"
-//               className="dark:stroke-gray-700"
-//             />
-//             <XAxis
-//               dataKey="name"
-//               tick={{ fontSize: 12, fill: "#9ca3af" }}
-//               axisLine={false}
-//               tickLine={false}
-//             />
-//             <YAxis
-//               tick={{ fontSize: 12, fill: "#9ca3af" }}
-//               axisLine={false}
-//               tickLine={false}
-//               domain={[0, 3]}
-//               ticks={[0, 0.75, 1.5, 2.25, 3]}
-//             />
-//             <Tooltip
-//               cursor={{ fill: "transparent" }}
-//               contentStyle={{ borderRadius: "12px", border: "none" }}
-//             />
-//             <Bar
-//               dataKey="minor"
-//               stackId="a"
-//               fill="#f59e0b"
-//               radius={[0, 0, 0, 0]}
-//               barSize={40}
-//             />
-//             <Bar
-//               dataKey="major"
-//               stackId="a"
-//               fill="#ef4444"
-//               radius={[4, 4, 0, 0]}
-//               barSize={40}
-//             />
-//           </BarChart>
-//         </ResponsiveContainer>
-//       </div>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import {
@@ -92,55 +10,29 @@ import {
   YAxis,
 } from "recharts";
 
-interface ViolationsTimelineProps {
-  violationsTimeline: Array<{
-    date?: string;
-    minor?: number;
-    major?: number;
-    [key: string]: any;
-  }>;
-}
+const data = [
+  { name: "Jan 1", minor: 0, major: 0 },
+  { name: "Jan 2", minor: 1, major: 0 },
+  { name: "Jan 3", minor: 0, major: 0 },
+  { name: "Jan 4", minor: 2, major: 1 },
+  { name: "Jan 5", minor: 1, major: 0 },
+  { name: "Jan 6", minor: 0, major: 0 },
+  { name: "Jan 7", minor: 1, major: 0 },
+  { name: "Jan 8", minor: 0, major: 0 },
+  { name: "Jan 9", minor: 1, major: 0 },
+  { name: "Jan 10", minor: 0, major: 0 },
+];
 
-export default function ViolationsTimeline({
-  violationsTimeline,
-}: ViolationsTimelineProps) {
-  // If no data, show empty state
-  if (!violationsTimeline || violationsTimeline.length === 0) {
-    return (
-      <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm w-full mb-6">
-        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">
-          Violations Timeline
-        </h3>
-        <div className="h-75 w-full flex items-center justify-center">
-          <p className="text-gray-400 dark:text-gray-500">
-            No violation data available
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Transform data for chart
-  const chartData = violationsTimeline.map((item) => ({
-    name: item.date || "Unknown",
-    minor: item.minor || 0,
-    major: item.major || 0,
-  }));
-
-  const maxViolations = Math.max(
-    ...chartData.map((d) => (d.minor || 0) + (d.major || 0)),
-    3,
-  );
-
+export default function ViolationsTimeline() {
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm w-full mb-6">
+    <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm w-full h-100 mb-6">
       <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">
         Violations Timeline
       </h3>
       <div className="h-75 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={chartData}
+            data={data}
             margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
           >
             <CartesianGrid
@@ -154,27 +46,17 @@ export default function ViolationsTimeline({
               tick={{ fontSize: 12, fill: "#9ca3af" }}
               axisLine={false}
               tickLine={false}
-              angle={-45}
-              textAnchor="end"
-              height={60}
             />
             <YAxis
               tick={{ fontSize: 12, fill: "#9ca3af" }}
               axisLine={false}
               tickLine={false}
-              domain={[0, maxViolations]}
-              allowDecimals={false}
+              domain={[0, 3]}
+              ticks={[0, 0.75, 1.5, 2.25, 3]}
             />
             <Tooltip
               cursor={{ fill: "transparent" }}
               contentStyle={{ borderRadius: "12px", border: "none" }}
-              formatter={(
-                value: number | undefined,
-                name: string | undefined,
-              ) => [
-                value ?? 0,
-                name === "minor" ? "Minor Violations" : "Major Violations",
-              ]}
             />
             <Bar
               dataKey="minor"
@@ -182,7 +64,6 @@ export default function ViolationsTimeline({
               fill="#f59e0b"
               radius={[0, 0, 0, 0]}
               barSize={40}
-              name="Minor"
             />
             <Bar
               dataKey="major"
@@ -190,7 +71,6 @@ export default function ViolationsTimeline({
               fill="#ef4444"
               radius={[4, 4, 0, 0]}
               barSize={40}
-              name="Major"
             />
           </BarChart>
         </ResponsiveContainer>
@@ -198,3 +78,123 @@ export default function ViolationsTimeline({
     </div>
   );
 }
+
+// dynamic version with real data from API response
+// "use client";
+
+// import {
+//   Bar,
+//   BarChart,
+//   CartesianGrid,
+//   ResponsiveContainer,
+//   Tooltip,
+//   XAxis,
+//   YAxis,
+// } from "recharts";
+
+// interface ViolationsTimelineProps {
+//   violationsTimeline: Array<{
+//     date?: string;
+//     minor?: number;
+//     major?: number;
+//     [key: string]: any;
+//   }>;
+// }
+
+// export default function ViolationsTimeline({
+//   violationsTimeline,
+// }: ViolationsTimelineProps) {
+//   // If no data, show empty state
+//   if (!violationsTimeline || violationsTimeline.length === 0) {
+//     return (
+//       <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm w-full mb-6">
+//         <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">
+//           Violations Timeline
+//         </h3>
+//         <div className="h-75 w-full flex items-center justify-center">
+//           <p className="text-gray-400 dark:text-gray-500">
+//             No violation data available
+//           </p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   // Transform data for chart
+//   const chartData = violationsTimeline.map((item) => ({
+//     name: item.date || "Unknown",
+//     minor: item.minor || 0,
+//     major: item.major || 0,
+//   }));
+
+//   const maxViolations = Math.max(
+//     ...chartData.map((d) => (d.minor || 0) + (d.major || 0)),
+//     3,
+//   );
+
+//   return (
+//     <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm w-full mb-6">
+//       <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">
+//         Violations Timeline
+//       </h3>
+//       <div className="h-75 w-full">
+//         <ResponsiveContainer width="100%" height="100%">
+//           <BarChart
+//             data={chartData}
+//             margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+//           >
+//             <CartesianGrid
+//               strokeDasharray="3 3"
+//               vertical={false}
+//               stroke="#e5e7eb"
+//               className="dark:stroke-gray-700"
+//             />
+//             <XAxis
+//               dataKey="name"
+//               tick={{ fontSize: 12, fill: "#9ca3af" }}
+//               axisLine={false}
+//               tickLine={false}
+//               angle={-45}
+//               textAnchor="end"
+//               height={60}
+//             />
+//             <YAxis
+//               tick={{ fontSize: 12, fill: "#9ca3af" }}
+//               axisLine={false}
+//               tickLine={false}
+//               domain={[0, maxViolations]}
+//               allowDecimals={false}
+//             />
+//             <Tooltip
+//               cursor={{ fill: "transparent" }}
+//               contentStyle={{ borderRadius: "12px", border: "none" }}
+//               formatter={(
+//                 value: number | undefined,
+//                 name: string | undefined,
+//               ) => [
+//                 value ?? 0,
+//                 name === "minor" ? "Minor Violations" : "Major Violations",
+//               ]}
+//             />
+//             <Bar
+//               dataKey="minor"
+//               stackId="a"
+//               fill="#f59e0b"
+//               radius={[0, 0, 0, 0]}
+//               barSize={40}
+//               name="Minor"
+//             />
+//             <Bar
+//               dataKey="major"
+//               stackId="a"
+//               fill="#ef4444"
+//               radius={[4, 4, 0, 0]}
+//               barSize={40}
+//               name="Major"
+//             />
+//           </BarChart>
+//         </ResponsiveContainer>
+//       </div>
+//     </div>
+//   );
+// }

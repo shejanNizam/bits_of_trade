@@ -30,7 +30,7 @@ export const strategyApi = baseApi.injectEndpoints({
         params: {
           page,
           limit,
-          search: search || undefined,
+          search: search,
         },
       }),
       providesTags: ["strategy"],

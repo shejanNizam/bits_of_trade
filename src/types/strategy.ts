@@ -22,6 +22,7 @@ export interface Strategy {
   created_at: string;
   updated_at: string;
   avg_return: number;
+  risk_reward_ratio: string;
   max_drawdown: number;
   user: number;
   created_by_admin: null | string;

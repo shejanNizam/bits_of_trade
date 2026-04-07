@@ -186,6 +186,7 @@ interface StrategyCardProps {
   progress: number;
   max_drawdown: number;
   profit_factor: number;
+  risk_reward_ratio: string;
   color: string;
   tradeType?: string;
   onEdit?: () => void;
@@ -212,6 +213,7 @@ const StrategyCard: React.FC<StrategyCardProps> = ({
   onView,
   onCopy,
   onShare,
+  risk_reward_ratio,
 }) => {
   return (
     <div className="bg-white dark:bg-primary/10 rounded-2xl border border-slate-200 dark:border-zinc-800 p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-all duration-300">
@@ -267,8 +269,7 @@ const StrategyCard: React.FC<StrategyCardProps> = ({
         <div>
           <p className="text-[10px] text-slate-400">Risk:Reward</p>
           <p className="text-xs font-bold text-slate-700 dark:text-white">
-            {/* dynamic later */}
-            1:2
+            {risk_reward_ratio}
           </p>
         </div>
         <div>

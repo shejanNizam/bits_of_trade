@@ -215,6 +215,7 @@ export default function MyStrategiesTab({
             max_drawdown={strategy.max_drawdown}
             profit_factor={strategy.profit_factor}
             tradeType={strategy.trade_type}
+            risk_reward_ratio={strategy.risk_reward_ratio}
             onEdit={() => handleEdit(strategy)}
             onDelete={() => handleDelete(strategy)}
           />

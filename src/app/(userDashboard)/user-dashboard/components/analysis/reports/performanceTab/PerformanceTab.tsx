@@ -21,7 +21,7 @@ export default function PerformanceTab() {
   const performanceBreakdown = data?.performance_breakdown || null;
   const timeMetrics = data?.time_metrics || null;
   const durationInsights = data?.duration_insights || null;
-  // const holdTimeVsWinRate = data?.hold_time_vs_win_rate || [];
+  const holdTimeVsWinRate = data?.hold_time_vs_win_rate || [];
   const marketSessionBreakdown = data?.market_session_breakdown || [];
   const strategyEffectiveness = data?.strategy_effectiveness || [];
   const symbolFrequency = data?.symbol_frequency || null;
@@ -53,8 +53,7 @@ export default function PerformanceTab() {
 
       <DurationInsights durationInsights={durationInsights} />
 
-      {/* <HoldTimeWinRate holdTimeVsWinRate={holdTimeVsWinRate} /> */}
-      <HoldTimeWinRate />
+      <HoldTimeWinRate holdTimeVsWinRate={holdTimeVsWinRate} />
 
       <MarketSessionBreakdown marketSessionBreakdown={marketSessionBreakdown} />
 
