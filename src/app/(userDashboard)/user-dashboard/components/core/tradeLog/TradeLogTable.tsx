@@ -16,7 +16,6 @@ import {
   IoCopyOutline,
   IoCreateOutline,
   IoDownloadOutline,
-  IoEyeOutline,
 } from "react-icons/io5";
 import { MdInfoOutline } from "react-icons/md";
 import AddTradeModal from "./AddTradeModal";
@@ -310,7 +309,7 @@ export default function TradeLogTable() {
       align: "right",
       render: (_, record) => (
         <div className="flex items-center justify-end gap-3 text-gray-500">
-          <IoEyeOutline className="text-lg cursor-pointer hover:text-blue-500 transition-colors" />
+          {/* <IoEyeOutline className="text-lg cursor-pointer hover:text-blue-500 transition-colors" /> */}
           <IoCreateOutline
             className="text-lg cursor-pointer hover:text-green-500 transition-colors"
             onClick={() => handleOpenEditModal(record)}
