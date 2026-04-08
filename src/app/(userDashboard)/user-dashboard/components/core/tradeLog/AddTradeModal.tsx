@@ -3,10 +3,13 @@
 import {
   useImportTradeManuallyMutation,
   useUpdateTradeManuallyMutation,
+  useUploadScreenshotsMutation,
 } from "@/redux/features/tradelog/tradelogApi";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
-import type { FormInstance } from "antd";
-import { Form, Input, Modal, Select, Slider, Tabs } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import type { FormInstance, UploadProps } from "antd";
+import { Form, Image, Input, Modal, Select, Slider, Tabs, Upload } from "antd";
+import type { UploadFile } from "antd/es/upload/interface";
 import { useEffect, useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 import type { TradeData } from "./TradeLogTable";
@@ -43,6 +46,15 @@ const formatTime = (date: Date): string => {
   return `${hours}:${minutes}:${seconds}`;
 };
 
+// Helper function to get base64 preview
+const getBase64 = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+
 export default function AddTradeModal({
   open,
   onClose,
@@ -52,12 +64,19 @@ export default function AddTradeModal({
   const [activeTab, setActiveTab] = useState("general");
   const [form] = Form.useForm<TradeFormValues>();
 
+  // Screenshot state
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+
   const [importTradeManually, { isLoading: isCreating }] =
     useImportTradeManuallyMutation();
   const [updateTradeManually, { isLoading: isUpdating }] =
     useUpdateTradeManuallyMutation();
+  const [uploadScreenshots, { isLoading: isUploading }] =
+    useUploadScreenshotsMutation();
 
-  const isLoading = isCreating || isUpdating;
+  const isLoading = isCreating || isUpdating || isUploading;
 
   useEffect(() => {
     if (open) {
@@ -81,6 +100,24 @@ export default function AddTradeModal({
           violation_modes: editData.violation_modes || [],
           lessons_learned: editData.lessons_learned,
         });
+
+        // Load existing screenshots if any
+        if (
+          (editData as any).screenshot_urls &&
+          Array.isArray((editData as any).screenshot_urls)
+        ) {
+          const existingFiles = (editData as any).screenshot_urls.map(
+            (url: string, index: number) => ({
+              uid: `existing-${index}`,
+              name: `screenshot-${index}.png`,
+              status: "done" as const,
+              url: url,
+            }),
+          );
+          setFileList(existingFiles);
+        } else {
+          setFileList([]);
+        }
       } else {
         form.resetFields();
         form.setFieldsValue({
@@ -88,12 +125,36 @@ export default function AddTradeModal({
           satisfaction_rating: 50,
           violation_modes: [],
         });
+        setFileList([]);
       }
     }
   }, [editData, open, form]);
 
   const handleFinish = async (values: TradeFormValues) => {
     try {
+      let screenshotUrls: string[] = [];
+
+      // Upload screenshots if there are new files
+      const newFiles = fileList.filter((file) => file.originFileObj);
+      if (newFiles.length > 0) {
+        const formData = new FormData();
+        newFiles.forEach((file) => {
+          if (file.originFileObj) {
+            formData.append("images", file.originFileObj);
+          }
+        });
+
+        const uploadResponse = await uploadScreenshots(formData).unwrap();
+        screenshotUrls = uploadResponse.urls;
+      }
+
+      // Get existing URLs from already uploaded files
+      const existingUrls = fileList
+        .filter((file) => !file.originFileObj && file.url)
+        .map((file) => file.url as string);
+
+      const allScreenshotUrls = [...existingUrls, ...screenshotUrls];
+
       // Format current time in HH:MM:SS format
       const currentTime = formatTime(new Date());
 
@@ -119,6 +180,7 @@ export default function AddTradeModal({
         is_disciplined: values.violation_modes?.length === 0,
         is_tagged_complete: true,
         import_source: "manual",
+        screenshot_urls: allScreenshotUrls,
       };
 
       if (editData?.id) {
@@ -161,6 +223,30 @@ export default function AddTradeModal({
       }
     }
   };
+
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as File);
+    }
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+  };
+
+  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+  };
+
+  const handleRemove = (file: UploadFile) => {
+    setFileList(fileList.filter((item) => item.uid !== file.uid));
+    return true;
+  };
+
+  const uploadButton = (
+    <button style={{ border: 0, background: "none" }} type="button">
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </button>
+  );
 
   return (
     <Modal
@@ -208,20 +294,50 @@ export default function AddTradeModal({
               label: "Psychology",
               children: <PsychologyTab form={form} />,
             },
+            {
+              key: "screenshots",
+              label: "Screenshots",
+              children: (
+                <ScreenshotsTab
+                  fileList={fileList}
+                  onPreview={handlePreview}
+                  onChange={handleChange}
+                  onRemove={handleRemove}
+                  uploadButton={uploadButton}
+                />
+              ),
+            },
           ]}
         />
+
+        {/* Image Preview Modal */}
+        {previewImage && (
+          <Image
+            alt=""
+            wrapperStyle={{ display: "none" }}
+            preview={{
+              visible: previewOpen,
+              onVisibleChange: (visible) => setPreviewOpen(visible),
+              afterOpenChange: (visible) => !visible && setPreviewImage(""),
+            }}
+            src={previewImage}
+          />
+        )}
 
         <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-200 dark:border-gray-700 mt-4">
           <button
             type="button"
-            onClick={() => form.resetFields()}
+            onClick={() => {
+              form.resetFields();
+              setFileList([]);
+            }}
             className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-sm font-medium"
           >
             Reset
           </button>
           <button
-            disabled={isLoading}
             type="submit"
+            disabled={isLoading}
             className="px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading
@@ -374,8 +490,7 @@ function GeneralTab({
         >
           <Input type="date" size="large" />
         </Form.Item>
-        <div className="col-span-1"></div>{" "}
-        {/* Empty div to maintain grid layout */}
+        <div className="col-span-1"></div>
       </div>
 
       <div className="grid grid-cols-3 gap-4">
@@ -541,6 +656,46 @@ function PsychologyTab({ form }: { form: FormInstance<TradeFormValues> }) {
       >
         <Input.TextArea placeholder="Notes on psychology..." rows={4} />
       </Form.Item>
+    </div>
+  );
+}
+
+function ScreenshotsTab({
+  fileList,
+  onPreview,
+  onChange,
+  onRemove,
+  uploadButton,
+}: {
+  fileList: UploadFile[];
+  onPreview: (file: UploadFile) => void;
+  onChange: UploadProps["onChange"];
+  onRemove: (file: UploadFile) => void;
+  uploadButton: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-5 py-4">
+      <div>
+        <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3">
+          Trade Screenshots
+        </label>
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          onPreview={onPreview}
+          onChange={onChange}
+          onRemove={onRemove}
+          beforeUpload={() => false}
+          accept="image/*"
+          multiple
+          maxCount={8}
+        >
+          {fileList.length >= 8 ? null : uploadButton}
+        </Upload>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          Upload up to 8 screenshots. Supported formats: JPG, PNG, GIF
+        </p>
+      </div>
     </div>
   );
 }

@@ -59,6 +59,16 @@ export const tradelogApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["tradelog"],
     }),
+
+    // post screen shorts
+    uploadScreenshots: builder.mutation({
+      query: (payload) => ({
+        url: "/api/tradelog/upload-screenshot/",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["tradelog"],
+    }),
   }),
 });
 
@@ -69,4 +79,7 @@ export const {
   useGetAllTradeQuery,
   useGetSingleTradeQuery,
   useDeleteTradeMutation,
+
+  // screenshots
+  useUploadScreenshotsMutation,
 } = tradelogApi;
