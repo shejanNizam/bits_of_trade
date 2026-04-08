@@ -63,6 +63,7 @@
 //   );
 // }
 
+import Link from "next/link";
 import { FiTarget } from "react-icons/fi";
 
 interface DoingWellItem {
@@ -159,9 +160,11 @@ export function WhatYouDoingWell({ doingWell }: WhatYouDoingWellProps) {
                       {metricValue.text}
                     </p>
                     {item.view_in_plan && (
-                      <button className="text-[10px] bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white px-2 py-1 rounded-lg font-bold transition-all">
-                        View in plan
-                      </button>
+                      <Link href="/user-dashboard/strategy-library">
+                        <button className="text-[10px] bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white px-2 py-1 rounded-lg font-bold transition-all">
+                          View in plan
+                        </button>
+                      </Link>
                     )}
                   </div>
                 </div>

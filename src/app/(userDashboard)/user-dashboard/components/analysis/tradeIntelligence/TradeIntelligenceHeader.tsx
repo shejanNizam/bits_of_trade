@@ -168,7 +168,7 @@ const TradeIntelligenceHeader = ({
               className="w-full"
               suffixIcon={<FaChevronDown className="text-xs" />}
               options={marketOptions}
-              placeholder="All Markets"
+              placeholder=" Select a Market"
               allowClear
               disabled={isLoading}
             />
@@ -185,7 +185,7 @@ const TradeIntelligenceHeader = ({
               className="w-full"
               suffixIcon={<FaChevronDown className="text-xs" />}
               options={brokerOptions}
-              placeholder="All Brokers"
+              placeholder="Select a Brokers"
               showSearch
               allowClear
               disabled={isLoading}
@@ -206,6 +206,7 @@ const TradeIntelligenceHeader = ({
               value={selectedPeriod}
               onChange={onPeriodChange}
               className="w-full"
+              placeholder="Select a Time Range"
               suffixIcon={<FaChevronDown className="text-xs" />}
               options={timeRangeOptions}
               disabled={isLoading}

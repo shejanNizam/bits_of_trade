@@ -40,10 +40,10 @@
 //         {stats.map((stat, i) => (
 //           <div
 //             key={i}
-//             className={`p-6 rounded-2xl border text-center transition-transform hover:scale-[1.02] ${stat.color}`}
+//             className={`p-6 rounded-2xl border text-center transition-transform hover:scale-[1.02]₹{stat.color}`}
 //           >
 //             <div
-//               className={`font-black ${stat.small ? "text-sm" : "text-4xl"} mb-1`}
+//               className={`font-black₹{stat.small ? "text-sm" : "text-4xl"} mb-1`}
 //             >
 //               {stat.value}
 //             </div>
@@ -114,13 +114,6 @@ export function DisciplineHealthSummary({
     return "text-red-500 bg-red-50 dark:bg-red-500/10";
   };
 
-  const getRatingColor = (rating: string) => {
-    if (rating === "Excellent") return "text-emerald-500";
-    if (rating === "Improving but fragile") return "text-amber-500";
-    if (rating === "Needs Attention") return "text-orange-500";
-    return "text-red-500";
-  };
-
   const getTrendIcon = (trend: string) => {
     if (trend === "Improving") return "📈";
     if (trend === "Declining") return "📉";
@@ -146,7 +139,7 @@ export function DisciplineHealthSummary({
     {
       label: "Health Rating",
       value: disciplineHealth.health_rating,
-      color: `bg-purple-50 dark:bg-purple-500/10 ${getRatingColor(disciplineHealth.health_rating)}`,
+      color: `bg-purple-50 dark:bg-purple-500/10₹{getRatingColor(disciplineHealth.health_rating)}`,
       small: true,
     },
   ];
@@ -162,10 +155,10 @@ export function DisciplineHealthSummary({
         {stats.map((stat, i) => (
           <div
             key={i}
-            className={`p-6 rounded-2xl border text-center transition-transform hover:scale-[1.02] ${stat.color} border-current/20`}
+            className={`p-6 rounded-2xl border text-center transition-transform hover:scale-[1.02]₹{stat.color} border-current/20`}
           >
             <div
-              className={`font-black ${stat.small ? "text-sm" : "text-4xl"} mb-1`}
+              className={`font-black₹{stat.small ? "text-sm" : "text-4xl"} mb-1`}
             >
               {stat.value}
             </div>
@@ -186,7 +179,7 @@ export function DisciplineHealthSummary({
             {disciplineHealth.green_sessions}
           </p>
           <p className="text-[10px] text-emerald-500">
-            ${disciplineHealth.session_pnl_summary.green_pnl.toLocaleString()}
+            ₹{disciplineHealth.session_pnl_summary.green_pnl.toLocaleString()}
           </p>
         </div>
         <div className="text-center p-3 bg-amber-50 dark:bg-amber-500/10 rounded-xl">
@@ -195,7 +188,7 @@ export function DisciplineHealthSummary({
             {disciplineHealth.yellow_sessions}
           </p>
           <p className="text-[10px] text-amber-500">
-            ${disciplineHealth.session_pnl_summary.yellow_pnl.toLocaleString()}
+            ₹{disciplineHealth.session_pnl_summary.yellow_pnl.toLocaleString()}
           </p>
         </div>
         <div className="text-center p-3 bg-red-50 dark:bg-red-500/10 rounded-xl">
@@ -204,7 +197,7 @@ export function DisciplineHealthSummary({
             {disciplineHealth.red_sessions}
           </p>
           <p className="text-[10px] text-red-500">
-            ${disciplineHealth.session_pnl_summary.red_pnl.toLocaleString()}
+            ₹{disciplineHealth.session_pnl_summary.red_pnl.toLocaleString()}
           </p>
         </div>
       </div>

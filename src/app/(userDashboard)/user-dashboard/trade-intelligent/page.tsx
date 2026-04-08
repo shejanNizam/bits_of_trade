@@ -45,9 +45,9 @@ export default function TradeIntelligentPage() {
   const [intelligenceData, setIntelligenceData] = useState<any>(null);
 
   // Filter states
-  const [selectedMarket, setSelectedMarket] = useState<string>("");
-  const [selectedBroker, setSelectedBroker] = useState<string>("");
-  const [selectedPeriod, setSelectedPeriod] = useState<string>("last30");
+  const [selectedMarket, setSelectedMarket] = useState<string>("all");
+  const [selectedBroker, setSelectedBroker] = useState<string>("all");
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("all");
   const [customDateRange, setCustomDateRange] = useState<{
     fromDate: string | null;
     toDate: string | null;
