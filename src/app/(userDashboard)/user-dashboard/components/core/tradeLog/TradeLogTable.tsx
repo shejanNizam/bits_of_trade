@@ -1,21 +1,22 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
+  useBulkDeleteTradesMutation,
   useDeleteTradeMutation,
   useGetAllTradeQuery,
 } from "@/redux/features/tradelog/tradelogApi";
 import { useGetStrategyForTradeQuery } from "@/redux/features/utils/utilsApi";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import { message, Pagination, Spin, Table } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import { useState } from "react";
+import type { ColumnsType, TableRowSelection } from "antd/es/table/interface";
+import { Key, useState } from "react";
 import {
   IoAddOutline,
   IoCopyOutline,
   IoCreateOutline,
   IoDownloadOutline,
+  IoTrashOutline,
 } from "react-icons/io5";
 import { MdInfoOutline } from "react-icons/md";
 import AddTradeModal from "./AddTradeModal";
@@ -34,6 +35,7 @@ export interface TradeData {
   fees: string;
   total_pnl: string;
   strategy: string | null;
+  strategy_name?: string;
   entry_confidence: number | null;
   satisfaction_rating: number | null;
   emotional_state: string | null;
@@ -45,6 +47,7 @@ export interface TradeData {
   broker_name: string;
   created_at: string;
   updated_at: string;
+  screenshot_urls?: string[];
 }
 
 export default function TradeLogTable() {
@@ -54,27 +57,27 @@ export default function TradeLogTable() {
   const [selectedTrade, setSelectedTrade] = useState<TradeData | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
   const { data, isLoading, error, refetch } = useGetAllTradeQuery({
     page: currentPage,
     limit: pageSize,
   });
-  console.log(data);
 
   const { data: strategiesData } = useGetStrategyForTradeQuery({
     page: 1,
     limit: 100,
   });
-  console.log(strategiesData);
 
   const [deleteTrade] = useDeleteTradeMutation();
+  const [bulkDeleteTrades] = useBulkDeleteTradesMutation();
 
   const trades = data?.results || [];
   const totalCount = data?.count || 0;
 
   // Calculate statistics for tabs
   const calculateTabCounts = () => {
-    const total = trades.length;
+    const total = totalCount; // Use totalCount from API instead of filtered trades length
     const wins = trades.filter(
       (trade: TradeData) => parseFloat(trade.total_pnl) > 0,
     ).length;
@@ -148,6 +151,7 @@ export default function TradeLogTable() {
           title: "Deleted!",
           text: "Trade has been deleted successfully.",
         });
+        setSelectedRowKeys([]);
         refetch();
       } catch (error: any) {
         ErrorSwal({
@@ -158,10 +162,88 @@ export default function TradeLogTable() {
     }
   };
 
+  const handleBulkDelete = async (type: "selected" | "all" | "filtered") => {
+    let confirmText = "";
+    let payload: any = {};
+
+    switch (type) {
+      case "selected":
+        if (selectedRowKeys.length === 0) {
+          message.warning("Please select trades to delete");
+          return;
+        }
+        confirmText = `Are you sure you want to delete ${selectedRowKeys.length} selected trade(s)?`;
+        payload = { ids: selectedRowKeys };
+        break;
+      case "all":
+        confirmText =
+          "Are you sure you want to delete ALL trades? This action cannot be undone!";
+        payload = { delete_all: true };
+        break;
+      case "filtered":
+        confirmText = `Are you sure you want to delete all ${activeTab === "all" ? "" : activeTab} trades?`;
+        payload = { delete_all: true };
+        if (activeTab === "wins") {
+          payload.outcome = "win";
+        } else if (activeTab === "losses") {
+          payload.outcome = "loss";
+        } else if (activeTab === "disciplined") {
+          payload.discipline_status = "disciplined";
+        } else if (activeTab === "violations") {
+          payload.rule_breach = true;
+        }
+        break;
+    }
+
+    const result = await ErrorSwal({
+      title: "Bulk Delete Trades?",
+      text: confirmText,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await bulkDeleteTrades(payload).unwrap();
+
+        let successMessage = response.message;
+        if (response.not_found) {
+          successMessage += `\n${response.note}`;
+        }
+
+        SuccessSwal({
+          title: "Deleted!",
+          text: successMessage,
+        });
+
+        setSelectedRowKeys([]);
+        refetch();
+      } catch (error: any) {
+        ErrorSwal({
+          title: "Error!",
+          text:
+            error?.data?.error ||
+            error?.data?.message ||
+            "Failed to delete trades.",
+        });
+      }
+    }
+  };
+
   const handleCopyTrade = (trade: TradeData) => {
-    // Copy trade data to clipboard or create a new trade with same details
     navigator.clipboard.writeText(JSON.stringify(trade, null, 2));
     message.success("Trade details copied to clipboard!");
+  };
+
+  // Row selection configuration
+  const rowSelection: TableRowSelection<TradeData> = {
+    selectedRowKeys,
+    onChange: (newSelectedRowKeys: Key[]) => {
+      setSelectedRowKeys(newSelectedRowKeys);
+    },
+    selections: [
+      Table.SELECTION_ALL,
+      Table.SELECTION_INVERT,
+      Table.SELECTION_NONE,
+    ],
   };
 
   const columns: ColumnsType<TradeData> = [
@@ -309,7 +391,6 @@ export default function TradeLogTable() {
       align: "right",
       render: (_, record) => (
         <div className="flex items-center justify-end gap-3 text-gray-500">
-          {/* <IoEyeOutline className="text-lg cursor-pointer hover:text-blue-500 transition-colors" /> */}
           <IoCreateOutline
             className="text-lg cursor-pointer hover:text-green-500 transition-colors"
             onClick={() => handleOpenEditModal(record)}
@@ -317,6 +398,10 @@ export default function TradeLogTable() {
           <IoCopyOutline
             className="text-lg cursor-pointer hover:text-purple-500 transition-colors"
             onClick={() => handleCopyTrade(record)}
+          />
+          <IoTrashOutline
+            className="text-lg cursor-pointer hover:text-red-500 transition-colors"
+            onClick={() => handleDeleteTrade(record)}
           />
         </div>
       ),
@@ -381,31 +466,68 @@ export default function TradeLogTable() {
         </div>
       </div>
 
-      {/* Filter Tabs */}
+      {/* Filter Tabs with Delete All Button */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">
-            Filter by:
-          </span>
-          {tabs.map((tab) => (
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">
+              Filter by:
+            </span>
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => {
+                  setActiveTab(tab.key);
+                  setSelectedRowKeys([]);
+                }}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  activeTab === tab.key
+                    ? "bg-blue-600 dark:bg-blue-500 text-white"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                }`}
+              >
+                {tab.label} ({tab.count})
+              </button>
+            ))}
+          </div>
+
+          {/* Delete Buttons Group */}
+          <div className="flex items-center gap-2">
+            {selectedRowKeys.length > 0 && (
+              <button
+                onClick={() => handleBulkDelete("selected")}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors flex items-center gap-2"
+              >
+                <IoTrashOutline className="text-base" />
+                Delete Selected ({selectedRowKeys.length})
+              </button>
+            )}
+
+            {activeTab !== "all" && (
+              <button
+                onClick={() => handleBulkDelete("filtered")}
+                className="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-medium hover:bg-orange-700 transition-colors flex items-center gap-2"
+              >
+                <IoTrashOutline className="text-base" />
+                Delete Filtered
+              </button>
+            )}
+
             <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === tab.key
-                  ? "bg-blue-600 dark:bg-blue-500 text-white"
-                  : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-              }`}
+              onClick={() => handleBulkDelete("all")}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors flex items-center gap-2"
             >
-              {tab.label} ({tab.count})
+              <IoTrashOutline className="text-base" />
+              Delete All
             </button>
-          ))}
+          </div>
         </div>
       </div>
 
       {/* Table */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
         <Table
+          rowSelection={rowSelection}
           columns={columns}
           dataSource={filteredTrades}
           pagination={false}
@@ -425,6 +547,7 @@ export default function TradeLogTable() {
             onChange={(page, size) => {
               setCurrentPage(page);
               if (size !== pageSize) setPageSize(size);
+              setSelectedRowKeys([]);
             }}
             showSizeChanger
             showTotal={(total) => `Total ${total} trades`}
