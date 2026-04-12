@@ -93,7 +93,7 @@ const TradeIntelligenceHeader = ({
 }: TradeIntelligenceHeaderProps) => {
   const marketOptions = [
     { value: "all", label: "All" },
-    { value: "indian_stocks", label: "Indian Stocks" },
+    { value: "indian_market", label: "Indian Stocks" },
     { value: "forex", label: "Forex" },
     { value: "crypto", label: "Crypto" },
     { value: "options", label: "Options" },
