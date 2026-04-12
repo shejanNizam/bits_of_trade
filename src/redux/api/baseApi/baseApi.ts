@@ -30,6 +30,9 @@ const baseApi = createApi({
     "mistake",
     "strategy",
     "settings",
+    "notification",
+    "unreadCount",
+    "notificationSettings",
   ],
   endpoints: () => ({}),
 });
