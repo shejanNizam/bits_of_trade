@@ -3,7 +3,7 @@
 "use client";
 
 import { useGetCalendarDataQuery } from "@/redux/features/overview/overviewApi";
-import { Calendar } from "antd";
+import { Calendar, Select } from "antd";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { useState } from "react";
@@ -24,8 +24,17 @@ interface DayStats {
 }
 
 export default function TradingCalendar() {
-  const { data: apiData } = useGetCalendarDataQuery({});
+  const [selectedYear, setSelectedYear] = useState<number>(dayjs().year());
+  const [selectedMonth, setSelectedMonth] = useState<number>(
+    dayjs().month() + 1,
+  ); // month is 1-12 in API
   const [currentMonth, setCurrentMonth] = useState(dayjs());
+
+  // Fetch data with year and month filters
+  const { data: apiData } = useGetCalendarDataQuery({
+    year: selectedYear,
+    month: selectedMonth,
+  });
 
   // Process API data into a map for easy lookup
   const tradingData: Record<string, DayStats> = {};
@@ -50,18 +59,76 @@ export default function TradingCalendar() {
 
   const summary = apiData?.summary;
   const monthName = apiData?.month_name || currentMonth.format("MMMM");
-  const year = apiData?.year || currentMonth.year();
+  const year = apiData?.year || selectedYear;
+
+  // Generate year options (current year - 5 to current year + 1)
+  const currentYear = dayjs().year();
+  const yearOptions = [];
+  for (let y = currentYear - 5; y <= currentYear + 1; y++) {
+    yearOptions.push({ label: y.toString(), value: y });
+  }
+
+  // Month options
+  const monthOptions = [
+    { label: "January", value: 1 },
+    { label: "February", value: 2 },
+    { label: "March", value: 3 },
+    { label: "April", value: 4 },
+    { label: "May", value: 5 },
+    { label: "June", value: 6 },
+    { label: "July", value: 7 },
+    { label: "August", value: 8 },
+    { label: "September", value: 9 },
+    { label: "October", value: 10 },
+    { label: "November", value: 11 },
+    { label: "December", value: 12 },
+  ];
+
+  const handleYearChange = (value: number) => {
+    setSelectedYear(value);
+    // Update current month to maintain consistency
+    setCurrentMonth(dayjs(`${value}-${selectedMonth}-01`));
+  };
+
+  const handleMonthChange = (value: number) => {
+    setSelectedMonth(value);
+    // Update current month to maintain consistency
+    setCurrentMonth(dayjs(`${selectedYear}-${value}-01`));
+  };
 
   const goToPreviousMonth = () => {
-    setCurrentMonth(currentMonth.subtract(1, "month"));
+    let newYear = selectedYear;
+    let newMonth = selectedMonth - 1;
+
+    if (newMonth < 1) {
+      newMonth = 12;
+      newYear = selectedYear - 1;
+    }
+
+    setSelectedYear(newYear);
+    setSelectedMonth(newMonth);
+    setCurrentMonth(dayjs(`${newYear}-${newMonth}-01`));
   };
 
   const goToNextMonth = () => {
-    setCurrentMonth(currentMonth.add(1, "month"));
+    let newYear = selectedYear;
+    let newMonth = selectedMonth + 1;
+
+    if (newMonth > 12) {
+      newMonth = 1;
+      newYear = selectedYear + 1;
+    }
+
+    setSelectedYear(newYear);
+    setSelectedMonth(newMonth);
+    setCurrentMonth(dayjs(`${newYear}-${newMonth}-01`));
   };
 
   const goToCurrentMonth = () => {
-    setCurrentMonth(dayjs());
+    const now = dayjs();
+    setSelectedYear(now.year());
+    setSelectedMonth(now.month() + 1);
+    setCurrentMonth(now);
   };
 
   const dateCellRender = (value: Dayjs) => {
@@ -167,7 +234,7 @@ export default function TradingCalendar() {
   return (
     <div className="w-full bg-white dark:bg-[#0B0F1A] rounded-xl shadow-sm overflow-hidden border border-gray-200 dark:border-gray-800">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800 gap-3">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800 gap-3">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
             <button
@@ -194,6 +261,28 @@ export default function TradingCalendar() {
           </button>
         </div>
 
+        {/* Filters - Year and Month Selectors */}
+        <div className="flex items-center gap-3">
+          <Select
+            value={selectedYear}
+            onChange={handleYearChange}
+            options={yearOptions}
+            size="small"
+            className="min-w-25"
+            popupMatchSelectWidth={false}
+            style={{ width: 100 }}
+          />
+          <Select
+            value={selectedMonth}
+            onChange={handleMonthChange}
+            options={monthOptions}
+            size="small"
+            className="min-w-30"
+            popupMatchSelectWidth={false}
+            style={{ width: 120 }}
+          />
+        </div>
+
         {/* Summary Stats */}
         {summary && summary.total_trades > 0 && (
           <div className="flex items-center gap-4 text-xs">
@@ -214,11 +303,6 @@ export default function TradingCalendar() {
             </div>
           </div>
         )}
-
-        {/* Info button (optional) */}
-        {/* <div className="flex items-center gap-4 text-gray-400">
-          <MdInfoOutline className="text-lg cursor-pointer hover:text-teal-500" />
-        </div> */}
       </div>
 
       {/* Calendar */}
@@ -231,7 +315,7 @@ export default function TradingCalendar() {
         />
       </div>
 
-      {/* Legend for no trades (optional) */}
+      {/* Legend for no trades */}
       {summary?.total_trades === 0 && (
         <div className="px-5 py-3 border-t border-gray-100 dark:border-gray-800 text-center text-xs text-gray-400 dark:text-gray-500">
           No trading activity recorded for {monthName} {year}
