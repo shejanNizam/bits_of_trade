@@ -25,7 +25,20 @@ export const userApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["user"],
     }),
+    updateProfile: builder.mutation({
+      query: (formData) => ({
+        url: "/api/auth/profile/",
+        method: "PATCH",
+        body: formData,
+        formData: true, // Important for file upload
+      }),
+      invalidatesTags: ["auth"],
+    }),
   }),
 });
 
-export const { useGetUserDataQuery, useUpdateUserDataMutation } = userApi;
+export const {
+  useGetUserDataQuery,
+  useUpdateUserDataMutation,
+  useUpdateProfileMutation,
+} = userApi;

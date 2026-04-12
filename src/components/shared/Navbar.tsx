@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { RootState } from "@/redux/store";
@@ -19,10 +20,28 @@ import ThemeToggle from "./ThemeToggle";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const pathname = usePathname();
   const { theme } = useTheme();
 
   const { user } = useSelector((state: RootState) => state.auth);
+
+  // Get profile image URL with fallback
+  const getProfileImageUrl = () => {
+    if (
+      !user ||
+      !("profile_picture" in user) ||
+      !(user as any).profile_picture ||
+      imageError
+    ) {
+      return default_img;
+    }
+    return (
+      process.env.NEXT_PUBLIC_IMAGE_URL + "/" + (user as any).profile_picture
+    );
+  };
+
+  const profileImageUrl = getProfileImageUrl();
 
   useEffect(() => {
     setMounted(true);
@@ -83,17 +102,19 @@ export default function Navbar() {
 
           {user ? (
             <Link
-              className="flex justify-start items-center gap-2 cursor-pointer"
+              className="flex justify-start items-center gap-2 cursor-pointer group"
               href="/user-dashboard"
             >
-              <Image
-                width={1000}
-                height={1000}
-                className="w-12 h-12 rounded-full border-4 border-primary"
-                src={default_img}
-                alt="profile_image"
-              />
-              <TiArrowSortedDown />
+              <div className="relative w-10 h-10">
+                <Image
+                  src={profileImageUrl ? profileImageUrl : default_img}
+                  alt="profile_image"
+                  fill
+                  className="rounded-full border-2 border-blue-500 object-cover"
+                  onError={() => setImageError(true)}
+                />
+              </div>
+              <TiArrowSortedDown className="text-gray-700 dark:text-gray-300 group-hover:text-blue-500 transition-colors" />
             </Link>
           ) : (
             <>
@@ -205,23 +226,35 @@ export default function Navbar() {
             {user ? (
               <Link
                 href="/user-dashboard"
-                className="flex justify-center items-center gap-2 cursor-pointer w-full px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+                onClick={toggleDrawer}
+                className="flex justify-start items-center gap-3 cursor-pointer w-full px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group"
               >
-                <Image
-                  width={1000}
-                  height={1000}
-                  className="w-10 h-10 rounded-full border-2 border-primary"
-                  src={default_img}
-                  alt="profile_image"
-                />
-                <span
-                  className="font-semibold"
-                  style={{ color: isDark ? "#f1f5f9" : "#111827" }}
-                >
-                  My Account
-                </span>
+                <div className="relative w-10 h-10">
+                  <Image
+                    src={profileImageUrl}
+                    alt="profile_image"
+                    fill
+                    className="rounded-full border-2 border-blue-500 object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                </div>
+                <div className="flex-1">
+                  <p
+                    className="font-semibold text-sm"
+                    style={{ color: isDark ? "#f1f5f9" : "#111827" }}
+                  >
+                    {user?.first_name} {user?.last_name}
+                  </p>
+                  <p
+                    className="text-xs"
+                    style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+                  >
+                    {user?.email}
+                  </p>
+                </div>
                 <TiArrowSortedDown
                   style={{ color: isDark ? "#f1f5f9" : "#111827" }}
+                  className="group-hover:text-blue-500 transition-colors"
                 />
               </Link>
             ) : (
