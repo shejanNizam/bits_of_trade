@@ -11,7 +11,30 @@ export const overviewApi = baseApi.injectEndpoints({
       }),
       providesTags: ["overview"],
     }),
+
+    //
+    getTradeDistribution: builder.query({
+      query: () => ({
+        url: "/api/tradelog/trades/distribution/",
+        method: "GET",
+      }),
+      providesTags: ["overview"],
+    }),
+    //
+    //api/tradelogs/trades/calendar/
+
+    getCalendarData: builder.query({
+      query: () => ({
+        url: "api/tradelog/trades/calendar/",
+        method: "GET",
+      }),
+      providesTags: ["overview"],
+    }),
   }),
 });
 
-export const { useGetAllOverviewQuery } = overviewApi;
+export const {
+  useGetAllOverviewQuery,
+  useGetTradeDistributionQuery,
+  useGetCalendarDataQuery,
+} = overviewApi;

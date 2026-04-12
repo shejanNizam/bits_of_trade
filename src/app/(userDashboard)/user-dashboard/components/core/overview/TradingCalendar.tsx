@@ -1,5 +1,6 @@
 "use client";
 
+import { useGetCalendarDataQuery } from "@/redux/features/overview/overviewApi";
 import { Calendar } from "antd";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
@@ -31,6 +32,9 @@ const tradingData: Record<string, DayStats> = {
 };
 
 export default function TradingCalendar() {
+  const { data } = useGetCalendarDataQuery({});
+  console.log(data);
+
   const currentMonth = dayjs("2025-11-01");
 
   const dateCellRender = (value: Dayjs) => {
