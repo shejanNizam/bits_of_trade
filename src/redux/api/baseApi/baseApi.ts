@@ -33,6 +33,10 @@ const baseApi = createApi({
     "notification",
     "unreadCount",
     "notificationSettings",
+    "LearningLessons",
+    "Courses",
+    "Videos",
+    "UserCourseProgress",
   ],
   endpoints: () => ({}),
 });
