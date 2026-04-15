@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // "use client";
 
 // import { useState } from "react";
@@ -201,20 +202,20 @@ export default function AllLearningPaths({
     return map;
   }, [userProgress]);
 
-  // Colors for different courses
-  const colors = [
-    "text-red-500 bg-red-50 dark:bg-red-900/20",
-    "text-purple-500 bg-purple-50 dark:bg-purple-900/20",
-    "text-blue-500 bg-blue-50 dark:bg-blue-900/20",
-    "text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20",
-    "text-orange-500 bg-orange-50 dark:bg-orange-900/20",
-    "text-teal-500 bg-teal-50 dark:bg-teal-900/20",
-    "text-pink-500 bg-pink-50 dark:bg-pink-900/20",
-    "text-indigo-500 bg-indigo-50 dark:bg-indigo-900/20",
-  ];
-
   // Transform courses to LearningPath format
   const learningPaths: LearningPath[] = useMemo(() => {
+    // Colors for different courses
+    const colors = [
+      "text-red-500 bg-red-50 dark:bg-red-900/20",
+      "text-purple-500 bg-purple-50 dark:bg-purple-900/20",
+      "text-blue-500 bg-blue-50 dark:bg-blue-900/20",
+      "text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20",
+      "text-orange-500 bg-orange-50 dark:bg-orange-900/20",
+      "text-teal-500 bg-teal-50 dark:bg-teal-900/20",
+      "text-pink-500 bg-pink-50 dark:bg-pink-900/20",
+      "text-indigo-500 bg-indigo-50 dark:bg-indigo-900/20",
+    ];
+
     if (!courses.length) return [];
 
     return courses

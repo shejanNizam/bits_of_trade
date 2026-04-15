@@ -34,15 +34,16 @@ export interface LoginFormValues {
 
 export interface LoginResponse {
   message: string;
-  user: {
-    id: number;
-    email: string;
-    first_name: string;
-    last_name: string;
-    subscription_type: string;
-    profile_picture: string | null;
-    created_at: string;
+  user: User;
+  tokens: {
+    refresh: string;
+    access: string;
   };
+}
+
+export interface LoginResponse {
+  message: string;
+  user: User;
   tokens: {
     refresh: string;
     access: string;
@@ -59,4 +60,18 @@ export interface ApiError {
     }[];
     error: string;
   };
+}
+
+export interface User {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  subscription_type: string;
+  profile_picture: string | null;
+  created_at: string;
+  // Add this line
+  onboarding_completed: boolean;
+  // Add this if you plan to use it from the response you shared
+  session_state?: string | null;
 }

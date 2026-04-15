@@ -373,7 +373,7 @@ const GoogleLoginButton: React.FC = () => {
       }, 100);
       return () => clearInterval(interval);
     }
-  }, []);
+  });
 
   const handleClick = (): void => {
     if (!window.google?.accounts?.id) {

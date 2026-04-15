@@ -4,12 +4,204 @@
 // import { setCredentials } from "@/redux/slices/authSlice";
 // import { ApiError, LoginFormValues, LoginResponse } from "@/types/auth";
 // import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
-// import { Button, Checkbox, Form, Input, theme } from "antd";
+// import { Button, Checkbox, Divider, Form, Input, theme } from "antd";
 // import Link from "next/link";
 // import { useRouter, useSearchParams } from "next/navigation";
-// import { Suspense } from "react";
+// import { Suspense, useEffect, useRef, useState } from "react";
 // import { FaArrowLeft } from "react-icons/fa";
+// import { FcGoogle } from "react-icons/fc";
 // import { useDispatch } from "react-redux";
+
+// // ==================== TYPES ====================
+// interface GoogleNotification {
+//   isNotDisplayed: () => boolean;
+//   isSkippedMoment: () => boolean;
+//   isDismissedMoment: () => boolean;
+//   getNotDisplayedReason: () => string;
+//   getSkippedReason: () => string;
+//   getDismissedReason: () => string;
+// }
+
+// interface GoogleCredentialResponse {
+//   credential: string;
+//   select_by: string;
+// }
+
+// interface GoogleButtonConfig {
+//   type?: "standard" | "icon";
+//   theme?: "outline" | "filled_blue" | "filled_black";
+//   size?: "large" | "medium" | "small";
+//   text?: string;
+//   shape?: "rectangular" | "pill" | "circle" | "square";
+//   width?: number;
+// }
+
+// interface GoogleIdConfig {
+//   client_id: string;
+//   callback: (response: GoogleCredentialResponse) => void;
+//   auto_select?: boolean;
+//   cancel_on_tap_outside?: boolean;
+// }
+
+// // ==================== TYPE DECLARATION ====================
+// declare global {
+//   interface Window {
+//     google: {
+//       accounts: {
+//         id: {
+//           initialize: (config: GoogleIdConfig) => void;
+//           prompt: (
+//             callback?: (notification: GoogleNotification) => void,
+//           ) => void;
+//           renderButton: (
+//             element: HTMLElement,
+//             config: GoogleButtonConfig,
+//           ) => void;
+//           cancel: () => void;
+//           disableAutoSelect: () => void;
+//         };
+//       };
+//     };
+//   }
+// }
+
+// // ==================== GOOGLE BUTTON ====================
+// const GoogleLoginButton: React.FC<{ redirectPath: string }> = ({
+//   redirectPath,
+// }) => {
+//   const dispatch = useDispatch();
+//   const router = useRouter();
+//   const [isLoading, setIsLoading] = useState<boolean>(false);
+//   const buttonRef = useRef<HTMLDivElement>(null);
+//   const isInitialized = useRef<boolean>(false);
+
+//   const handleGoogleSuccess = async (idToken: string): Promise<void> => {
+//     setIsLoading(true);
+//     try {
+//       const res = await fetch(
+//         `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google-login/`,
+//         {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ token: idToken }),
+//         },
+//       );
+
+//       const data = await res.json();
+//       if (!res.ok) throw { data };
+
+//       if (data?.tokens?.access) {
+//         localStorage.setItem("token", data.tokens.access);
+//         dispatch(
+//           setCredentials({ user: data.user, token: data.tokens.access }),
+//         );
+//       }
+
+//       SuccessSwal({ title: "Success!", text: "Signed in with Google!" });
+//       router.push(redirectPath);
+//     } catch (error) {
+//       const apiError = error as ApiError;
+//       ErrorSwal({
+//         title: "Google Sign-in Failed",
+//         text:
+//           apiError?.data?.error ||
+//           apiError?.data?.errors?.[0]?.message ||
+//           "Could not sign in with Google.",
+//       });
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   const initializeGoogle = (): void => {
+//     if (isInitialized.current) return;
+//     if (!window.google?.accounts?.id) return;
+
+//     isInitialized.current = true;
+
+//     window.google.accounts.id.initialize({
+//       client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+//       callback: (response: GoogleCredentialResponse) => {
+//         if (response.credential) {
+//           handleGoogleSuccess(response.credential);
+//         }
+//       },
+//       auto_select: false,
+//       cancel_on_tap_outside: true,
+//     });
+//   };
+
+//   useEffect(() => {
+//     if (!document.getElementById("google-gsi-script")) {
+//       const script = document.createElement("script");
+//       script.id = "google-gsi-script";
+//       script.src = "https://accounts.google.com/gsi/client";
+//       script.async = true;
+//       script.defer = true;
+//       script.onload = () => initializeGoogle();
+//       document.head.appendChild(script);
+//     } else if (window.google?.accounts?.id) {
+//       initializeGoogle();
+//     } else {
+//       const interval = setInterval(() => {
+//         if (window.google?.accounts?.id) {
+//           clearInterval(interval);
+//           initializeGoogle();
+//         }
+//       }, 100);
+//       return () => clearInterval(interval);
+//     }
+//   }, []);
+
+//   const handleClick = (): void => {
+//     if (!window.google?.accounts?.id) {
+//       ErrorSwal({
+//         title: "Error",
+//         text: "Google Sign-in is not ready. Please refresh the page.",
+//       });
+//       return;
+//     }
+
+//     initializeGoogle();
+
+//     window.google.accounts.id.prompt((notification: GoogleNotification) => {
+//       if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+//         if (buttonRef.current) {
+//           window.google.accounts.id.renderButton(buttonRef.current, {
+//             type: "standard",
+//             theme: "outline",
+//             size: "large",
+//             width: buttonRef.current.offsetWidth,
+//           });
+//           const btn = buttonRef.current.querySelector(
+//             "div[role=button]",
+//           ) as HTMLElement | null;
+//           btn?.click();
+//         }
+//       }
+//     });
+//   };
+
+//   return (
+//     <div className="relative w-full">
+//       <div
+//         ref={buttonRef}
+//         className="absolute opacity-0 pointer-events-none"
+//         style={{ zIndex: -1, width: "100%" }}
+//       />
+//       <Button
+//         size="large"
+//         onClick={handleClick}
+//         loading={isLoading}
+//         className="w-full flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+//         style={{ height: 50 }}
+//         icon={!isLoading ? <FcGoogle size={20} /> : undefined}
+//       >
+//         {isLoading ? "Signing in..." : "Continue with Google"}
+//       </Button>
+//     </div>
+//   );
+// };
 
 // // ==================== LOGIN CONTENT COMPONENT ====================
 // const LoginContent: React.FC = () => {
@@ -23,7 +215,6 @@
 
 //   const [login, { isLoading }] = useLoginMutation();
 
-//   // ==================== FORM SUBMIT HANDLER ====================
 //   const onFinish = async (values: LoginFormValues): Promise<void> => {
 //     try {
 //       const response: LoginResponse = await login({
@@ -49,7 +240,6 @@
 //       }
 //     } catch (error) {
 //       const apiError = error as ApiError;
-
 //       ErrorSwal({
 //         title: "Login failed!",
 //         text:
@@ -59,15 +249,11 @@
 //     }
 //   };
 
-//   const handleBack = () => {
-//     router.back();
-//   };
-
 //   return (
 //     <div className="min-h-screen w-full flex flex-col justify-center items-center px-4 bg-white dark:bg-gray-900 transition-colors">
 //       <div className="shadow-2xl dark:shadow-gray-800/50 rounded-2xl w-full max-w-xl p-8 md:p-16 relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
 //         <button
-//           onClick={handleBack}
+//           onClick={() => router.back()}
 //           className="absolute top-4 left-4 text-gray-600 dark:text-gray-400 hover:opacity-70 transition-opacity"
 //           aria-label="Go Back"
 //         >
@@ -155,8 +341,18 @@
 //             </Button>
 //           </Form.Item>
 
+//           <Divider className="dark:border-gray-600 my-2">
+//             <span className="text-gray-400 dark:text-gray-500 text-sm px-2">
+//               or
+//             </span>
+//           </Divider>
+
+//           <Form.Item className="mb-0">
+//             <GoogleLoginButton redirectPath={redirectPath} />
+//           </Form.Item>
+
 //           <p className="text-center pt-4 dark:text-gray-300">
-//             {"Don't have an account?"}
+//             {"Don't have an account? "}
 //             <Link
 //               href="/signup"
 //               className="text-blue-600 dark:text-blue-400 font-bold underline"
@@ -232,7 +428,6 @@ interface GoogleIdConfig {
   cancel_on_tap_outside?: boolean;
 }
 
-// ==================== TYPE DECLARATION ====================
 declare global {
   interface Window {
     google: {
@@ -255,9 +450,7 @@ declare global {
 }
 
 // ==================== GOOGLE BUTTON ====================
-const GoogleLoginButton: React.FC<{ redirectPath: string }> = ({
-  redirectPath,
-}) => {
+const GoogleLoginButton: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -284,10 +477,16 @@ const GoogleLoginButton: React.FC<{ redirectPath: string }> = ({
         dispatch(
           setCredentials({ user: data.user, token: data.tokens.access }),
         );
-      }
 
-      SuccessSwal({ title: "Success!", text: "Signed in with Google!" });
-      router.push(redirectPath);
+        SuccessSwal({ title: "Success!", text: "Signed in with Google!" });
+
+        // Logic: Redirect based on onboarding status
+        if (data.user.onboarding_completed) {
+          router.push("/");
+        } else {
+          router.push("/onboarding");
+        }
+      }
     } catch (error) {
       const apiError = error as ApiError;
       ErrorSwal({
@@ -331,16 +530,8 @@ const GoogleLoginButton: React.FC<{ redirectPath: string }> = ({
       document.head.appendChild(script);
     } else if (window.google?.accounts?.id) {
       initializeGoogle();
-    } else {
-      const interval = setInterval(() => {
-        if (window.google?.accounts?.id) {
-          clearInterval(interval);
-          initializeGoogle();
-        }
-      }, 100);
-      return () => clearInterval(interval);
     }
-  }, []);
+  });
 
   const handleClick = (): void => {
     if (!window.google?.accounts?.id) {
@@ -400,7 +591,8 @@ const LoginContent: React.FC = () => {
   const { token: antdToken } = theme.useToken();
   const dispatch = useDispatch();
 
-  const redirectPath = searchParams.get("from") || "/onboarding";
+  // If "from" exists, we use it only if onboarding is completed
+  const redirectPath = searchParams.get("from") || "/";
 
   const [login, { isLoading }] = useLoginMutation();
 
@@ -422,10 +614,18 @@ const LoginContent: React.FC = () => {
 
         SuccessSwal({
           title: "Login successful!",
-          text: `Welcome back, ${response.message}!`,
+          text: `Welcome back, ${response.user.first_name || "Trader"}!`,
         });
 
-        router.push(redirectPath);
+        // ==================== UPDATED ROUTING LOGIC ====================
+        // Priority: If onboarding is not completed, always go to /onboarding
+        // Otherwise, go to the intended redirect path or home
+        if (response.user.onboarding_completed) {
+          router.push(redirectPath);
+        } else {
+          router.push("/onboarding");
+        }
+        // ==============================================================
       }
     } catch (error) {
       const apiError = error as ApiError;
@@ -466,7 +666,7 @@ const LoginContent: React.FC = () => {
         >
           <Form.Item<LoginFormValues>
             label={
-              <span className="font-semibold text-gray-900 dark:text-white transition-colors">
+              <span className="font-semibold text-gray-900 dark:text-white">
                 Email
               </span>
             }
@@ -485,7 +685,7 @@ const LoginContent: React.FC = () => {
 
           <Form.Item<LoginFormValues>
             label={
-              <span className="font-semibold text-gray-900 dark:text-white transition-colors">
+              <span className="font-semibold text-gray-900 dark:text-white">
                 Password
               </span>
             }
@@ -507,7 +707,7 @@ const LoginContent: React.FC = () => {
             >
               <Checkbox className="dark:text-white">Remember me</Checkbox>
             </Form.Item>
-            <Form.Item>
+            <Form.Item className="mb-0">
               <Link
                 href="/forgot-password"
                 className="text-blue-600 dark:text-blue-400 underline font-bold"
@@ -537,7 +737,7 @@ const LoginContent: React.FC = () => {
           </Divider>
 
           <Form.Item className="mb-0">
-            <GoogleLoginButton redirectPath={redirectPath} />
+            <GoogleLoginButton />
           </Form.Item>
 
           <p className="text-center pt-4 dark:text-gray-300">

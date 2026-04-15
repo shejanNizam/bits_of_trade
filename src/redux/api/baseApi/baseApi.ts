@@ -18,6 +18,7 @@ const baseApi = createApi({
   }),
   tagTypes: [
     "auth",
+    "onboarding",
     "overview",
     "discipline",
     "user",

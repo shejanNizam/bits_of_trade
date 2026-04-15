@@ -55,12 +55,6 @@ export function OneLastThing() {
           >
             Skip for now
           </CustomSecondaryButton>
-          {/* <button
-            onClick={() => router.push("/")}
-            className="w-full text-sm sm:text-base md:text-lg font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-200 py-2 sm:py-3 active:scale-95 touch-manipulation"
-          >
-            Skip for now
-          </button> */}
         </div>
       </div>
     </div>

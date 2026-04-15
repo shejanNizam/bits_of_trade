@@ -31,22 +31,6 @@ export const overviewApi = baseApi.injectEndpoints({
       }),
       providesTags: ["overview"],
     }),
-    // getCalendarData: builder.query({
-    //   query: ({ year, month }: { year?: number; month?: number } = {}) => {
-    //     const params = new URLSearchParams();
-    //     if (year) params.append("year", year.toString());
-    //     if (month) params.append("month", month.toString());
-
-    //     const queryString = params.toString();
-    //     return {
-    //       url: queryString
-    //         ? `api/tradelog/trades/calendar/?${queryString}`
-    //         : "api/tradelog/trades/calendar/",
-    //       method: "GET",
-    //     };
-    //   },
-    //   providesTags: ["overview"],
-    // }),
   }),
 });
 
