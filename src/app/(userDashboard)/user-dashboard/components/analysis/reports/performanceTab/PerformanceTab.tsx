@@ -11,6 +11,7 @@ import QuantityAnalysis from "./QuantityAnalysis";
 import StrategyEffectiveness from "./StrategyEffectiveness";
 import SymbolFrequency from "./SymbolFrequency";
 import TimeMetrics from "./TimeMetrics";
+import WeekdayWinRate from "./WeekdayWinRate";
 
 export default function PerformanceTab() {
   const { data, isLoading } = useGetAllPerfomanceQuery({});
@@ -27,6 +28,7 @@ export default function PerformanceTab() {
   const symbolFrequency = data?.symbol_frequency || null;
   const capitalUsage = data?.capital_usage || null;
   const quantityAnalysis = data?.quantity_analysis || null;
+  const weekdayWinRate = data?.weekday_win_rate || null;
 
   if (isLoading) {
     return (
@@ -46,6 +48,8 @@ export default function PerformanceTab() {
         <NetPL netPnlCumulative={netPnlCumulative} />
         <NetDailyPL netDailyPnl={netDailyPnl} />
       </div>
+
+      <WeekdayWinRate weekdayWinRate={weekdayWinRate} />
 
       <PerformanceBreakdown performanceBreakdown={performanceBreakdown} />
 
