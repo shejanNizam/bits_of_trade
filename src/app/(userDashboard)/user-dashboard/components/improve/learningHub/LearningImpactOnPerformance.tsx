@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // export default function LearningImpactOnPerformance() {
 //   const stats = [
 //     {
@@ -45,124 +43,107 @@
 //   );
 // }
 
-"use client";
+// ─── Props ────────────────────────────────────────────────────────────────────
 
-import {
-  useGetAllCoursesQuery,
-  useGetAllUserCourseProgressQuery,
-} from "@/redux/features/learninghub/learninghubApi";
-import { Skeleton } from "antd";
-import { useMemo } from "react";
+import { CourseProgressAPI } from "../../../learning-hub/page";
 
-// Mock performance data - in production, this would come from a backend endpoint
-// that correlates course completion with trading performance metrics
-interface PerformanceImpact {
-  winRateImprovement: number;
-  mistakeReduction: number;
-  disciplineScore: number;
+interface LearningImpactOnPerformanceProps {
+  progress: CourseProgressAPI[];
 }
 
-export default function LearningImpactOnPerformance() {
-  const { data: progressData, isLoading: progressLoading } =
-    useGetAllUserCourseProgressQuery({});
-  const { data: courses, isLoading: coursesLoading } = useGetAllCoursesQuery(
-    {},
-  );
+// ─── Component ────────────────────────────────────────────────────────────────
 
-  // Calculate impact based on completed courses
-  // This is a simulation - actual data would come from your analytics backend
-  const impact = useMemo((): PerformanceImpact => {
-    if (!progressData) {
-      return { winRateImprovement: 0, mistakeReduction: 0, disciplineScore: 0 };
-    }
+export default function LearningImpactOnPerformance({
+  progress,
+}: LearningImpactOnPerformanceProps) {
+  // ── Derive stats from real progress data ──────────────────────────────────
 
-    const completedCourses = progressData.filter((p: any) => p.is_completed);
-    const completedCount = completedCourses.length;
+  // Total enrolments across all users (from API field)
+  const totalEnrolments =
+    progress.length > 0 ? progress[0].total_UserCourseStart : 0;
 
-    // Simulate impact based on number of completed courses
-    // Each completed course roughly improves metrics
-    const baseWinRate = 8.5;
-    const baseMistakeReduction = 22;
-    const baseDiscipline = 2.1;
+  // Total completions across all users (from API field)
+  const totalCompletions =
+    progress.length > 0 ? progress[0].total_completed_UserCourseStart : 0;
 
-    return {
-      winRateImprovement: Math.min(35, baseWinRate + completedCount * 2.5),
-      mistakeReduction: Math.min(65, baseMistakeReduction + completedCount * 6),
-      disciplineScore: Math.min(4.5, baseDiscipline + completedCount * 0.35),
-    };
-  }, [progressData]);
+  // Completion rate across the platform
+  const completionRate =
+    totalEnrolments > 0
+      ? Math.round((totalCompletions / totalEnrolments) * 100)
+      : 0;
 
-  const completedCount =
-    progressData?.filter((p: any) => p.is_completed).length || 0;
+  // Personal completion percentage (average across this user's courses)
+  const personalAvg =
+    progress.length > 0
+      ? Math.round(
+          progress.reduce((sum, p) => sum + p.completion_percentage, 0) /
+            progress.length,
+        )
+      : 0;
+
+  // Multiplier: how many courses this user has completed vs started
+  const completedByUser = progress.filter((p) => p.is_completed).length;
+  const multiplier =
+    progress.length > 0
+      ? (completedByUser / progress.length).toFixed(1)
+      : "0.0";
 
   const stats = [
     {
-      label: "Win rate improved after courses",
-      value: `+${impact.winRateImprovement.toFixed(1)}%`,
+      label: "Platform completion rate",
+      value: `${completionRate}%`,
       icon: "🎯",
       color: "text-emerald-500",
     },
     {
-      label: "Mistakes reduced with training",
-      value: `-${impact.mistakeReduction.toFixed(0)}%`,
+      label: "Your average progress",
+      value: `${personalAvg}%`,
       icon: "⚠️",
       color: "text-blue-500",
     },
     {
-      label: "Better discipline scores",
-      value: `${impact.disciplineScore.toFixed(1)}x`,
+      label: "Completion ratio",
+      value: `${multiplier}x`,
       icon: "✅",
       color: "text-purple-500",
     },
   ];
 
-  if (progressLoading || coursesLoading) {
-    return (
-      <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-8 dark:border-slate-800 dark:bg-slate-900/50">
-        <Skeleton active paragraph={{ rows: 3 }} />
-      </section>
-    );
-  }
-
   return (
     <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-8 dark:border-slate-800 dark:bg-slate-900/50">
-      <div className="flex justify-between items-center mb-10 flex-wrap gap-4">
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-          Learning Impact on Performance
-        </h2>
-        {completedCount > 0 && (
-          <span className="text-sm text-slate-500 dark:text-slate-400">
-            Based on {completedCount} completed{" "}
-            {completedCount === 1 ? "course" : "courses"}
-          </span>
-        )}
+      <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-10">
+        Learning Impact on Performance
+      </h2>
+
+      <div className="flex flex-col md:flex-row justify-around items-center gap-12 text-center">
+        {stats.map((stat, i) => (
+          <div key={i} className="max-w-50">
+            <div className="mb-2 text-3xl">{stat.icon}</div>
+            <div className={`text-4xl font-black mb-2 ${stat.color}`}>
+              {stat.value}
+            </div>
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+              {stat.label}
+            </p>
+          </div>
+        ))}
       </div>
 
-      {completedCount === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-slate-400 dark:text-slate-500">
-            Complete your first course to see your performance impact!
-          </p>
-          <p className="text-sm text-slate-400 dark:text-slate-500 mt-2">
-            Our data shows that traders who complete courses improve their win
-            rate by an average of 18.5%.
-          </p>
-        </div>
-      ) : (
-        <div className="flex flex-col md:flex-row justify-around items-center gap-12 text-center">
-          {stats.map((stat, i) => (
-            <div key={i} className="max-w-50">
-              <div className="mb-2 text-3xl">{stat.icon}</div>
-              <div className={`text-4xl font-black mb-2 ${stat.color}`}>
-                {stat.value}
-              </div>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Summary row */}
+      <div className="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-wrap justify-center gap-6 text-center text-xs text-slate-400 dark:text-slate-500 font-medium">
+        <span>
+          Total enrolments:{" "}
+          <strong className="text-slate-600 dark:text-slate-300">
+            {totalEnrolments}
+          </strong>
+        </span>
+        <span>
+          Total completions:{" "}
+          <strong className="text-slate-600 dark:text-slate-300">
+            {totalCompletions}
+          </strong>
+        </span>
+      </div>
     </section>
   );
 }

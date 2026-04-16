@@ -1,107 +1,271 @@
+// "use client";
+
+// import { PlayCircleFilled } from "@ant-design/icons";
+// import { useState } from "react";
+// import LessonModal from "./LessonModal";
+
+// // 1. Interface definitions for type safety
+// export interface Lesson {
+//   title: string;
+//   type: string;
+//   level: "Beginner" | "Intermediate" | "Advanced";
+//   time: string;
+//   outcome: string;
+//   insight: string;
+//   color: string;
+// }
+
+// interface LessonCategory {
+//   category: string;
+//   lessons: Lesson[];
+// }
+
+// const LESSON_DATA: LessonCategory[] = [
+//   {
+//     category: "Risk Management",
+//     lessons: [
+//       {
+//         title: "Position Sizing Fundamentals",
+//         type: "Risk Management",
+//         level: "Beginner",
+//         time: "15 min",
+//         outcome: "Master proper position sizing techniques",
+//         insight: "Your average loss size increased by 12% recently",
+//         color: "blue",
+//       },
+//       {
+//         title: "Breakout Confirmation System",
+//         type: "Psychology",
+//         level: "Intermediate",
+//         time: "20 min",
+//         outcome: "Reduce false breakout entries by 40%",
+//         insight: "You had 4 false breakouts in last 10 trades",
+//         color: "purple",
+//       },
+//       {
+//         title: "Trend Following Framework",
+//         type: "Technical",
+//         level: "Beginner",
+//         time: "10 min",
+//         outcome: "Align entries with dominant trend direction",
+//         insight: "Your counter-trend trades show 62% loss rate",
+//         color: "orange",
+//       },
+//     ],
+//   },
+//   { category: "Psychology Lessons", lessons: [] },
+//   { category: "Technical Analysis Lessons", lessons: [] },
+//   { category: "Data Science Lessons", lessons: [] },
+// ];
+
+// export default function Lessons() {
+//   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+
+//   // Use the first category's lessons as a fallback for empty sections
+//   const demoLessons = LESSON_DATA[0].lessons;
+
+//   return (
+//     <div className="p-6 space-y-12">
+//       {LESSON_DATA.map((section, idx) => (
+//         <section key={idx} className="space-y-6">
+//           <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+//             {section.category}
+//           </h2>
+
+//           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+//             {(section.lessons.length > 0 ? section.lessons : demoLessons).map(
+//               (lesson, lIdx) => (
+//                 <LessonCard
+//                   key={`${idx}-${lIdx}`}
+//                   lesson={lesson}
+//                   onStart={() => setSelectedLesson(lesson)}
+//                 />
+//               ),
+//             )}
+//           </div>
+//         </section>
+//       ))}
+
+//       {/* Separate Modal Component */}
+//       <LessonModal
+//         lesson={selectedLesson}
+//         open={!!selectedLesson}
+//         onClose={() => setSelectedLesson(null)}
+//       />
+//     </div>
+//   );
+// }
+
+// function LessonCard({
+//   lesson,
+//   onStart,
+// }: {
+//   lesson: Lesson;
+//   onStart: () => void;
+// }) {
+//   return (
+//     <div className="flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
+//       <div className="flex items-center justify-between mb-4">
+//         <span className="rounded-md bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
+//           {lesson.type}
+//         </span>
+//         <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+//           {lesson.level}
+//         </span>
+//       </div>
+
+//       <h4 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">
+//         {lesson.title}
+//       </h4>
+//       <p className="mt-1 text-sm text-slate-400">🕒 {lesson.time}</p>
+
+//       <div className="mt-6 space-y-4">
+//         <div>
+//           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+//             Outcome
+//           </p>
+//           <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+//             {lesson.outcome}
+//           </p>
+//         </div>
+
+//         <div className="rounded-lg border-l-4 border-orange-400 bg-orange-50 p-3 dark:bg-orange-900/10">
+//           <p className="text-[10px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">
+//             Why Now:
+//           </p>
+//           <p className="text-xs text-orange-800 dark:text-orange-200">
+//             {lesson.insight}
+//           </p>
+//         </div>
+//       </div>
+
+//       <button
+//         onClick={onStart}
+//         className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-sm font-bold text-white transition-all hover:bg-indigo-700 active:scale-[0.98]"
+//       >
+//         <PlayCircleFilled />
+//         Start Learning
+//       </button>
+//     </div>
+//   );
+// }
+
 "use client";
 
-import { LearningLesson } from "@/types/learning";
 import { PlayCircleFilled } from "@ant-design/icons";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import {
+  CourseAPI,
+  CourseProgressAPI,
+  LearningLessonAPI,
+} from "../../../learning-hub/page";
 import LessonModal from "./LessonModal";
 
-interface LessonsProps {
-  lessons: LearningLesson[];
+// ─── Public lesson type used by LessonModal ───────────────────────────────────
+
+export interface Lesson {
+  courseId: number;
+  title: string;
+  type: string; // course_type from API
+  level: string; // course_level from API
+  time: string; // derived from total video durations (shown as video count)
+  outcome: string; // about field from API
+  insight: string; // description field from API
+  about: string | null;
+  videos: CourseAPI["videos"];
 }
 
-export default function Lessons({ lessons }: LessonsProps) {
-  const [selectedLesson, setSelectedLesson] = useState<LearningLesson | null>(
-    null,
-  );
+// ─── Helper: derive a readable duration label from videos array ───────────────
 
-  // Ensure lessons is an array
-  const lessonsArray = Array.isArray(lessons) ? lessons : [];
+function deriveTime(videos: CourseAPI["videos"]): string {
+  const count = videos.length;
+  if (count === 0) return "—";
+  return `${count} video${count !== 1 ? "s" : ""}`;
+}
 
-  // Group lessons by category based on course types
-  const lessonCategories = useMemo(() => {
-    const categories = [
-      {
-        category: "Risk Management",
-        lessons: lessonsArray.filter(
-          (l) =>
-            l.title?.toLowerCase().includes("risk") ||
-            l.courses?.some((c) => c.course_type === "risk"),
+// ─── Helper: capitalise first letter ─────────────────────────────────────────
+
+function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// ─── Props ────────────────────────────────────────────────────────────────────
+
+interface LessonsProps {
+  lessons: LearningLessonAPI[];
+  token: string;
+  progress: CourseProgressAPI[];
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export default function Lessons({ lessons, token, progress }: LessonsProps) {
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+
+  // Map each LearningLessonAPI into a section with courses converted to Lesson[]
+  const sections = lessons
+    .filter((l) => l.is_active)
+    .map((l) => ({
+      category: l.title,
+      lessons: l.courses
+        .filter((c) => c.is_active)
+        .map(
+          (c): Lesson => ({
+            courseId: c.id,
+            title: c.title,
+            type: capitalize(c.course_type),
+            level: capitalize(c.course_level),
+            time: deriveTime(c.videos),
+            outcome: c.about ?? "Complete this course to level up your skills.",
+            insight:
+              c.description ??
+              "This course is recommended based on your recent activity.",
+            about: c.about,
+            videos: c.videos,
+          }),
         ),
-      },
-      {
-        category: "Psychology Lessons",
-        lessons: lessonsArray.filter(
-          (l) =>
-            l.title?.toLowerCase().includes("psychology") ||
-            l.courses?.some((c) => c.course_type === "psychology"),
-        ),
-      },
-      {
-        category: "Technical Analysis",
-        lessons: lessonsArray.filter(
-          (l) =>
-            l.title?.toLowerCase().includes("technical") ||
-            l.courses?.some((c) => c.course_type === "technical"),
-        ),
-      },
-      {
-        category: "All Lessons",
-        lessons: lessonsArray,
-      },
-    ];
+    }));
 
-    return categories.filter((cat) => cat.lessons.length > 0);
-  }, [lessonsArray]);
-
-  const getColorForLesson = (title: string) => {
-    if (title?.toLowerCase().includes("risk")) return "blue";
-    if (title?.toLowerCase().includes("psychology")) return "purple";
-    if (title?.toLowerCase().includes("technical")) return "orange";
-    return "emerald";
-  };
-
-  const getTotalVideos = (lesson: LearningLesson) => {
+  // If API returns no lessons yet, show an empty state
+  if (sections.length === 0) {
     return (
-      lesson.courses?.reduce(
-        (total, course) => total + (course.videos?.length || 0),
-        0,
-      ) || 0
-    );
-  };
-
-  const getTotalCourses = (lesson: LearningLesson) => {
-    return lesson.courses?.length || 0;
-  };
-
-  if (lessonsArray.length === 0) {
-    return (
-      <div className="p-6 text-center">
-        <p className="text-slate-500 dark:text-slate-400">
-          No lessons available yet. Check back soon!
-        </p>
+      <div className="p-6 text-center text-slate-400 dark:text-slate-500">
+        No lessons available yet.
       </div>
     );
   }
 
   return (
     <div className="p-6 space-y-12">
-      {lessonCategories.map((section, idx) => (
+      {sections.map((section, idx) => (
         <section key={idx} className="space-y-6">
           <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
             {section.category}
           </h2>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {section.lessons.map((lesson) => (
-              <LessonCard
-                key={lesson.id}
-                lesson={lesson}
-                color={getColorForLesson(lesson.title)}
-                totalVideos={getTotalVideos(lesson)}
-                totalCourses={getTotalCourses(lesson)}
-                onStart={() => setSelectedLesson(lesson)}
-              />
-            ))}
-          </div>
+
+          {section.lessons.length === 0 ? (
+            <p className="text-sm text-slate-400 dark:text-slate-500">
+              No courses in this section yet.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {section.lessons.map((lesson, lIdx) => {
+                // Find this course's progress record (if exists)
+                const courseProgress = progress.find(
+                  (p) => p.course.id === lesson.courseId,
+                );
+
+                return (
+                  <LessonCard
+                    key={`${idx}-${lIdx}`}
+                    lesson={lesson}
+                    courseProgress={courseProgress}
+                    onStart={() => setSelectedLesson(lesson)}
+                  />
+                );
+              })}
+            </div>
+          )}
         </section>
       ))}
 
@@ -109,79 +273,85 @@ export default function Lessons({ lessons }: LessonsProps) {
         lesson={selectedLesson}
         open={!!selectedLesson}
         onClose={() => setSelectedLesson(null)}
+        token={token}
+        progress={progress}
       />
     </div>
   );
 }
 
+// ─── Lesson Card ──────────────────────────────────────────────────────────────
+
 function LessonCard({
   lesson,
-  color,
-  totalVideos,
-  totalCourses,
+  courseProgress,
   onStart,
 }: {
-  lesson: LearningLesson;
-  color: string;
-  totalVideos: number;
-  totalCourses: number;
+  lesson: Lesson;
+  courseProgress: CourseProgressAPI | undefined;
   onStart: () => void;
 }) {
-  const colorClasses: Record<string, string> = {
-    blue: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
-    purple:
-      "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
-    orange:
-      "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
-    emerald:
-      "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
-  };
+  const hasStarted = !!courseProgress;
+  const percentage = courseProgress?.completion_percentage ?? 0;
 
   return (
     <div className="flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
       <div className="flex items-center justify-between mb-4">
-        <span
-          className={`rounded-md px-2 py-1 text-xs font-semibold ${colorClasses[color]}`}
-        >
-          {totalCourses} {totalCourses === 1 ? "Course" : "Courses"}
+        <span className="rounded-md bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
+          {lesson.type}
         </span>
         <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-          {totalVideos} {totalVideos === 1 ? "Video" : "Videos"}
+          {lesson.level}
         </span>
       </div>
 
       <h4 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">
         {lesson.title}
       </h4>
-      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 line-clamp-2">
-        {lesson.description || "No description available"}
-      </p>
+      <p className="mt-1 text-sm text-slate-400">🕒 {lesson.time}</p>
 
-      {lesson.courses && lesson.courses.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2">
-          {lesson.courses.slice(0, 2).map((course) => (
-            <span
-              key={course.id}
-              className="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400 truncate max-w-37.5"
-              title={course.title}
-            >
-              {course.title}
-            </span>
-          ))}
-          {totalCourses > 2 && (
-            <span className="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">
-              +{totalCourses - 2} more
-            </span>
-          )}
+      {/* Progress bar — only show if user has started */}
+      {hasStarted && (
+        <div className="mt-3 space-y-1">
+          <div className="flex justify-between text-[10px] font-bold text-slate-400">
+            <span>Progress</span>
+            <span>{Math.round(percentage)}%</span>
+          </div>
+          <div className="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+            <div
+              className="h-full bg-indigo-500 transition-all duration-500"
+              style={{ width: `${percentage}%` }}
+            />
+          </div>
         </div>
       )}
+
+      <div className="mt-6 space-y-4">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            Outcome
+          </p>
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            {lesson.outcome}
+          </p>
+        </div>
+
+        <div className="rounded-lg border-l-4 border-orange-400 bg-orange-50 p-3 dark:bg-orange-900/10">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">
+            Why Now:
+          </p>
+          <p className="text-xs text-orange-800 dark:text-orange-200">
+            {lesson.insight}
+          </p>
+        </div>
+      </div>
 
       <button
         onClick={onStart}
         className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-sm font-bold text-white transition-all hover:bg-indigo-700 active:scale-[0.98]"
       >
         <PlayCircleFilled />
-        Start Learning
+        {hasStarted ? "Continue Learning" : "Start Learning"}
       </button>
     </div>
   );

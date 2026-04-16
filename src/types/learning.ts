@@ -1,53 +1,3 @@
-// Learning Lesson Types
-// export interface LearningLesson {
-//   id: number;
-//   title: string;
-//   description: string | null;
-//   is_active: boolean;
-//   created_at: string;
-//   updated_at: string;
-//   courses: Course[];
-// }
-
-// Course Types
-// export interface Course {
-//   id: number;
-//   title: string;
-//   about: string | null;
-//   description: string | null;
-//   course_type: string;
-//   course_level: "beginner" | "intermediate" | "advanced";
-//   is_active: boolean;
-//   created_at: string;
-//   updated_at: string;
-//   lessons: {
-//     id: number;
-//     title: string;
-//     description: string;
-//   };
-//   videos: Video[];
-// }
-
-// Video Types
-// export interface Video {
-//   id: number;
-//   title: string;
-//   description: string | null;
-//   video: string;
-//   course: {
-//     id: number;
-//     title: string;
-//     course_type: string;
-//     course_level: string;
-//   };
-//   is_free: boolean;
-//   is_complete: boolean;
-//   is_active: boolean;
-//   created_at: string;
-//   updated_at: string;
-// }
-
-// User Course Progress Types
 export interface UserCourseProgress {
   id: number;
   user: {
@@ -74,59 +24,56 @@ export interface UserCourseProgress {
   total_completed_UserCourseStart: number;
 }
 
-// Component Props Types
-export interface LessonCardData {
-  id: number;
-  title: string;
-  type: string;
-  level: "Beginner" | "Intermediate" | "Advanced";
-  time: string;
-  outcome: string;
-  insight: string;
-  color: string;
-  courseId: number;
-}
-
-export interface LearningPathData {
-  id: number;
-  title: string;
-  tag: string;
-  level: string;
-  modules: number;
-  completed: number;
-  time: string;
-  color: string;
-  courseId: number;
-}
-
 export interface Video {
   id: number;
   title: string;
+  description: string | null;
   video: string;
   is_free: boolean;
   is_complete: boolean;
   is_active: boolean;
-  description?: string;
-  course?: { id: number; title: string };
+  created_at: string;
+  updated_at: string;
+  course: {
+    id: number;
+    title: string;
+    course_type: string;
+    course_level: string;
+  };
 }
 
 export interface Course {
   id: number;
   title: string;
-  about: string;
-  description: string;
+  about: string | null;
+  description: string | null;
   course_type: string;
   course_level: string;
-  is_active?: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  lessons: {
+    id: number;
+    title: string;
+    description: string;
+  };
   videos: Video[];
 }
 
 export interface LearningLesson {
   id: number;
   title: string;
-  description?: string;
+  description: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
   courses: Course[];
+}
+
+// For your API Response with Pagination
+export interface ApiResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
 }

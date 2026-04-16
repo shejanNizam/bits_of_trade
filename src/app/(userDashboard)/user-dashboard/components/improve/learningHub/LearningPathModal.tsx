@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // "use client";
 
 // import {
@@ -241,146 +240,93 @@
 "use client";
 
 import {
-  useCreateCourseProgressMutation,
-  useGetAllUserCourseProgressQuery,
-  useGetCourseByIdQuery,
-} from "@/redux/features/learninghub/learninghubApi";
-import { LessonCardData, Video } from "@/types/learning";
-import {
   CheckCircleFilled,
   ClockCircleOutlined,
   CloseOutlined,
   LockOutlined,
   PlayCircleFilled,
 } from "@ant-design/icons";
-import { Modal, Progress, Skeleton } from "antd";
-import { useEffect, useState } from "react";
+import { Modal, Progress } from "antd";
+import { useState } from "react";
+import { CourseProgressAPI } from "../../../learning-hub/page";
+import { LearningPath } from "./AllLearningPaths";
 
-interface LessonModalProps {
-  lesson: LessonCardData | null;
+// ─── Props ────────────────────────────────────────────────────────────────────
+
+interface LearningPathModalProps {
+  path: LearningPath | null;
   open: boolean;
   onClose: () => void;
+  token: string;
+  progress: CourseProgressAPI[];
 }
 
-interface ModuleItem {
-  id: number;
-  title: string;
-  time: string;
-  status: "Completed" | "Current" | "Locked";
-  videoId: number;
-  isFree?: boolean;
-}
+// ─── Component ────────────────────────────────────────────────────────────────
 
-// Helper to estimate video duration (mock - would come from backend ideally)
-const estimateVideoDuration = (): string => {
-  const minutes = [5, 8, 12, 15, 20];
-  return `${minutes[Math.floor(Math.random() * minutes.length)]} min`;
-};
-
-export default function LessonModal({
-  lesson,
+export default function LearningPathModal({
+  path,
   open,
   onClose,
-}: LessonModalProps) {
-  const [isStarting, setIsStarting] = useState(false);
-  const [createProgress] = useCreateCourseProgressMutation();
+  token,
+  progress,
+}: LearningPathModalProps) {
+  const [starting, setStarting] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  const {
-    data: course,
-    isLoading: courseLoading,
-    error: courseError,
-  } = useGetCourseByIdQuery(lesson?.courseId || 0, {
-    skip: !lesson?.courseId || !open,
-  });
+  if (!path) return null;
 
-  const { data: progressData, refetch: refetchProgress } =
-    useGetAllUserCourseProgressQuery({}, { skip: !open });
+  // Find existing progress for this course
+  const existingProgress = progress.find((p) => p.course.id === path.courseId);
+  const hasStarted = !!existingProgress;
+  const watchedIds = path.watchedIds;
 
-  // Get progress for this specific course
-  const courseProgress = progressData?.find(
-    (p: any) => p.course.id === lesson?.courseId,
-  );
-
-  const watchedVideoIds = new Set(
-    courseProgress?.videos_watched?.map((v: any) => v.id) || [],
-  );
-
-  // Build modules list from course videos
-  const modules: ModuleItem[] =
-    course?.videos
-      ?.filter((video: Video) => video.is_active)
-      .map((video: Video, index: number) => {
-        const isWatched = watchedVideoIds.has(video.id);
-        let status: "Completed" | "Current" | "Locked" = "Locked";
-
-        if (isWatched) {
-          status = "Completed";
-        } else if (
-          index === 0 ||
-          watchedVideoIds.has(course.videos[index - 1]?.id)
-        ) {
-          status = "Current";
-        }
-
-        return {
-          id: video.id,
-          title: video.title,
-          time: estimateVideoDuration(),
-          status,
-          videoId: video.id,
-          isFree: video.is_free,
-        };
-      }) || [];
-
-  const completedCount = modules.filter((m) => m.status === "Completed").length;
   const percentage =
-    modules.length > 0 ? (completedCount / modules.length) * 100 : 0;
+    path.modules > 0 ? Math.round((path.completed / path.modules) * 100) : 0;
 
-  // Auto-create progress record if user starts the course
-  useEffect(() => {
-    if (open && lesson && !courseProgress && !isStarting && !courseLoading) {
-      // We don't auto-create - user needs to click "Start Learning"
+  // ── POST /course-progress/create/ ──────────────────────────────────────────
+  async function handleContinueOrStart() {
+    if (hasStarted) {
+      // Navigate to player — implement routing as needed in your app
+      onClose();
+      return;
     }
-  }, [open, lesson, courseProgress, isStarting, courseLoading]);
 
-  const handleStartLearning = async () => {
-    if (!lesson || courseProgress) return;
+    setStarting(true);
+    setApiError(null);
 
-    setIsStarting(true);
     try {
-      // Get user ID from localStorage or auth context
-      const userStr = localStorage.getItem("user");
-      const user = userStr ? JSON.parse(userStr) : null;
+      const payloadBase64 = token.split(".")[1];
+      const payload = JSON.parse(atob(payloadBase64));
+      const userId: number = payload.user_id;
 
-      if (user?.id) {
-        await createProgress({
-          user: user.id,
-          course: lesson.courseId,
-        }).unwrap();
-        await refetchProgress();
+      const res = await fetch("/api/learninghub/course-progress/create/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user: userId, course: path.courseId }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        const isAlreadyEnrolled =
+          res.status === 400 && JSON.stringify(errData).includes("unique set");
+
+        if (!isAlreadyEnrolled) {
+          throw new Error(errData?.detail ?? `Error ${res.status}`);
+        }
       }
-    } catch (error) {
-      console.error("Failed to create course progress:", error);
+
+      onClose();
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Something went wrong";
+      setApiError(message);
     } finally {
-      setIsStarting(false);
+      setStarting(false);
     }
-  };
-
-  const handleContinueLearning = () => {
-    // Find the first non-completed module and play it
-    const nextModule = modules.find((m) => m.status === "Current");
-    if (nextModule) {
-      // Navigate to video player or open video modal
-      console.log("Play video:", nextModule.videoId);
-    }
-  };
-
-  if (!lesson) return null;
-
-  const isLoading = courseLoading;
-  const hasError = courseError;
-  const hasProgress = !!courseProgress;
-  const isCourseCompleted = courseProgress?.is_completed || percentage === 100;
+  }
 
   return (
     <Modal
@@ -392,175 +338,170 @@ export default function LessonModal({
       closeIcon={
         <CloseOutlined className="text-slate-400 dark:text-slate-500 mt-2 mr-2" />
       }
-      styles={{
-        body: { padding: 0 },
-      }}
+      styles={{ body: { padding: 0 } }}
       className="dark:ant-modal-dark rounded-2xl overflow-hidden"
     >
       <div className="transition-colors duration-300">
-        {/* Header Section */}
+        {/* Header */}
         <div className="p-6 sm:p-8 border-b border-slate-100 dark:border-slate-800">
           <div className="flex gap-2 mb-4">
             <span
-              className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-${lesson.color}-50 text-${lesson.color}-600 dark:bg-${lesson.color}-900/20 dark:text-${lesson.color}-400`}
+              className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${path.color}`}
             >
-              {lesson.type}
+              {path.tag}
             </span>
             <span className="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide">
-              {lesson.level}
+              {path.level}
             </span>
-            {courseProgress && isCourseCompleted && (
-              <span className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide">
-                Completed ✓
-              </span>
-            )}
           </div>
 
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2">
-            {lesson.title}
+            {path.title}
           </h2>
 
           <div className="flex gap-4 text-xs sm:text-sm text-slate-400 dark:text-slate-500 font-medium">
             <span className="flex items-center gap-1">
-              📖 {modules.length} {modules.length === 1 ? "module" : "modules"}
+              📖 {path.modules} modules
             </span>
             <span className="flex items-center gap-1">
-              <ClockCircleOutlined /> {lesson.time}
+              <ClockCircleOutlined /> {path.time}
             </span>
           </div>
         </div>
 
         <div className="p-6 sm:p-8 space-y-6 sm:space-y-8">
-          {/* Progress Card - Only show if user has started the course */}
-          {(hasProgress || completedCount > 0) && (
-            <div className="bg-teal-50/50 dark:bg-teal-900/10 border border-teal-100 dark:border-teal-900/20 rounded-xl p-5">
-              <div className="flex justify-between items-center mb-3">
-                <span className="text-sm font-bold text-slate-900 dark:text-white">
-                  Your Progress
-                </span>
-                <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400">
-                  {completedCount} / {modules.length} completed
-                </span>
-              </div>
-              <Progress
-                percent={percentage}
-                strokeColor="#14b8a6"
-                trailColor="rgba(20, 184, 166, 0.1)"
-                showInfo={false}
-                className="mb-2"
-              />
-              <p className="text-[11px] sm:text-xs text-teal-600 dark:text-teal-400 font-medium">
-                {isCourseCompleted
-                  ? "🎉 Congratulations! You've completed this course!"
-                  : `${Math.max(0, 100 - Math.round(percentage))}% remaining to complete this course`}
+          {/* Progress Card */}
+          <div className="bg-teal-50/50 dark:bg-teal-900/10 border border-teal-100 dark:border-teal-900/20 rounded-xl p-5">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm font-bold text-slate-900 dark:text-white">
+                Your Progress
+              </span>
+              <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400">
+                {path.completed} / {path.modules} completed
+              </span>
+            </div>
+            <Progress
+              percent={percentage}
+              strokeColor="#14b8a6"
+              trailColor="rgba(20, 184, 166, 0.1)"
+              showInfo={false}
+              className="mb-2"
+            />
+            <p className="text-[11px] sm:text-xs text-teal-600 dark:text-teal-400 font-medium">
+              {Math.max(0, 100 - percentage)}% remaining to complete this
+              learning path
+            </p>
+          </div>
+
+          {/* About */}
+          {(path.about || path.description) && (
+            <div className="space-y-2">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 font-sans">
+                About This Course
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                {path.about ?? path.description}
               </p>
             </div>
           )}
 
-          {/* About Section */}
-          <div className="space-y-2">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 font-sans">
-              About This Course
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-              {course?.description || course?.about || lesson.outcome}
-            </p>
-          </div>
-
-          {/* Module List */}
+          {/* Modules from real API videos */}
           <div className="space-y-4">
             <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
               Course Modules
             </h3>
 
-            {isLoading ? (
-              <div className="space-y-2">
-                {[1, 2, 3].map((i) => (
-                  <Skeleton
-                    key={i}
-                    active
-                    paragraph={{ rows: 1 }}
-                    className="p-3"
-                  />
-                ))}
-              </div>
-            ) : hasError ? (
-              <div className="text-center py-6 text-red-500">
-                Failed to load course modules
-              </div>
-            ) : modules.length === 0 ? (
-              <div className="text-center py-6 text-slate-400">
-                No modules available for this course yet.
-              </div>
+            {path.videos.length === 0 ? (
+              <p className="text-sm text-slate-400 dark:text-slate-500">
+                No videos uploaded yet.
+              </p>
             ) : (
-              <div className="space-y-2.5 max-h-75 overflow-y-auto pr-2 custom-scrollbar">
-                {modules.map((mod) => (
-                  <div
-                    key={mod.id}
-                    className={`flex items-center justify-between p-3 sm:p-4 rounded-xl border transition-all duration-200 ${
-                      mod.status === "Completed"
-                        ? "bg-emerald-50/30 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-900/20"
-                        : mod.status === "Current"
-                          ? "bg-white dark:bg-slate-900 border-indigo-200 dark:border-indigo-800 shadow-sm cursor-pointer hover:bg-indigo-50/50 dark:hover:bg-indigo-950/20"
-                          : "bg-slate-50/50 dark:bg-slate-900/40 border-slate-100 dark:border-slate-800 opacity-60"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div
-                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 ${
-                          mod.status === "Completed"
-                            ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600"
-                            : mod.status === "Current"
-                              ? "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600"
-                              : "bg-slate-100 dark:bg-slate-800 text-slate-400"
-                        }`}
-                      >
-                        {mod.status === "Completed" ? (
-                          <CheckCircleFilled className="text-lg sm:text-xl" />
-                        ) : mod.status === "Current" ? (
-                          <PlayCircleFilled className="text-lg sm:text-xl" />
-                        ) : (
-                          <LockOutlined className="text-sm" />
-                        )}
-                      </div>
-                      <div>
-                        <h4
-                          className={`text-xs sm:text-sm font-bold leading-tight ${
-                            mod.status === "Locked"
-                              ? "text-slate-400 dark:text-slate-600"
-                              : "text-slate-900 dark:text-slate-200"
-                          }`}
-                        >
-                          {mod.title}
-                          {mod.isFree && !hasProgress && (
-                            <span className="ml-2 text-[10px] text-emerald-500 font-normal">
-                              Free Preview
-                            </span>
-                          )}
-                        </h4>
-                        <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500">
-                          {mod.time}
-                        </span>
-                      </div>
-                    </div>
-                    <span
-                      className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-tight ${
-                        mod.status === "Completed"
-                          ? "text-emerald-500"
-                          : mod.status === "Locked"
-                            ? "text-slate-300 dark:text-slate-600"
-                            : "hidden"
+              <div className="space-y-2.5 max-h-72 overflow-y-auto pr-2 custom-scrollbar">
+                {path.videos.map((video, idx) => {
+                  const isWatched = watchedIds.has(video.id);
+                  const firstUnwatchedIdx = path.videos.findIndex(
+                    (v) => !watchedIds.has(v.id),
+                  );
+                  const isCurrent = idx === firstUnwatchedIdx;
+                  const isLocked =
+                    !video.is_free && !isWatched && idx > firstUnwatchedIdx;
+
+                  const status = isWatched
+                    ? "Completed"
+                    : isCurrent
+                      ? "Current"
+                      : "Locked";
+
+                  return (
+                    <div
+                      key={video.id}
+                      className={`flex items-center justify-between p-3 sm:p-4 rounded-xl border transition-all duration-200 ${
+                        status === "Completed"
+                          ? "bg-emerald-50/30 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-900/20"
+                          : status === "Current"
+                            ? "bg-white dark:bg-slate-900 border-indigo-200 dark:border-indigo-800 shadow-sm"
+                            : "bg-slate-50/50 dark:bg-slate-900/40 border-slate-100 dark:border-slate-800 opacity-60"
                       }`}
                     >
-                      {mod.status}
-                    </span>
-                  </div>
-                ))}
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div
+                          className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 ${
+                            status === "Completed"
+                              ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600"
+                              : status === "Current"
+                                ? "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600"
+                                : "bg-slate-100 dark:bg-slate-800 text-slate-400"
+                          }`}
+                        >
+                          {status === "Completed" ? (
+                            <CheckCircleFilled className="text-lg sm:text-xl" />
+                          ) : status === "Current" ? (
+                            <PlayCircleFilled className="text-lg sm:text-xl" />
+                          ) : (
+                            <LockOutlined className="text-sm" />
+                          )}
+                        </div>
+                        <div>
+                          <h4
+                            className={`text-xs sm:text-sm font-bold leading-tight ${
+                              isLocked
+                                ? "text-slate-400 dark:text-slate-600"
+                                : "text-slate-900 dark:text-slate-200"
+                            }`}
+                          >
+                            Module {idx + 1}: {video.title}
+                          </h4>
+                          {video.description && (
+                            <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500">
+                              {video.description}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <span
+                        className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-tight ${
+                          status === "Completed"
+                            ? "text-emerald-500"
+                            : status === "Locked"
+                              ? "text-slate-300 dark:text-slate-600"
+                              : "hidden"
+                        }`}
+                      >
+                        {status === "Locked" ? "Locked" : "Done"}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
 
-          {/* Footer Actions */}
+          {/* API Error */}
+          {apiError && (
+            <p className="text-xs text-red-500 font-medium">{apiError}</p>
+          )}
+
+          {/* Footer */}
           <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
             <button
               onClick={onClose}
@@ -568,33 +509,18 @@ export default function LessonModal({
             >
               Close
             </button>
-
-            {!hasProgress && !isCourseCompleted ? (
-              <button
-                onClick={handleStartLearning}
-                disabled={isStarting}
-                className="order-1 sm:order-2 flex-2 py-3 rounded-xl bg-indigo-600 dark:bg-indigo-500 text-white font-bold text-sm hover:bg-indigo-700 shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <PlayCircleFilled />
-                {isStarting ? "Starting..." : "Start Learning"}
-              </button>
-            ) : !isCourseCompleted ? (
-              <button
-                onClick={handleContinueLearning}
-                className="order-1 sm:order-2 flex-2 py-3 rounded-xl bg-indigo-600 dark:bg-indigo-500 text-white font-bold text-sm hover:bg-indigo-700 shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex items-center justify-center gap-2"
-              >
-                <PlayCircleFilled />
-                Continue Learning
-              </button>
-            ) : (
-              <button
-                onClick={onClose}
-                className="order-1 sm:order-2 flex-2 py-3 rounded-xl bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 transition-all flex items-center justify-center gap-2"
-              >
-                <CheckCircleFilled />
-                Course Completed
-              </button>
-            )}
+            <button
+              onClick={handleContinueOrStart}
+              disabled={starting}
+              className="order-1 sm:order-2 flex-2 py-3 rounded-xl bg-indigo-600 dark:bg-indigo-500 text-white font-bold text-sm hover:bg-indigo-700 shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <PlayCircleFilled />
+              {starting
+                ? "Starting…"
+                : hasStarted
+                  ? "Continue Learning"
+                  : "Start Learning"}
+            </button>
           </div>
         </div>
       </div>
