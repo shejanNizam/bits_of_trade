@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import { useLoginMutation } from "@/redux/api/authApi/authApi";
@@ -222,6 +220,9 @@ const LoginContent: React.FC = () => {
 
       if (response?.tokens?.access) {
         localStorage.setItem("token", response.tokens.access);
+        // localStorage.setItem("user_id", response.user.id);
+        localStorage.setItem("user_id", String(response.user.id));
+
         dispatch(
           setCredentials({
             user: response?.user,

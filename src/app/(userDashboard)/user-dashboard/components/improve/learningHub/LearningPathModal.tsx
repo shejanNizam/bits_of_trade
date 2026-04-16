@@ -240,6 +240,10 @@
 "use client";
 
 import {
+  CourseProgressAPI,
+  useCreateCourseProgressMutation,
+} from "@/redux/features/learninghub/learninghubApi";
+import {
   CheckCircleFilled,
   ClockCircleOutlined,
   CloseOutlined,
@@ -247,9 +251,7 @@ import {
   PlayCircleFilled,
 } from "@ant-design/icons";
 import { Modal, Progress } from "antd";
-import { useState } from "react";
-import { CourseProgressAPI } from "../../../learning-hub/page";
-import { LearningPath } from "./AllLearningPaths";
+import type { LearningPath } from "./AllLearningPaths";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -257,7 +259,6 @@ interface LearningPathModalProps {
   path: LearningPath | null;
   open: boolean;
   onClose: () => void;
-  token: string;
   progress: CourseProgressAPI[];
 }
 
@@ -267,65 +268,45 @@ export default function LearningPathModal({
   path,
   open,
   onClose,
-  token,
   progress,
 }: LearningPathModalProps) {
-  const [starting, setStarting] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
+  const [createCourseProgress, { isLoading: starting, error: createError }] =
+    useCreateCourseProgressMutation();
 
   if (!path) return null;
 
-  // Find existing progress for this course
-  const existingProgress = progress.find((p) => p.course.id === path.courseId);
-  const hasStarted = !!existingProgress;
+  // Find this course's progress
+  const courseProgress = progress.find((p) => p.course.id === path.courseId);
+  const hasStarted = !!courseProgress;
   const watchedIds = path.watchedIds;
 
   const percentage =
     path.modules > 0 ? Math.round((path.completed / path.modules) * 100) : 0;
 
-  // ── POST /course-progress/create/ ──────────────────────────────────────────
+  const apiError = createError
+    ? "error" in createError
+      ? (createError as { error: string }).error
+      : "Failed to enrol. Please try again."
+    : null;
+
   async function handleContinueOrStart() {
-    if (hasStarted) {
-      // Navigate to player — implement routing as needed in your app
-      onClose();
-      return;
-    }
-
-    setStarting(true);
-    setApiError(null);
-
-    try {
-      const payloadBase64 = token.split(".")[1];
-      const payload = JSON.parse(atob(payloadBase64));
-      const userId: number = payload.user_id;
-
-      const res = await fetch("/api/learninghub/course-progress/create/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user: userId, course: path.courseId }),
-      });
-
-      if (!res.ok) {
-        const errData = await res.json();
-        const isAlreadyEnrolled =
-          res.status === 400 && JSON.stringify(errData).includes("unique set");
-
-        if (!isAlreadyEnrolled) {
-          throw new Error(errData?.detail ?? `Error ${res.status}`);
-        }
+    if (!path) return;
+    if (!hasStarted) {
+      const userId = Number(localStorage.getItem("user_id") ?? 0);
+      if (!userId) {
+        alert("Please log in to start this course.");
+        return;
       }
-
-      onClose();
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Something went wrong";
-      setApiError(message);
-    } finally {
-      setStarting(false);
+      try {
+        await createCourseProgress({
+          user: userId,
+          course: path.courseId,
+        }).unwrap();
+      } catch {
+        return;
+      }
     }
+    onClose();
   }
 
   return (
@@ -369,8 +350,9 @@ export default function LearningPathModal({
           </div>
         </div>
 
+        {/* Body */}
         <div className="p-6 sm:p-8 space-y-6 sm:space-y-8">
-          {/* Progress Card */}
+          {/* Progress card */}
           <div className="bg-teal-50/50 dark:bg-teal-900/10 border border-teal-100 dark:border-teal-900/20 rounded-xl p-5">
             <div className="flex justify-between items-center mb-3">
               <span className="text-sm font-bold text-slate-900 dark:text-white">
@@ -396,7 +378,7 @@ export default function LearningPathModal({
           {/* About */}
           {(path.about || path.description) && (
             <div className="space-y-2">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 font-sans">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
                 About This Course
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
@@ -405,7 +387,7 @@ export default function LearningPathModal({
             </div>
           )}
 
-          {/* Modules from real API videos */}
+          {/* Module list from real API videos */}
           <div className="space-y-4">
             <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
               Course Modules
@@ -426,7 +408,7 @@ export default function LearningPathModal({
                   const isLocked =
                     !video.is_free && !isWatched && idx > firstUnwatchedIdx;
 
-                  const status = isWatched
+                  const status: "Completed" | "Current" | "Locked" = isWatched
                     ? "Completed"
                     : isCurrent
                       ? "Current"
@@ -478,6 +460,7 @@ export default function LearningPathModal({
                           )}
                         </div>
                       </div>
+
                       <span
                         className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-tight ${
                           status === "Completed"
