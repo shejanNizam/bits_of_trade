@@ -1,4 +1,3 @@
-// /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -17,16 +16,20 @@ import {
   IoAddOutline,
   IoCreateOutline,
   IoDownloadOutline,
+  IoEyeOutline,
   IoTrashOutline,
 } from "react-icons/io5";
 import { MdInfoOutline } from "react-icons/md";
 import AddTradeModal from "./AddTradeModal";
 import ImportBrokerModal from "./ImportBrokerModal";
+import PreviewModal from "./PreviewModal";
 
 export interface TradeData {
   id: string;
   trade_date: string;
   trade_time: string;
+  entry_time: string | null;
+  exit_time: string | null;
   symbol: string;
   market_type: string;
   direction: "long" | "short";
@@ -34,6 +37,9 @@ export interface TradeData {
   entry_price: string;
   exit_price: string;
   fees: string;
+  stop_loss: string | null;
+  target: string | null;
+  leverage: string;
   total_pnl: string;
   strategy: string | null;
   strategy_name?: string;
@@ -45,19 +51,25 @@ export interface TradeData {
   is_disciplined: boolean;
   is_tagged_complete: boolean;
   import_source: string;
-  broker_name: string;
+  broker_name: string | null;
   created_at: string;
   updated_at: string;
   screenshot_urls?: string[];
   rules_followed?: string[];
   mistakes?: string[];
+  outcome_summary?: string;
+  trade_analysis?: string;
+  user?: number;
+  session?: string;
 }
 
 export default function TradeLogTable() {
   const [activeTab, setActiveTab] = useState("all");
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<TradeData | null>(null);
+  const [previewTrade, setPreviewTrade] = useState<TradeData | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
@@ -226,6 +238,11 @@ export default function TradeLogTable() {
   const handleOpenEditModal = (trade: TradeData) => {
     setSelectedTrade(trade);
     setIsTradeModalOpen(true);
+  };
+
+  const handleOpenPreviewModal = (trade: TradeData) => {
+    setPreviewTrade(trade);
+    setIsPreviewModalOpen(true);
   };
 
   const handleDeleteTrade = async (trade: TradeData) => {
@@ -510,13 +527,20 @@ export default function TradeLogTable() {
       align: "right",
       render: (_, record) => (
         <div className="flex items-center justify-end gap-3 text-gray-500">
+          <IoEyeOutline
+            className="text-lg cursor-pointer hover:text-blue-500 transition-colors"
+            onClick={() => handleOpenPreviewModal(record)}
+            title="Preview Trade"
+          />
           <IoCreateOutline
             className="text-lg cursor-pointer hover:text-green-500 transition-colors"
             onClick={() => handleOpenEditModal(record)}
+            title="Edit Trade"
           />
           <IoTrashOutline
             className="text-lg cursor-pointer hover:text-red-500 transition-colors"
             onClick={() => handleDeleteTrade(record)}
+            title="Delete Trade"
           />
         </div>
       ),
@@ -689,6 +713,15 @@ export default function TradeLogTable() {
         }}
         editData={selectedTrade}
         strategiesData={strategiesData}
+      />
+
+      <PreviewModal
+        open={isPreviewModalOpen}
+        onClose={() => {
+          setIsPreviewModalOpen(false);
+          setPreviewTrade(null);
+        }}
+        trade={previewTrade}
       />
     </div>
   );
