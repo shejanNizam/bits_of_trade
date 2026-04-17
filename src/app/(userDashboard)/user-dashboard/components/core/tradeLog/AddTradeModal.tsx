@@ -26,6 +26,8 @@ type TradeFormValues = Partial<TradeData> & {
   violation_modes?: string[];
   stop_loss?: number | null;
   target?: number | null;
+  outcome_summary?: string;
+  trade_analysis?: string;
 };
 
 const VIOLATION_MODES_LIST = [
@@ -171,6 +173,8 @@ export default function AddTradeModal({
         stop_loss: values.stop_loss || null,
         target: values.target || null,
         strategy: values.strategy,
+        outcome_summary: values.outcome_summary || null,
+        trade_analysis: values.trade_analysis || "",
         entry_confidence: values.entry_confidence,
         satisfaction_rating: values.satisfaction_rating,
         emotional_state: values.emotional_state,
@@ -354,6 +358,194 @@ export default function AddTradeModal({
   );
 }
 
+// function GeneralTab({
+//   editData,
+//   strategiesData,
+// }: {
+//   editData?: TradeData | null;
+//   strategiesData?: { id: number; strategy_name: string }[] | null;
+// }) {
+//   return (
+//     <div className="space-y-5 py-4">
+//       <div className="grid grid-cols-2 gap-4">
+//         <Form.Item
+//           name="market_type"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Market Type*
+//             </span>
+//           }
+//           rules={[{ required: true, message: "Please select a market type" }]}
+//           className="mb-0"
+//         >
+//           <Select
+//             placeholder="Select Market"
+//             className="w-full"
+//             size="large"
+//             options={[
+//               { value: "indian_market", label: "Indian Stocks" },
+//               { value: "forex", label: "Forex" },
+//               { value: "crypto", label: "Crypto" },
+//               { value: "options", label: "Options" },
+//             ]}
+//           />
+//         </Form.Item>
+
+//         <Form.Item
+//           name="symbol"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Symbol*
+//             </span>
+//           }
+//           rules={[
+//             { required: true, message: "Please enter a symbol" },
+//             { whitespace: true, message: "Symbol cannot be empty" },
+//           ]}
+//           className="mb-0"
+//         >
+//           <Input placeholder="Symbol" size="large" />
+//         </Form.Item>
+//       </div>
+
+//       <div className="grid grid-cols-2 gap-4">
+//         <Form.Item
+//           name="entry_price"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Entry Price (₹)*
+//             </span>
+//           }
+//           rules={[{ required: true, message: "Please enter the entry price" }]}
+//           className="mb-0"
+//         >
+//           <Input placeholder="0.00" size="large" type="number" step="0.01" />
+//         </Form.Item>
+//         <Form.Item
+//           name="quantity"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Quantity*
+//             </span>
+//           }
+//           rules={[{ required: true, message: "Please enter the quantity" }]}
+//           className="mb-0"
+//         >
+//           <Input placeholder="0" size="large" type="number" step="1" />
+//         </Form.Item>
+//       </div>
+
+//       <div className="grid grid-cols-2 gap-4">
+//         <Form.Item
+//           name="exit_price"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Exit Price*
+//             </span>
+//           }
+//           className="mb-0"
+//         >
+//           <Input placeholder="0.00" size="large" type="number" step="0.01" />
+//         </Form.Item>
+//         <Form.Item
+//           name="fees"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Fees (₹)
+//             </span>
+//           }
+//           className="mb-0"
+//         >
+//           <Input placeholder="0.00" size="large" type="number" step="0.01" />
+//         </Form.Item>
+//       </div>
+
+//       <div className="grid grid-cols-3 gap-4">
+//         <Form.Item
+//           name="direction"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Direction*
+//             </span>
+//           }
+//           rules={[
+//             { required: true, message: "Please select a trade direction" },
+//           ]}
+//           className="mb-0"
+//         >
+//           <Select
+//             placeholder="Long/Short"
+//             size="large"
+//             options={[
+//               { value: "long", label: "Long" },
+//               { value: "short", label: "Short" },
+//             ]}
+//           />
+//         </Form.Item>
+//         <Form.Item
+//           name="trade_date"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Entry Date*
+//             </span>
+//           }
+//           rules={[{ required: true, message: "Please select the entry date" }]}
+//           className="mb-0"
+//         >
+//           <Input type="date" size="large" />
+//         </Form.Item>
+//         <div className="col-span-1"></div>
+//       </div>
+
+//       <div className="grid grid-cols-3 gap-4">
+//         <Form.Item
+//           name="stop_loss"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Stop Loss
+//             </span>
+//           }
+//           className="mb-0"
+//         >
+//           <Input placeholder="0.00" size="large" type="number" step="0.01" />
+//         </Form.Item>
+//         <Form.Item
+//           name="target"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Target
+//             </span>
+//           }
+//           className="mb-0"
+//         >
+//           <Input placeholder="0.00" size="large" type="number" step="0.01" />
+//         </Form.Item>
+
+//         <Form.Item
+//           name="strategy"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Strategy
+//             </span>
+//           }
+//           className="mb-0"
+//         >
+//           <Select
+//             placeholder="Select a strategy"
+//             size="large"
+//             options={strategiesData?.map((strategy) => ({
+//               label: strategy.strategy_name,
+//               value: strategy.id,
+//             }))}
+//             showSearch
+//             notFoundContent="No strategies found"
+//           />
+//         </Form.Item>
+//       </div>
+//     </div>
+//   );
+// }
+
 function GeneralTab({
   editData,
   strategiesData,
@@ -379,7 +571,7 @@ function GeneralTab({
             className="w-full"
             size="large"
             options={[
-              { value: "indian_market", label: "Indian Stocks" },
+              { value: "indian_market", label: "Indian Market" },
               { value: "forex", label: "Forex" },
               { value: "crypto", label: "Crypto" },
               { value: "options", label: "Options" },
@@ -490,7 +682,30 @@ function GeneralTab({
         >
           <Input type="date" size="large" />
         </Form.Item>
-        <div className="col-span-1"></div>
+        <div className="col-span-1">
+          <Form.Item
+            name="outcome_summary"
+            label={
+              <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+                Outcome Summary
+              </span>
+            }
+            tooltip="Categorizes the final financial or strategic result of the trade"
+            className="mb-0"
+          >
+            <Select
+              placeholder="Select outcome..."
+              size="large"
+              allowClear
+              options={[
+                { value: "target_hit", label: "Target Hit" },
+                { value: "stop_loss_hit", label: "Stop Loss Hit" },
+                { value: "breakeven", label: "Breakeven" },
+                { value: "partial_exit", label: "Partial Exit" },
+              ]}
+            />
+          </Form.Item>
+        </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4">
@@ -538,6 +753,24 @@ function GeneralTab({
           />
         </Form.Item>
       </div>
+
+      {/* New: Trade Analysis Field */}
+      <Form.Item
+        name="trade_analysis"
+        label={
+          <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+            Trade Analysis
+          </span>
+        }
+        tooltip="Why did you take this trade? What was your analysis?"
+      >
+        <Input.TextArea
+          placeholder="Document your technical, fundamental, or psychological rationale here..."
+          rows={4}
+          showCount
+          maxLength={500}
+        />
+      </Form.Item>
     </div>
   );
 }

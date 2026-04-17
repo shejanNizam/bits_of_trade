@@ -98,6 +98,15 @@ export const journalApi = baseApi.injectEndpoints({
       invalidatesTags: ["journal"],
     }),
 
+    tradeLinkWithRules: builder.mutation({
+      query: (payload) => ({
+        url: "/api/rules/trade-links/",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["journal"],
+    }),
+
     // for session recape tab ------------------------------>>
     createSessionRecap: builder.mutation({
       query: (payload) => ({
@@ -198,6 +207,9 @@ export const {
 
   // trade link with mistake
   useTradeLinkWithMistakeMutation,
+
+  // trade link with rules
+  useTradeLinkWithRulesMutation,
 
   // for session recap tab
   useCreateSessionRecapMutation,

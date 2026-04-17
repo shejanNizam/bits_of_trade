@@ -10,6 +10,7 @@ import LearningNotes from "../components/core/journal/LearningNotes";
 import Mistakes from "../components/core/journal/Mistakes";
 import PsychologyLog from "../components/core/journal/PsychologyLog";
 import RecentEntries from "../components/core/journal/RecentEntries";
+import Rules from "../components/core/journal/Rules";
 import SessionRecap from "../components/core/journal/SessionRecap";
 import TradeNotes from "../components/core/journal/TradeNotes";
 
@@ -37,6 +38,11 @@ export default function JournalPage() {
       key: "mistakes",
       label: "Mistakes",
       children: <Mistakes />,
+    },
+    {
+      key: "rules",
+      label: "Rules",
+      children: <Rules />,
     },
     {
       key: "session-recap",

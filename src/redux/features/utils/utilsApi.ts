@@ -32,10 +32,10 @@ export const utilsApi = baseApi.injectEndpoints({
     // get rules is and title
     getRules: builder.query({
       query: () => ({
-        url: ``,
+        url: `/api/rules/list/`,
         method: "GET",
       }),
-      providesTags: ["mistake"],
+      providesTags: ["rules"],
     }),
   }),
 });

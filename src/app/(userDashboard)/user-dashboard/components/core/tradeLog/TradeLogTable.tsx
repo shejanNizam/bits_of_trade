@@ -13,7 +13,6 @@ import type { ColumnsType, TableRowSelection } from "antd/es/table/interface";
 import { Key, useState } from "react";
 import {
   IoAddOutline,
-  IoCopyOutline,
   IoCreateOutline,
   IoDownloadOutline,
   IoTrashOutline,
@@ -48,6 +47,8 @@ export interface TradeData {
   created_at: string;
   updated_at: string;
   screenshot_urls?: string[];
+  rules_followed?: string[];
+  mistakes?: string[];
 }
 
 export default function TradeLogTable() {
@@ -228,11 +229,6 @@ export default function TradeLogTable() {
     }
   };
 
-  const handleCopyTrade = (trade: TradeData) => {
-    navigator.clipboard.writeText(JSON.stringify(trade, null, 2));
-    message.success("Trade details copied to clipboard!");
-  };
-
   // Row selection configuration
   const rowSelection: TableRowSelection<TradeData> = {
     selectedRowKeys,
@@ -352,12 +348,46 @@ export default function TradeLogTable() {
       ),
     },
     {
+      title: "Rules Followed",
+      dataIndex: "rules_followed",
+      key: "rules_followed",
+      align: "center",
+      render: (rules_followed: string[]) => (
+        <div className="flex gap-1 flex-wrap justify-center">
+          {rules_followed && rules_followed.length > 0 ? (
+            <span className="text-green-500 text-[10px] font-medium">
+              {rules_followed.length}
+            </span>
+          ) : (
+            <span className="text-gray-400">-</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      title: "Mistakes",
+      dataIndex: "mistakes",
+      key: "mistakes",
+      align: "center",
+      render: (mistakes: string[]) => (
+        <div className="flex gap-1 flex-wrap justify-center">
+          {mistakes && mistakes.length > 0 ? (
+            <span className="text-red-500 text-[10px] font-medium">
+              {mistakes.length}
+            </span>
+          ) : (
+            <span className="text-gray-400">-</span>
+          )}
+        </div>
+      ),
+    },
+    {
       title: "Violations",
       dataIndex: "violation_modes",
       key: "violation_modes",
       align: "center",
       render: (violations) => (
-        <div className="flex gap-1 flex-wrap">
+        <div className="flex gap-1 flex-wrap justify-center">
           {violations?.length > 0 ? (
             <span className="text-red-500 text-[10px] font-medium">
               {violations.length}
@@ -394,10 +424,6 @@ export default function TradeLogTable() {
           <IoCreateOutline
             className="text-lg cursor-pointer hover:text-green-500 transition-colors"
             onClick={() => handleOpenEditModal(record)}
-          />
-          <IoCopyOutline
-            className="text-lg cursor-pointer hover:text-purple-500 transition-colors"
-            onClick={() => handleCopyTrade(record)}
           />
           <IoTrashOutline
             className="text-lg cursor-pointer hover:text-red-500 transition-colors"
