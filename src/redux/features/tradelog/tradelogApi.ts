@@ -121,10 +121,10 @@ export const tradelogApi = baseApi.injectEndpoints({
 
     // GET api --> get all trades (pagination)
     getAllTrade: builder.query({
-      query: ({ page = 1, limit = 10 }) => ({
+      query: (params = {}) => ({
         url: "/api/tradelog/trades/",
         method: "GET",
-        params: { page, limit },
+        params: params,
       }),
       providesTags: ["tradelog"],
     }),
