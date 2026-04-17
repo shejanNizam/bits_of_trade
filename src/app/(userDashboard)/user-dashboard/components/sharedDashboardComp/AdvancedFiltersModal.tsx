@@ -324,7 +324,7 @@ const DEFAULT_FILTERS: FilterState = {
   disciplineStatus: "All Trades",
   reviewStatus: "All Statuses",
   ruleBreaches: "All Trades",
-  plRange: [-10000, 10000],
+  plRange: [-100000, 100000],
   mistakes: [],
   tags: "",
 };
@@ -337,8 +337,7 @@ export default function AdvancedFiltersModal({
 }: AdvancedFiltersModalProps) {
   const [filters, setFilters] = useState<FilterState>(() => {
     if (initialFilters) {
-      // Map API filters to UI filter state
-      const mappedFilters: FilterState = {
+      return {
         direction:
           initialFilters.direction === "long"
             ? "Long Only"
@@ -357,9 +356,7 @@ export default function AdvancedFiltersModal({
             : initialFilters.market_type === "indian_market"
               ? "Equities"
               : "All Instruments",
-        strategy: initialFilters.strategy
-          ? "Specific Strategy"
-          : "All Strategies",
+        strategy: initialFilters.strategy || "All Strategies",
         emotionalState: initialFilters.emotional_state
           ? initialFilters.emotional_state.charAt(0).toUpperCase() +
             initialFilters.emotional_state.slice(1)
@@ -383,23 +380,21 @@ export default function AdvancedFiltersModal({
               ? "Has Breaches"
               : "All Trades",
         plRange: [
-          initialFilters.pnl_min || -10000,
-          initialFilters.pnl_max || 10000,
+          initialFilters.pnl_min || -100000,
+          initialFilters.pnl_max || 100000,
         ],
         mistakes: initialFilters.mistakes
           ? initialFilters.mistakes.split(",")
           : [],
         tags: initialFilters.tags || "",
       };
-      return mappedFilters;
     }
     return DEFAULT_FILTERS;
   });
 
-  // Reset filters when modal opens with new initialFilters
   useEffect(() => {
     if (isOpen && initialFilters) {
-      const mappedFilters: FilterState = {
+      setFilters({
         direction:
           initialFilters.direction === "long"
             ? "Long Only"
@@ -418,9 +413,7 @@ export default function AdvancedFiltersModal({
             : initialFilters.market_type === "indian_market"
               ? "Equities"
               : "All Instruments",
-        strategy: initialFilters.strategy
-          ? "Specific Strategy"
-          : "All Strategies",
+        strategy: initialFilters.strategy || "All Strategies",
         emotionalState: initialFilters.emotional_state
           ? initialFilters.emotional_state.charAt(0).toUpperCase() +
             initialFilters.emotional_state.slice(1)
@@ -444,15 +437,14 @@ export default function AdvancedFiltersModal({
               ? "Has Breaches"
               : "All Trades",
         plRange: [
-          initialFilters.pnl_min || -10000,
-          initialFilters.pnl_max || 10000,
+          initialFilters.pnl_min || -100000,
+          initialFilters.pnl_max || 100000,
         ],
         mistakes: initialFilters.mistakes
           ? initialFilters.mistakes.split(",")
           : [],
         tags: initialFilters.tags || "",
-      };
-      setFilters(mappedFilters);
+      });
     } else if (isOpen && !initialFilters) {
       setFilters(DEFAULT_FILTERS);
     }
@@ -468,7 +460,8 @@ export default function AdvancedFiltersModal({
     if (filters.disciplineStatus !== "All Trades") count++;
     if (filters.reviewStatus !== "All Statuses") count++;
     if (filters.ruleBreaches !== "All Trades") count++;
-    if (filters.plRange[0] !== -10000 || filters.plRange[1] !== 10000) count++;
+    if (filters.plRange[0] !== -100000 || filters.plRange[1] !== 100000)
+      count++;
     if (filters.mistakes.length > 0) count++;
     if (filters.tags !== "") count++;
     return count;
@@ -496,7 +489,6 @@ export default function AdvancedFiltersModal({
     onApply(filters, activeCount);
   };
 
-  // Strictly type the keys used for the Select fields
   type SelectKeys =
     | "direction"
     | "outcome"
@@ -590,7 +582,6 @@ export default function AdvancedFiltersModal({
       }
     >
       <div className="mt-6 space-y-6 overflow-y-auto max-h-[80vh] pr-2 custom-scrollbar">
-        {/* 8 Select Fields Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
           {selectFields.map((field) => (
             <div key={field.key} className="space-y-1.5">
@@ -611,7 +602,6 @@ export default function AdvancedFiltersModal({
           ))}
         </div>
 
-        {/* P&L Range Slider */}
         <div className="p-5 bg-gray-50 dark:bg-[#111827] rounded-xl border border-gray-100 dark:border-gray-800">
           <div className="flex justify-between items-center mb-4">
             <span className="text-[13px] font-medium dark:text-gray-300">
@@ -644,7 +634,6 @@ export default function AdvancedFiltersModal({
           </div>
         </div>
 
-        {/* Mistake Tags */}
         <div className="space-y-3">
           <label className="text-[13px] font-medium text-gray-500 dark:text-gray-400">
             Filter by Mistakes
@@ -669,7 +658,6 @@ export default function AdvancedFiltersModal({
           </div>
         </div>
 
-        {/* Tags Search */}
         <div className="space-y-1.5">
           <label className="text-[13px] font-medium text-gray-500 dark:text-gray-400">
             Search by Tags
@@ -688,7 +676,6 @@ export default function AdvancedFiltersModal({
           </p>
         </div>
 
-        {/* Modal Footer */}
         <div className="flex flex-col sm:flex-row items-center justify-between pt-6 border-t border-gray-100 dark:border-gray-800 gap-4">
           <button
             onClick={handleResetAll}
