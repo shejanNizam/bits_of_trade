@@ -571,6 +571,7 @@ function GeneralTab({
             className="w-full"
             size="large"
             options={[
+              { value: "all", label: "All Brokers" },
               { value: "indian_market", label: "Indian Market" },
               { value: "forex", label: "Forex" },
               { value: "crypto", label: "Crypto" },

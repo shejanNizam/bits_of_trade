@@ -154,6 +154,7 @@ const CreateStrategyModal: React.FC<CreateStrategyModalProps> = ({
               placeholder="Select market types"
               tokenSeparators={[","]}
             >
+              <Option value="all">All Brokers</Option>
               <Option value="Indian Markets">Indian Markets</Option>
               <Option value="Options">Options</Option>
               <Option value="Forex">Forex</Option>
