@@ -428,21 +428,23 @@ export default function AddRuleModal({
         </div>
 
         {/* Active Status */}
-        <div className="flex items-center justify-between p-3 rounded-lg bg-[#1a1f2e] border border-[#2d3343]">
-          <div>
-            <label className="text-xs font-semibold text-zinc-300">
-              Rule Status
-            </label>
-            <p className="text-[10px] text-zinc-500 mt-0.5">
-              {"Disabled rules won't be enforced"}
-            </p>
+        {!isSystemRule && (
+          <div className="flex items-center justify-between p-3 rounded-lg bg-[#1a1f2e] border border-[#2d3343]">
+            <div>
+              <label className="text-xs font-semibold text-zinc-300">
+                Rule Status
+              </label>
+              <p className="text-[10px] text-zinc-500 mt-0.5">
+                {"Disabled rules won't be enforced"}
+              </p>
+            </div>
+            <Switch
+              checked={isActive}
+              onChange={setIsActive}
+              className={isActive ? "bg-green-500" : ""}
+            />
           </div>
-          <Switch
-            checked={isActive}
-            onChange={setIsActive}
-            className={isActive ? "bg-green-500" : ""}
-          />
-        </div>
+        )}
 
         {/* Dynamic Footer Alert */}
         <div
