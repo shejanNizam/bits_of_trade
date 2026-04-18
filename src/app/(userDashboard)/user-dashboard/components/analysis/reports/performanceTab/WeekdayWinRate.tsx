@@ -15,7 +15,9 @@ export default function WeekdayWinRate({
   weekdayWinRate,
 }: WeekdayWinRateProps) {
   // Find max win rate for relative bar sizing
-  const maxWinRate = Math.max(...weekdayWinRate.map((item) => item.win_rate));
+  const maxWinRate = Math.max(
+    ...(weekdayWinRate?.map((item) => item.win_rate) || []),
+  );
 
   // Helper function to get trend icon based on win rate
   const getTrendIcon = (winRate: number) => {
@@ -40,17 +42,17 @@ export default function WeekdayWinRate({
 
   // Calculate average win rate
   const avgWinRate = (
-    weekdayWinRate.reduce((sum, item) => sum + item.win_rate, 0) /
-    weekdayWinRate.length
+    weekdayWinRate?.reduce((sum, item) => sum + item.win_rate, 0) /
+    weekdayWinRate?.length
   ).toFixed(1);
 
   // Find best day
-  const bestDay = weekdayWinRate.reduce((best, current) =>
+  const bestDay = weekdayWinRate?.reduce((best, current) =>
     current.win_rate > best.win_rate ? current : best,
   );
 
   // Find worst day
-  const worstDay = weekdayWinRate.reduce((worst, current) =>
+  const worstDay = weekdayWinRate?.reduce((worst, current) =>
     current.win_rate < worst.win_rate ? current : worst,
   );
 
@@ -82,10 +84,10 @@ export default function WeekdayWinRate({
             Best Day
           </p>
           <p className="text-xl font-bold text-green-600 dark:text-green-400">
-            {bestDay.day}
+            {bestDay?.day}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            {bestDay.win_rate}% win rate ({bestDay.trades} trades)
+            {bestDay?.win_rate}% win rate ({bestDay?.trades} trades)
           </p>
         </div>
 
@@ -94,17 +96,17 @@ export default function WeekdayWinRate({
             Day to Improve
           </p>
           <p className="text-xl font-bold text-red-600 dark:text-red-400">
-            {worstDay.day}
+            {worstDay?.day}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            {worstDay.win_rate}% win rate ({worstDay.trades} trades)
+            {worstDay?.win_rate}% win rate ({worstDay?.trades} trades)
           </p>
         </div>
       </div>
 
       {/* Main Chart/List View */}
       <div className="space-y-4">
-        {weekdayWinRate.map((item) => (
+        {weekdayWinRate?.map((item) => (
           <div key={item.day} className="group">
             {/* Day and Win Rate Header */}
             <div className="flex justify-between items-center mb-2">
@@ -179,12 +181,13 @@ export default function WeekdayWinRate({
             </li>
           )}
 
-          {bestDay.win_rate - worstDay.win_rate > 20 && (
+          {bestDay?.win_rate - worstDay?.win_rate > 20 && (
             <li className="flex items-start gap-2">
               <span className="text-blue-500">📊</span>
               <span>
-                Significant performance variation between {bestDay.day} (
-                {bestDay.win_rate}%) and {worstDay.day} ({worstDay.win_rate}%)
+                Significant performance variation between {bestDay?.day} (
+                {bestDay?.win_rate}%) and {worstDay?.day} ({worstDay?.win_rate}
+                %)
               </span>
             </li>
           )}
@@ -193,7 +196,7 @@ export default function WeekdayWinRate({
             <span>
               Most active trading day:{" "}
               {
-                weekdayWinRate.reduce((most, curr) =>
+                weekdayWinRate?.reduce((most, curr) =>
                   curr.trades > most.trades ? curr : most,
                 ).day
               }

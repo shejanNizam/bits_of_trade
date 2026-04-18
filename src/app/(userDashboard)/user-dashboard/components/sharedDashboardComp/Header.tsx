@@ -412,7 +412,8 @@ export default function Header({ toggleSidebar }: HeaderProps) {
           {/* Mobile Filter Trigger */}
           <div className="lg:hidden">
             <Dropdown
-              dropdownRender={() => mobileFiltersContent}
+              // dropdownRender={() => mobileFiltersContent}
+              popupRender={() => mobileFiltersContent}
               trigger={["click"]}
               open={mobileFiltersOpen}
               onOpenChange={setMobileFiltersOpen}
