@@ -8,6 +8,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import { ErrorSwal } from "@/utils/allSwal";
 import { Button, Input, message } from "antd";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const { TextArea } = Input;
@@ -19,6 +20,8 @@ interface JournalFormData {
 }
 
 export default function DailyJournal() {
+  const router = useRouter();
+
   const { user } = useAppSelector((state: RootState) => state.auth);
   const sessionState = (user as any)?.session_state || null;
 
@@ -95,6 +98,7 @@ export default function DailyJournal() {
         try {
           await unlockJournal({ action: "complete_journal" }).unwrap();
           message.success("Journal unlocked successfully!");
+          router.push("/user-dashboard/discipline-guard");
         } catch (unlockError: any) {
           ErrorSwal({
             title: "",

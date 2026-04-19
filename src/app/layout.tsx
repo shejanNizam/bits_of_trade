@@ -33,7 +33,10 @@ export default function RootLayout({
         <StoreProvider>
           <AntdRegistry>
             <ThemeProvider>
-              <>{children}</>
+              {/* <>{children}</> */}
+              <div className="min-h-screen bg-white dark:bg-[#12203b] transition-colors duration-300">
+                {children}
+              </div>
             </ThemeProvider>
           </AntdRegistry>
         </StoreProvider>

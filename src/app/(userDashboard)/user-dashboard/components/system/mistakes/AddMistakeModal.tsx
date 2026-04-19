@@ -206,7 +206,7 @@ export default function AddMistakeModal({ open, onCancel, editData }: Props) {
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-semibold my-2 text-gray-700 dark:text-gray-300">
             Description
           </label>
           <Input.TextArea
@@ -219,7 +219,7 @@ export default function AddMistakeModal({ open, onCancel, editData }: Props) {
         </div>
 
         {/* Severity Weight Slider Section */}
-        <div className="bg-gray-50/50 dark:bg-gray-900/30 p-4 rounded-xl border border-gray-100 dark:border-gray-800">
+        <div className="bg-gray-50/50 dark:bg-gray-900/30 my-2 p-4 rounded-xl border border-gray-100 dark:border-gray-800">
           <div className="flex justify-between items-center mb-6">
             <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
               Severity Weight

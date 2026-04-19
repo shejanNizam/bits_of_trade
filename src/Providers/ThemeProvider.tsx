@@ -2,15 +2,16 @@
 
 import { useGetUserDataQuery } from "@/redux/api/userApi/userApi";
 import { setCredentials } from "@/redux/slices/authSlice";
-import { mainTheme } from "@/utils/antTheme";
+import { darkTheme, lightTheme } from "@/utils/antTheme";
 import { ConfigProvider, theme } from "antd";
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 function AntdConfigProvider({ children }: { children: React.ReactNode }) {
-  const { theme: currentTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState(lightTheme);
 
   const { data } = useGetUserDataQuery(undefined);
   const dispatch = useDispatch();
@@ -25,6 +26,15 @@ function AntdConfigProvider({ children }: { children: React.ReactNode }) {
     );
   }, [data, dispatch]);
 
+  // Update theme when resolvedTheme changes
+  useEffect(() => {
+    if (resolvedTheme === "dark") {
+      setCurrentTheme(darkTheme);
+    } else {
+      setCurrentTheme(lightTheme);
+    }
+  }, [resolvedTheme]);
+
   if (!mounted) {
     return <>{children}</>;
   }
@@ -32,9 +42,9 @@ function AntdConfigProvider({ children }: { children: React.ReactNode }) {
   return (
     <ConfigProvider
       theme={{
-        ...mainTheme,
+        ...currentTheme,
         algorithm:
-          currentTheme === "dark"
+          resolvedTheme === "dark"
             ? theme.darkAlgorithm
             : theme.defaultAlgorithm,
       }}
