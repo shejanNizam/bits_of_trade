@@ -2,13 +2,10 @@ import CustomHeading from "@/components/shared/CustomHeading";
 import ChasingOutcomes from "./ChasingOutcomes";
 import DisciplineSystemWorks from "./DisciplineSystemWorks";
 import LayerTwo from "./LayerTwo";
-import NotAnotherTradingTools from "./NotAnotherTradingTools";
 
 export default function HomeDisciplineSystem() {
   return (
     <>
-      <NotAnotherTradingTools />
-
       {/* Discipline System Section */}
       <section className="py-16 px-4 bg-gray-50 dark:bg-gray-900 transition-colors">
         <div className="container mx-auto max-w-7xl">
