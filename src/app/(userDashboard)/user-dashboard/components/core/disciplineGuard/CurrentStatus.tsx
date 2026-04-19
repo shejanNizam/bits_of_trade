@@ -705,7 +705,8 @@ export default function CurrentStatus() {
                   : "bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white"
               }`}
             >
-              Complete
+              {/* Complete */}
+              Complete Quick Check
             </button>
           )}
           <Link href="/user-dashboard/rules-limit">

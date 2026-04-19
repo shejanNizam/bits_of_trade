@@ -16,9 +16,9 @@ export default function DisciplineGuard() {
             A system that protects you from your worst day.
           </p>
         </div>
-        <button className=" bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg py-3 px-4 font-semibold text-sm sm:text-base transition-colors">
+        {/* <button className=" bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg py-3 px-4 font-semibold text-sm sm:text-base transition-colors">
           Complete Quick Check
-        </button>
+        </button> */}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-4 sm:gap-6">
