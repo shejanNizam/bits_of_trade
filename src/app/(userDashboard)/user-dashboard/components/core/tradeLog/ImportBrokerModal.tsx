@@ -6,9 +6,20 @@ import { ImportBrokerModalProps } from "@/types/trade-log";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import type { UploadFile, UploadProps } from "antd";
 import { Modal, Upload, message } from "antd";
+import Image from "next/image";
 import { useState } from "react";
 import { IoCloseOutline, IoInformationCircleOutline } from "react-icons/io5";
 import { MdOutlineFileUpload } from "react-icons/md";
+
+// Static broker list
+const BROKERS = [
+  { value: "zerodha", label: "Zerodha", icon: "/assets/zeroda.webp" },
+  { value: "upstox", label: "Upstox", icon: "/assets/upstox.webp" },
+  { value: "groww", label: "Groww", icon: "/assets/groww.png" },
+  { value: "angelone", label: "Angel One", icon: "/assets/angel_one.png" },
+  { value: "fyers", label: "Fyers", icon: "/assets/fyers.jpg" },
+  { value: "dhan", label: "Dhan", icon: "/assets/dhan.png" },
+];
 
 export default function ImportBrokerModal({
   open,
@@ -20,7 +31,6 @@ export default function ImportBrokerModal({
 
   const [importTrade, { isLoading }] = useImportTradeMutation();
 
-  // Check if file type is allowed
   const isAllowedFileType = (file: File) => {
     const allowedTypes = [
       "text/csv",
@@ -47,7 +57,6 @@ export default function ImportBrokerModal({
 
     const file = fileList[0].originFileObj as File;
 
-    // Validate file type
     if (!isAllowedFileType(file)) {
       message.error(
         "Invalid file type. Please upload a CSV or Excel file (.csv, .xls, .xlsx, .ods)",
@@ -55,7 +64,6 @@ export default function ImportBrokerModal({
       return;
     }
 
-    // Validate file size (max 10MB)
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
       message.error(
@@ -100,7 +108,6 @@ export default function ImportBrokerModal({
       let newFileList = [...info.fileList];
       newFileList = newFileList.slice(-1);
 
-      // Validate file type on change
       const file = newFileList[0]?.originFileObj;
       if (file && !isAllowedFileType(file)) {
         message.error(
@@ -113,7 +120,6 @@ export default function ImportBrokerModal({
       setFileList(newFileList);
     },
     beforeUpload: (file) => {
-      // Validate file type before upload
       if (!isAllowedFileType(file)) {
         message.error(
           "Please upload a valid CSV or Excel file (.csv, .xls, .xlsx, .ods)",
@@ -121,14 +127,13 @@ export default function ImportBrokerModal({
         return Upload.LIST_IGNORE;
       }
 
-      // Validate file size
-      const maxSize = 10 * 1024 * 1024; // 10MB
+      const maxSize = 10 * 1024 * 1024;
       if (file.size > maxSize) {
         message.error("File size exceeds 10MB limit");
         return Upload.LIST_IGNORE;
       }
 
-      return false; // Prevent auto upload
+      return false;
     },
     onRemove: () => {
       setFileList([]);
@@ -180,10 +185,33 @@ export default function ImportBrokerModal({
             </div>
           </div>
 
+          {/* Broker Static Grid Using next/image */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {BROKERS.map((broker) => (
+              <div
+                key={broker.value}
+                className="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-[#0f172a]"
+              >
+                <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center shrink-0 overflow-hidden">
+                  <Image
+                    src={broker.icon}
+                    alt={broker.label}
+                    width={32}
+                    height={32}
+                    className="object-contain p-1"
+                  />
+                </div>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {broker.label}
+                </span>
+              </div>
+            ))}
+          </div>
+
           {/* Custom Dragger Section */}
           <div className="relative group dark:bg-[#151F34]">
             <Dragger {...uploadProps}>
-              <div className="py-6 sm:py-8 flex flex-col items-center justify-center">
+              <div className="py-4 sm:py-6 flex flex-col items-center justify-center">
                 <MdOutlineFileUpload className="text-4xl sm:text-5xl text-gray-400 dark:text-gray-500 mb-4" />
                 <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base mb-2">
                   {fileList.length > 0
@@ -201,7 +229,7 @@ export default function ImportBrokerModal({
           </div>
 
           {/* File Format Requirements Section */}
-          <div className="bg-gray-50 dark:bg-[#0f172a] rounded-lg p-4 sm:p-5 space-y-3">
+          <div className="bg-gray-50 dark:bg-[#0f172a] rounded-lg p-2 sm:p-5 space-y-2">
             <h4 className="text-gray-500 dark:text-gray-400 font-bold text-[10px] sm:text-xs uppercase tracking-wider">
               File Format Requirements:
             </h4>
