@@ -67,7 +67,7 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-white dark:bg-slate-900 transition-colors">
-      <div className="container mx-auto px-4 flex items-center justify-between h-16">
+      <div className="container mx-auto px-4 flex items-center justify-between h-24">
         {/* Left - Logo */}
         <Link href="/" className="flex flex-col">
           <h1 className="text-2xl font-bold leading-tight">
