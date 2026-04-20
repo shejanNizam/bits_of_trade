@@ -21,6 +21,7 @@ const baseApi = createApi({
     "onboarding",
     "overview",
     "discipline",
+    "discipline-test",
     "user",
     "tradelog",
     "journal",
