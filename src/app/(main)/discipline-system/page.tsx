@@ -6,7 +6,6 @@ import LayerTwoDis from "@/components/disciplineSystem/LayerTwoDis";
 import SessionBasedDis from "@/components/disciplineSystem/SessionBasedDis";
 import CustomBanner from "@/components/shared/CustomBanner";
 import CustomPrimaryButton from "@/components/shared/CustomPrimaryButton";
-import CustomSecondaryButton from "@/components/shared/CustomSecondaryButton";
 import Link from "next/link";
 
 export default function DisciplineSystem() {
@@ -98,11 +97,11 @@ export default function DisciplineSystem() {
         <CanNotRely />
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link href="/discipline-tools">
-            <CustomSecondaryButton>View Discipline Tools</CustomSecondaryButton>
-          </Link>
-          <Link href="/discipline-test">
+          {/* <Link href="/discipline-test">
             <CustomPrimaryButton>View Discipline Tools</CustomPrimaryButton>
+          </Link> */}
+          <Link href="/onboarding/discipline-test">
+            <CustomPrimaryButton>Take Discipline Test</CustomPrimaryButton>
           </Link>
         </div>
       </div>

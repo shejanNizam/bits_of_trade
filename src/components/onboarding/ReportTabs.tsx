@@ -292,12 +292,12 @@ export function ReportTabs() {
           </div>
 
           {/* Title */}
-          <h3 className="text-2xl font-semibold text-center mb-2 text-gray-900">
+          <h3 className="text-2xl font-semibold text-center mb-2 text-gray-900 dark:text-white">
             Want a copy of your discipline profile?
           </h3>
 
           {/* Description */}
-          <p className="text-center text-gray-600 mb-8">
+          <p className="text-center text-gray-600 dark:text-white mb-8">
             {"We'll"} send your result breakdown and how traders at your level
             usually slip.
           </p>
