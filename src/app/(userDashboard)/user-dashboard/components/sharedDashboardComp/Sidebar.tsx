@@ -144,6 +144,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
         }).then(() => {
           dispatch(logout());
           localStorage.removeItem("token");
+          localStorage.removeItem("user_id");
           router.push("/login");
         });
       }
