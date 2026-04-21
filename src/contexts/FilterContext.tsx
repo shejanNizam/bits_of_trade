@@ -20,37 +20,24 @@ export type ReviewStatus = "tagged" | "untagged";
 export type DateRange = "today" | "this_week" | "this_month" | "custom";
 
 export interface FilterParams {
-  // Date Range
   date_range?: DateRange;
   date_from?: string;
   date_to?: string;
-
-  // Instrument & Account
   broker?: string;
   market_type?: MarketType;
   direction?: Direction;
   strategy?: string;
-
-  // Outcome & P&L
   outcome?: Outcome;
   filter?: FilterType;
   pnl_min?: number;
   pnl_max?: number;
-
-  // Psychology & Discipline
   emotional_state?: EmotionalState;
   discipline_status?: DisciplineStatus;
   review_status?: ReviewStatus;
-
-  // JSON Array Fields
   rule_breach?: string;
   mistakes?: string;
   tags?: string;
-
-  // Free-Text Search
   search?: string;
-
-  // Pagination
   page?: number;
   limit?: number;
 }
@@ -62,41 +49,47 @@ interface FilterContextType {
   activeFilterCount: number;
 }
 
+// All undefined — so reset clears everything back to "All" in the UI
 const defaultFilters: FilterParams = {
-  date_range: undefined,
-  broker: undefined,
-  market_type: undefined,
-  direction: undefined,
   page: 1,
   limit: 10,
 };
 
+const IGNORED_KEYS = new Set(["page", "limit"]);
+
+const countActiveFilters = (filters: FilterParams): number =>
+  (Object.keys(filters) as (keyof FilterParams)[]).filter((key) => {
+    if (IGNORED_KEYS.has(key)) return false;
+    const value = filters[key];
+    if (value === undefined || value === null || value === "") return false;
+    if (Array.isArray(value)) return value.length > 0;
+    // Key exists in defaultFilters → only count if it differs
+    if (key in defaultFilters) return value !== defaultFilters[key];
+    // Key not in defaultFilters → having any real value = active
+    return true;
+  }).length;
+
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
 export function FilterProvider({ children }: { children: ReactNode }) {
-  const [filters, setFilters] = useState<FilterParams>(defaultFilters);
+  const [filters, setFilters] = useState<FilterParams>({ ...defaultFilters });
 
   const updateFilters = (newFilters: Partial<FilterParams>) => {
     setFilters((prev) => ({ ...prev, ...newFilters, page: 1 }));
   };
 
   const resetFilters = () => {
-    setFilters(defaultFilters);
+    setFilters({ ...defaultFilters });
   };
-
-  const activeFilterCount = Object.keys(filters).filter((key) => {
-    const value = filters[key as keyof FilterParams];
-    const defaultValue = defaultFilters[key as keyof FilterParams];
-
-    if (key === "page" || key === "limit") return false;
-    if (Array.isArray(value)) return value.length > 0;
-    if (typeof value === "object") return Object.keys(value || {}).length > 0;
-    return value !== undefined && value !== defaultValue && value !== "";
-  }).length;
 
   return (
     <FilterContext.Provider
-      value={{ filters, updateFilters, resetFilters, activeFilterCount }}
+      value={{
+        filters,
+        updateFilters,
+        resetFilters,
+        activeFilterCount: countActiveFilters(filters),
+      }}
     >
       {children}
     </FilterContext.Provider>
@@ -105,8 +98,7 @@ export function FilterProvider({ children }: { children: ReactNode }) {
 
 export function useFilters() {
   const context = useContext(FilterContext);
-  if (!context) {
+  if (!context)
     throw new Error("useFilters must be used within a FilterProvider");
-  }
   return context;
 }
