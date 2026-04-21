@@ -45,8 +45,8 @@ export default function NetPL({ netPnlCumulative }: NetPLProps) {
           size="small"
           className="custom-radio"
         >
-          <Radio.Button value="daily">Daily</Radio.Button>
-          <Radio.Button value="weekly">Weekly</Radio.Button>
+          {/* <Radio.Button value="daily">Daily</Radio.Button>
+          <Radio.Button value="weekly">Weekly</Radio.Button> */}
         </Radio.Group>
       </div>
 
