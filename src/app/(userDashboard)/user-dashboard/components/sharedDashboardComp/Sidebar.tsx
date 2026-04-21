@@ -1,6 +1,7 @@
 "use client";
 
 import { logout } from "@/redux/slices/authSlice";
+import { clearAuthCookie } from "@/utils/cookieUtils";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -142,9 +143,10 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
           icon: "success",
           confirmButtonColor: "#3085d6",
         }).then(() => {
-          dispatch(logout());
           localStorage.removeItem("token");
           localStorage.removeItem("user_id");
+          clearAuthCookie();
+          dispatch(logout());
           router.push("/login");
         });
       }
