@@ -220,7 +220,6 @@ const LoginContent: React.FC = () => {
 
       if (response?.tokens?.access) {
         localStorage.setItem("token", response.tokens.access);
-        // localStorage.setItem("user_id", response.user.id);
         localStorage.setItem("user_id", String(response.user.id));
 
         dispatch(
@@ -235,15 +234,11 @@ const LoginContent: React.FC = () => {
           text: `Welcome back, ${response.user.first_name || "Trader"}!`,
         });
 
-        // ==================== UPDATED ROUTING LOGIC ====================
-        // Priority: If onboarding is not completed, always go to /onboarding
-        // Otherwise, go to the intended redirect path or home
         if (response.user.onboarding_completed) {
           router.push(redirectPath);
         } else {
           router.push("/onboarding");
         }
-        // ==============================================================
       }
     } catch (error) {
       const apiError = error as ApiError;
