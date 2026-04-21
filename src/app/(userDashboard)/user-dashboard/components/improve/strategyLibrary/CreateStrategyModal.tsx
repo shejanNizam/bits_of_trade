@@ -250,13 +250,13 @@ const CreateStrategyModal: React.FC<CreateStrategyModalProps> = ({
           >
             <Switch />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             name="is_template"
             label="Make Template"
             valuePropName="checked"
           >
             <Switch />
-          </Form.Item>
+          </Form.Item> */}
         </div>
 
         <div className="flex justify-end gap-2 mt-4">

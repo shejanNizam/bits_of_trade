@@ -2,7 +2,7 @@
 
 import { useSendDisciplineReportMutation } from "@/redux/features/disciplineTestApi/disciplineTestApi";
 import { Form, Input, Modal } from "antd";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AiOutlineWarning } from "react-icons/ai";
 import {
@@ -98,6 +98,7 @@ const reportData = {
 };
 
 export function ReportTabs() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const riskParam = searchParams.get("risk") as TabType | null;
   const scoreParam = searchParams.get("score");
@@ -173,6 +174,7 @@ export function ReportTabs() {
       });
 
       handleCloseModal();
+      router.push("/user-dashboard");
     } catch (error) {
       console.error("Failed to send report:", error);
       Modal.error({

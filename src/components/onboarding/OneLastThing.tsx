@@ -51,7 +51,7 @@ export function OneLastThing() {
 
           <CustomSecondaryButton
             className="w-full"
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/user-dashboard")}
           >
             Skip for now
           </CustomSecondaryButton>

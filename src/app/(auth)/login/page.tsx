@@ -97,7 +97,7 @@ const GoogleLoginButton: React.FC = () => {
 
         // Logic: Redirect based on onboarding status
         if (data.user.onboarding_completed) {
-          router.push("/");
+          router.push("/user-dashboard");
         } else {
           router.push("/onboarding");
         }
@@ -207,7 +207,7 @@ const LoginContent: React.FC = () => {
   const dispatch = useDispatch();
 
   // If "from" exists, we use it only if onboarding is completed
-  const redirectPath = searchParams.get("from") || "/";
+  const redirectPath = searchParams.get("from") || "/user-dashboard";
 
   const [login, { isLoading }] = useLoginMutation();
 

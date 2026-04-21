@@ -223,6 +223,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
               { value: "angelone", label: "Angel One" },
               { value: "fyers", label: "Fyers" },
               { value: "dhan", label: "Dhan" },
+              { value: "default", label: "Universal" },
             ]}
             className="w-full"
             size="large"
@@ -349,6 +350,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
                 { value: "dhan", label: "Dhan" },
                 { value: "fyers", label: "Fyers" },
                 { value: "angelone", label: "Angel One" },
+                { value: "default", label: "Universal" },
               ]}
               className="w-32"
             />

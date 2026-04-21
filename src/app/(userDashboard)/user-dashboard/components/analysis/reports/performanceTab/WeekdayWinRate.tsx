@@ -171,7 +171,7 @@ export default function WeekdayWinRate({
           {avgWinRate >= "50.0" ? (
             <li className="flex items-start gap-2">
               <span className="text-green-500">✓</span>
-              <span>Overall win rate is above 50% -保持良好的交易策略</span>
+              <span>Overall win rate is above 50% </span>
             </li>
           ) : (
             <li className="flex items-start gap-2">

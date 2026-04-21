@@ -1,18 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { RootState } from "@/redux/store";
 import { MenuOutlined } from "@ant-design/icons";
 import { Drawer } from "antd";
 import { useTheme } from "next-themes";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import { TiArrowSortedDown } from "react-icons/ti";
 import { useSelector } from "react-redux";
-import default_img from "../../assets/user_img_default.png";
+// import default_img from "../../assets/user_img_default.png";
 import CustomPrimaryButton from "./CustomPrimaryButton";
 import CustomSecondaryButton from "./CustomSecondaryButton";
 import ThemeToggle from "./ThemeToggle";
@@ -20,28 +17,28 @@ import ThemeToggle from "./ThemeToggle";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [imageError, setImageError] = useState(false);
+  // const [imageError, setImageError] = useState(false);
   const pathname = usePathname();
   const { theme } = useTheme();
 
   const { user } = useSelector((state: RootState) => state.auth);
 
   // Get profile image URL with fallback
-  const getProfileImageUrl = () => {
-    if (
-      !user ||
-      !("profile_picture" in user) ||
-      !(user as any).profile_picture ||
-      imageError
-    ) {
-      return default_img;
-    }
-    return (
-      process.env.NEXT_PUBLIC_IMAGE_URL + "/" + (user as any).profile_picture
-    );
-  };
+  // const getProfileImageUrl = () => {
+  //   if (
+  //     !user ||
+  //     !("profile_picture" in user) ||
+  //     !(user as any).profile_picture ||
+  //     imageError
+  //   ) {
+  //     return default_img;
+  //   }
+  //   return (
+  //     process.env.NEXT_PUBLIC_IMAGE_URL + "/" + (user as any).profile_picture
+  //   );
+  // };
 
-  const profileImageUrl = getProfileImageUrl();
+  // const profileImageUrl = getProfileImageUrl();
 
   useEffect(() => {
     setMounted(true);
@@ -101,21 +98,23 @@ export default function Navbar() {
           <ThemeToggle />
 
           {user ? (
-            <Link
-              className="flex justify-start items-center gap-2 cursor-pointer group"
-              href="/user-dashboard"
-            >
-              <div className="relative w-10 h-10">
-                <Image
-                  src={profileImageUrl ? profileImageUrl : default_img}
-                  alt="profile_image"
-                  fill
-                  className="rounded-full border-2 border-blue-500 object-cover"
-                  onError={() => setImageError(true)}
-                />
-              </div>
-              <TiArrowSortedDown className="text-gray-700 dark:text-gray-300 group-hover:text-blue-500 transition-colors" />
-            </Link>
+            <>
+              {/* <Link
+                className="flex justify-start items-center gap-2 cursor-pointer group"
+                href="/user-dashboard"
+              >
+                <div className="relative w-10 h-10">
+                  <Image
+                    src={profileImageUrl ? profileImageUrl : default_img}
+                    alt="profile_image"
+                    fill
+                    className="rounded-full border-2 border-blue-500 object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                </div>
+                <TiArrowSortedDown className="text-gray-700 dark:text-gray-300 group-hover:text-blue-500 transition-colors" />
+              </Link> */}
+            </>
           ) : (
             <>
               <Link href="/signup">
@@ -224,39 +223,41 @@ export default function Navbar() {
           {/* Drawer Buttons */}
           <div className="flex flex-col gap-3 mt-6">
             {user ? (
-              <Link
-                href="/user-dashboard"
-                onClick={toggleDrawer}
-                className="flex justify-start items-center gap-3 cursor-pointer w-full px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group"
-              >
-                <div className="relative w-10 h-10">
-                  <Image
-                    src={profileImageUrl}
-                    alt="profile_image"
-                    fill
-                    className="rounded-full border-2 border-blue-500 object-cover"
-                    onError={() => setImageError(true)}
-                  />
-                </div>
-                <div className="flex-1">
-                  <p
-                    className="font-semibold text-sm"
+              <>
+                {/* <Link
+                  href="/user-dashboard"
+                  onClick={toggleDrawer}
+                  className="flex justify-start items-center gap-3 cursor-pointer w-full px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group"
+                >
+                  <div className="relative w-10 h-10">
+                    <Image
+                      src={profileImageUrl}
+                      alt="profile_image"
+                      fill
+                      className="rounded-full border-2 border-blue-500 object-cover"
+                      onError={() => setImageError(true)}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <p
+                      className="font-semibold text-sm"
+                      style={{ color: isDark ? "#f1f5f9" : "#111827" }}
+                    >
+                      {user?.first_name} {user?.last_name}
+                    </p>
+                    <p
+                      className="text-xs"
+                      style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
+                    >
+                      {user?.email}
+                    </p>
+                  </div>
+                  <TiArrowSortedDown
                     style={{ color: isDark ? "#f1f5f9" : "#111827" }}
-                  >
-                    {user?.first_name} {user?.last_name}
-                  </p>
-                  <p
-                    className="text-xs"
-                    style={{ color: isDark ? "#9ca3af" : "#6b7280" }}
-                  >
-                    {user?.email}
-                  </p>
-                </div>
-                <TiArrowSortedDown
-                  style={{ color: isDark ? "#f1f5f9" : "#111827" }}
-                  className="group-hover:text-blue-500 transition-colors"
-                />
-              </Link>
+                    className="group-hover:text-blue-500 transition-colors"
+                  />
+                </Link> */}
+              </>
             ) : (
               // When user is NOT logged in - show Login button
               <>
