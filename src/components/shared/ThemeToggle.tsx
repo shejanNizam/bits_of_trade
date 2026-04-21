@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
@@ -24,9 +25,15 @@ export default function ThemeToggle() {
       aria-label="Toggle theme"
     >
       {isDark ? (
-        <span className="text-sm">☀️</span>
+        // <span className="text-sm">☀️</span>
+        <span className="text-sm">
+          <FaSun size={20} color="#2563EB" />
+        </span>
       ) : (
-        <span className="text-sm">🌙</span>
+        // <span className="text-sm">🌙</span>
+        <span className="text-sm">
+          <FaMoon size={20} color="#2563EB" />
+        </span>
       )}
     </button>
   );
