@@ -74,6 +74,8 @@ export default function TradeLogTable() {
   const [pageSize, setPageSize] = useState(10);
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
+  // const { user } = useSelector((state: RootState) => state.auth);
+
   // Get filters from context
   const { filters } = useFilters();
 
