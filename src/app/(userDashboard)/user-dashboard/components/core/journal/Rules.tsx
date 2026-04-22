@@ -26,7 +26,7 @@ interface TradeOption {
   symbol: string;
 }
 
-interface RuleOption {
+export interface RuleOption {
   id: string;
   rule_name: string;
   is_system_rule: boolean;

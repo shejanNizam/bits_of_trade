@@ -7,7 +7,11 @@ import {
   useDeleteTradeMutation,
   useGetAllTradeQuery,
 } from "@/redux/features/tradelog/tradelogApi";
-import { useGetStrategyForTradeQuery } from "@/redux/features/utils/utilsApi";
+import {
+  useGetMistakeQuery,
+  useGetRulesQuery,
+  useGetStrategyForTradeQuery,
+} from "@/redux/features/utils/utilsApi";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import { message, Pagination, Spin, Table } from "antd";
 import type { ColumnsType, TableRowSelection } from "antd/es/table/interface";
@@ -162,6 +166,16 @@ export default function TradeLogTable() {
     page: 1,
     limit: 100,
   });
+  const { data: mistakesData } = useGetMistakeQuery({
+    page: 1,
+    limit: 100,
+  });
+  const { data: rulesData } = useGetRulesQuery({
+    page: 1,
+    limit: 100,
+  });
+  console.log(rulesData);
+  console.log(mistakesData);
 
   const [deleteTrade] = useDeleteTradeMutation();
   const [bulkDeleteTrades] = useBulkDeleteTradesMutation();
@@ -715,6 +729,8 @@ export default function TradeLogTable() {
         }}
         editData={selectedTrade}
         strategiesData={strategiesData}
+        rulesData={rulesData}
+        mistakesData={mistakesData}
       />
 
       <PreviewModal

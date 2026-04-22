@@ -1,3 +1,5 @@
+// /* eslint-disable @typescript-eslint/no-unused-vars */
+// /* eslint-disable @typescript-eslint/no-explicit-any */
 // import {
 //   useImportTradeManuallyMutation,
 //   useUpdateTradeManuallyMutation,
@@ -17,15 +19,30 @@
 //   onClose: () => void;
 //   editData?: TradeData | null;
 //   strategiesData?: { id: number; strategy_name: string }[] | null;
+//   rulesData?:
+//     | { id: string; rule_name: string; is_system_rule: boolean }[]
+//     | null;
+//   mistakesData?: { id: string; mistake_name: string }[] | null;
+// }
+
+// interface RuleOption {
+//   id: string;
+//   rule_name: string;
+//   is_system_rule: boolean;
+// }
+
+// interface MistakeOption {
+//   id: string;
+//   mistake_name: string;
 // }
 
 // type TradeFormValues = {
 //   market_type?: string;
 //   symbol?: string;
-//   entry_price?: string;
-//   quantity?: string;
-//   exit_price?: string;
-//   fees?: string;
+//   entry_price?: number | null;
+//   quantity?: number | null;
+//   exit_price?: number | null;
+//   fees?: number | null;
 //   direction?: string;
 //   trade_date?: string;
 //   stop_loss?: number | null;
@@ -72,6 +89,8 @@
 //   onClose,
 //   editData,
 //   strategiesData,
+//   rulesData,
+//   mistakesData,
 // }: AddTradeModalProps) {
 //   const [activeTab, setActiveTab] = useState("general");
 //   const [form] = Form.useForm<TradeFormValues>();
@@ -97,10 +116,14 @@
 //         form.setFieldsValue({
 //           market_type: editData.market_type,
 //           symbol: editData.symbol,
-//           entry_price: editData.entry_price,
-//           quantity: editData.quantity,
-//           exit_price: editData.exit_price,
-//           fees: editData.fees,
+//           entry_price: editData.entry_price
+//             ? parseFloat(editData.entry_price)
+//             : null,
+//           quantity: editData.quantity ? parseInt(editData.quantity) : null,
+//           exit_price: editData.exit_price
+//             ? parseFloat(editData.exit_price)
+//             : null,
+//           fees: editData.fees ? parseFloat(editData.fees) : null,
 //           direction: editData.direction,
 //           trade_date: editData.trade_date,
 //           stop_loss: editData.stop_loss ? parseFloat(editData.stop_loss) : null,
@@ -138,6 +161,7 @@
 //           entry_confidence: 50,
 //           satisfaction_rating: 50,
 //           violation_modes: [],
+//           quantity: 1,
 //         });
 //         setFileList([]);
 //       }
@@ -178,12 +202,12 @@
 //         symbol: values.symbol,
 //         market_type: values.market_type,
 //         direction: values.direction,
-//         quantity: values.quantity,
-//         entry_price: values.entry_price,
-//         exit_price: values.exit_price,
-//         fees: values.fees || 0,
-//         stop_loss: values.stop_loss || null,
-//         target: values.target || null,
+//         quantity: values.quantity?.toString() || "0",
+//         entry_price: values.entry_price?.toString() || "0",
+//         exit_price: values.exit_price?.toString() || "0",
+//         fees: values.fees?.toString() || "0",
+//         stop_loss: values.stop_loss?.toString() || null,
+//         target: values.target?.toString() || null,
 //         strategy: values.strategy,
 //         outcome_summary: values.outcome_summary || null,
 //         trade_analysis: values.trade_analysis || "",
@@ -289,6 +313,7 @@
 //           entry_confidence: 50,
 //           satisfaction_rating: 50,
 //           violation_modes: [],
+//           quantity: 1,
 //         }}
 //       >
 //         <Tabs
@@ -302,6 +327,8 @@
 //                 <GeneralTab
 //                   editData={editData}
 //                   strategiesData={strategiesData}
+//                   rulesData={rulesData}
+//                   mistakesData={mistakesData}
 //                 />
 //               ),
 //             },
@@ -345,6 +372,12 @@
 //             type="button"
 //             onClick={() => {
 //               form.resetFields();
+//               form.setFieldsValue({
+//                 entry_confidence: 50,
+//                 satisfaction_rating: 50,
+//                 violation_modes: [],
+//                 quantity: 1,
+//               });
 //               setFileList([]);
 //             }}
 //             className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-sm font-medium"
@@ -370,9 +403,158 @@
 //   );
 // }
 
+// // Number Input Component with native up/down arrows
+// function NumberInput({
+//   value,
+//   onChange,
+//   min = 0,
+//   max,
+//   step = 1,
+//   placeholder = "0",
+//   integer = false,
+//   ...props
+// }: {
+//   value?: any;
+//   onChange?: (value: any) => void;
+//   min?: number;
+//   max?: number;
+//   step?: number;
+//   placeholder?: string;
+//   integer?: boolean;
+//   [key: string]: any;
+// }) {
+//   const [localValue, setLocalValue] = useState<string>(() => {
+//     if (value !== undefined && value !== null) {
+//       if (integer) {
+//         return Math.floor(Number(value)).toString();
+//       }
+//       return value.toString();
+//     }
+//     return "";
+//   });
+
+//   useEffect(() => {
+//     if (value !== undefined && value !== null) {
+//       if (integer) {
+//         setLocalValue(Math.floor(Number(value)).toString());
+//       } else {
+//         const numValue = Number(value);
+//         setLocalValue(numValue.toString());
+//       }
+//     } else {
+//       setLocalValue("");
+//     }
+//   }, [value, integer]);
+
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const inputValue = e.target.value;
+
+//     // Allow empty string
+//     if (inputValue === "") {
+//       setLocalValue("");
+//       if (onChange) onChange(null);
+//       return;
+//     }
+
+//     // Validate input based on integer flag
+//     const regex = integer ? /^\d*$/ : /^\d*\.?\d*$/;
+
+//     if (regex.test(inputValue)) {
+//       setLocalValue(inputValue);
+
+//       // Convert to number if valid
+//       const numValue = integer
+//         ? parseInt(inputValue, 10)
+//         : parseFloat(inputValue);
+
+//       if (!isNaN(numValue)) {
+//         let finalValue = numValue;
+
+//         // Apply min/max constraints
+//         if (min !== undefined && finalValue < min) finalValue = min;
+//         if (max !== undefined && finalValue > max) finalValue = max;
+
+//         // Apply integer rounding
+//         if (integer) {
+//           finalValue = Math.floor(finalValue);
+//         }
+
+//         // Round to avoid floating point issues
+//         if (!integer) {
+//           finalValue = parseFloat(finalValue.toFixed(4));
+//         }
+
+//         if (onChange) onChange(finalValue);
+
+//         // Update display if value was adjusted
+//         const displayValue = integer
+//           ? Math.floor(finalValue).toString()
+//           : finalValue.toString();
+//         if (displayValue !== localValue) {
+//           setLocalValue(displayValue);
+//         }
+//       } else if (onChange) {
+//         onChange(null);
+//       }
+//     }
+//   };
+
+//   const handleBlur = () => {
+//     if (localValue === "") {
+//       setLocalValue("");
+//       if (onChange) onChange(null);
+//     } else {
+//       const numValue = integer
+//         ? parseInt(localValue, 10)
+//         : parseFloat(localValue);
+//       if (!isNaN(numValue)) {
+//         let finalValue = numValue;
+
+//         // Apply min/max constraints
+//         if (min !== undefined && finalValue < min) finalValue = min;
+//         if (max !== undefined && finalValue > max) finalValue = max;
+
+//         // Apply integer rounding
+//         if (integer) {
+//           finalValue = Math.floor(finalValue);
+//         }
+
+//         // Round to avoid floating point issues
+//         if (!integer) {
+//           finalValue = parseFloat(finalValue.toFixed(4));
+//         }
+
+//         const displayValue = integer
+//           ? Math.floor(finalValue).toString()
+//           : finalValue.toString();
+//         setLocalValue(displayValue);
+//         if (onChange) onChange(finalValue);
+//       }
+//     }
+//   };
+
+//   return (
+//     <Input
+//       {...props}
+//       type="number"
+//       value={localValue}
+//       onChange={handleChange}
+//       onBlur={handleBlur}
+//       placeholder={placeholder}
+//       size="large"
+//       min={min}
+//       max={max}
+//       step={step}
+//       className="[&::-webkit-inner-spin-button]:opacity-100 [&::-webkit-outer-spin-button]:opacity-100"
+//     />
+//   );
+// }
+
 // function GeneralTab({
 //   editData,
 //   strategiesData,
+//   rulesData,
+//   mistakesData,
 // }: {
 //   editData?: TradeData | null;
 //   strategiesData?: { id: number; strategy_name: string }[] | null;
@@ -431,18 +613,7 @@
 //           rules={[{ required: true, message: "Please enter the entry price" }]}
 //           className="mb-0"
 //         >
-//           <Input
-//             placeholder="0.00"
-//             size="large"
-//             type="number"
-//             step="1"
-//             min={0}
-//             onKeyDown={(e) => {
-//               if (e.key === "-" || e.key === "e") {
-//                 e.preventDefault();
-//               }
-//             }}
-//           />
+//           <NumberInput placeholder="0" step={1} min={0} integer={false} />
 //         </Form.Item>
 //         <Form.Item
 //           name="quantity"
@@ -458,23 +629,15 @@
 //                 if (value && Number(value) < 1) {
 //                   throw new Error("Quantity must be at least 1");
 //                 }
+//                 if (value && !Number.isInteger(Number(value))) {
+//                   throw new Error("Quantity must be a whole number");
+//                 }
 //               },
 //             },
 //           ]}
 //           className="mb-0"
 //         >
-//           <Input
-//             placeholder="0"
-//             size="large"
-//             type="number"
-//             step="1"
-//             min={1}
-//             onKeyDown={(e) => {
-//               if (e.key === "-" || e.key === "e") {
-//                 e.preventDefault();
-//               }
-//             }}
-//           />
+//           <NumberInput placeholder="1" step={1} min={1} integer={true} />
 //         </Form.Item>
 //       </div>
 
@@ -488,18 +651,7 @@
 //           }
 //           className="mb-0"
 //         >
-//           <Input
-//             placeholder="0.00"
-//             size="large"
-//             type="number"
-//             step="1"
-//             min={0}
-//             onKeyDown={(e) => {
-//               if (e.key === "-" || e.key === "e") {
-//                 e.preventDefault();
-//               }
-//             }}
-//           />
+//           <NumberInput placeholder="0" step={1} min={0} integer={true} />
 //         </Form.Item>
 //         <Form.Item
 //           name="fees"
@@ -510,18 +662,7 @@
 //           }
 //           className="mb-0"
 //         >
-//           <Input
-//             placeholder="0.00"
-//             size="large"
-//             type="number"
-//             step="1"
-//             min={0}
-//             onKeyDown={(e) => {
-//               if (e.key === "-" || e.key === "e") {
-//                 e.preventDefault();
-//               }
-//             }}
-//           />
+//           <NumberInput placeholder="0" step={1} min={0} integer={true} />
 //         </Form.Item>
 //       </div>
 
@@ -595,18 +736,7 @@
 //           }
 //           className="mb-0"
 //         >
-//           <Input
-//             placeholder="0.00"
-//             size="large"
-//             type="number"
-//             step="1"
-//             min={0}
-//             onKeyDown={(e) => {
-//               if (e.key === "-" || e.key === "e") {
-//                 e.preventDefault();
-//               }
-//             }}
-//           />
+//           <NumberInput placeholder="0" step={1} min={0} integer={true} />
 //         </Form.Item>
 //         <Form.Item
 //           name="target"
@@ -617,18 +747,7 @@
 //           }
 //           className="mb-0"
 //         >
-//           <Input
-//             placeholder="0.00"
-//             size="large"
-//             type="number"
-//             step="1"
-//             min={0}
-//             onKeyDown={(e) => {
-//               if (e.key === "-" || e.key === "e") {
-//                 e.preventDefault();
-//               }
-//             }}
-//           />
+//           <NumberInput placeholder="0" step={1} min={0} integer={true} />
 //         </Form.Item>
 
 //         <Form.Item
@@ -649,6 +768,60 @@
 //             }))}
 //             showSearch
 //             notFoundContent="No strategies found"
+//             allowClear
+//           />
+//         </Form.Item>
+//       </div>
+
+//       {/* rules and mistake  */}
+//       <div className="grid grid-cols-2 gap-4">
+//         <Form.Item
+//           name="rules"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Rules Violated
+//             </span>
+//           }
+//           className="mb-0"
+//         >
+//           <Select
+//             placeholder="Select rules violated"
+//             size="large"
+//             mode="multiple"
+//             showSearch
+//             optionFilterProp="children"
+//             allowClear
+//             options={rules
+//               .filter((rule: RuleOption) => !rule.is_system_rule)
+//               .map((rule: RuleOption) => ({
+//                 label: rule.rule_name,
+//                 value: rule.id,
+//               }))}
+//             notFoundContent="No rules available"
+//           />
+//         </Form.Item>
+
+//         <Form.Item
+//           name="mistakes"
+//           label={
+//             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+//               Mistakes Made
+//             </span>
+//           }
+//           className="mb-0"
+//         >
+//           <Select
+//             placeholder="Select mistakes made"
+//             size="large"
+//             mode="multiple"
+//             showSearch
+//             optionFilterProp="children"
+//             allowClear
+//             options={mistakes.map((mistake: MistakeOption) => ({
+//               label: mistake.mistake_name,
+//               value: mistake.id,
+//             }))}
+//             notFoundContent="No mistakes available"
 //           />
 //         </Form.Item>
 //       </div>
@@ -853,6 +1026,29 @@ interface AddTradeModalProps {
   onClose: () => void;
   editData?: TradeData | null;
   strategiesData?: { id: number; strategy_name: string }[] | null;
+  rulesData?: {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: RuleOption[];
+  } | null;
+  mistakesData?: {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: MistakeOption[];
+  } | null;
+}
+
+interface RuleOption {
+  id: string;
+  rule_name: string;
+  is_system_rule: boolean;
+}
+
+interface MistakeOption {
+  id: string;
+  mistake_name: string;
 }
 
 type TradeFormValues = {
@@ -874,6 +1070,8 @@ type TradeFormValues = {
   emotional_state?: string;
   violation_modes?: string[];
   lessons_learned?: string;
+  rules?: string[];
+  mistakes?: string[];
 };
 
 const VIOLATION_MODES_LIST = [
@@ -908,6 +1106,8 @@ export default function AddTradeModal({
   onClose,
   editData,
   strategiesData,
+  rulesData,
+  mistakesData,
 }: AddTradeModalProps) {
   const [activeTab, setActiveTab] = useState("general");
   const [form] = Form.useForm<TradeFormValues>();
@@ -953,6 +1153,8 @@ export default function AddTradeModal({
           emotional_state: editData.emotional_state ?? undefined,
           violation_modes: editData.violation_modes || [],
           lessons_learned: editData.lessons_learned,
+          rules: editData.rules || [],
+          mistakes: editData.mistakes || [],
         });
 
         // Load existing screenshots if any
@@ -979,6 +1181,8 @@ export default function AddTradeModal({
           satisfaction_rating: 50,
           violation_modes: [],
           quantity: 1,
+          rules: [],
+          mistakes: [],
         });
         setFileList([]);
       }
@@ -1033,6 +1237,8 @@ export default function AddTradeModal({
         emotional_state: values.emotional_state,
         violation_modes: values.violation_modes || [],
         lessons_learned: values.lessons_learned,
+        rules: values.rules || [],
+        mistakes: values.mistakes || [],
         rules_followed: [],
         is_disciplined: values.violation_modes?.length === 0,
         is_tagged_complete: true,
@@ -1131,6 +1337,8 @@ export default function AddTradeModal({
           satisfaction_rating: 50,
           violation_modes: [],
           quantity: 1,
+          rules: [],
+          mistakes: [],
         }}
       >
         <Tabs
@@ -1144,6 +1352,8 @@ export default function AddTradeModal({
                 <GeneralTab
                   editData={editData}
                   strategiesData={strategiesData}
+                  rulesData={rulesData}
+                  mistakesData={mistakesData}
                 />
               ),
             },
@@ -1192,6 +1402,8 @@ export default function AddTradeModal({
                 satisfaction_rating: 50,
                 violation_modes: [],
                 quantity: 1,
+                rules: [],
+                mistakes: [],
               });
               setFileList([]);
             }}
@@ -1368,10 +1580,27 @@ function NumberInput({
 function GeneralTab({
   editData,
   strategiesData,
+  rulesData,
+  mistakesData,
 }: {
   editData?: TradeData | null;
   strategiesData?: { id: number; strategy_name: string }[] | null;
+  rulesData?: {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: RuleOption[];
+  } | null;
+  mistakesData?: {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: MistakeOption[];
+  } | null;
 }) {
+  const rules = rulesData?.results || [];
+  const mistakes = mistakesData?.results || [];
+
   return (
     <div className="space-y-5 py-4">
       <div className="grid grid-cols-2 gap-4">
@@ -1582,6 +1811,59 @@ function GeneralTab({
             showSearch
             notFoundContent="No strategies found"
             allowClear
+          />
+        </Form.Item>
+      </div>
+
+      {/* Rules and Mistakes Select Boxes */}
+      <div className="grid grid-cols-2 gap-4">
+        <Form.Item
+          name="rules"
+          label={
+            <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+              Rules Violated
+            </span>
+          }
+          className="mb-0"
+        >
+          <Select
+            placeholder="Select rules violated"
+            size="large"
+            mode="multiple"
+            showSearch
+            optionFilterProp="children"
+            allowClear
+            options={rules
+              .filter((rule: RuleOption) => !rule.is_system_rule)
+              .map((rule: RuleOption) => ({
+                label: rule.rule_name,
+                value: rule.id,
+              }))}
+            notFoundContent="No rules available"
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="mistakes"
+          label={
+            <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
+              Mistakes Made
+            </span>
+          }
+          className="mb-0"
+        >
+          <Select
+            placeholder="Select mistakes made"
+            size="large"
+            mode="multiple"
+            showSearch
+            optionFilterProp="children"
+            allowClear
+            options={mistakes.map((mistake: MistakeOption) => ({
+              label: mistake.mistake_name,
+              value: mistake.id,
+            }))}
+            notFoundContent="No mistakes available"
           />
         </Form.Item>
       </div>
