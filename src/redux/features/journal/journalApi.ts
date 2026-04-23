@@ -2,7 +2,7 @@ import baseApi from "@/redux/api/baseApi/baseApi";
 
 export const journalApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    //
+    // for daily journal tab ------------------------------>>
     getAllDailyJournal: builder.query({
       query: () => ({
         url: "/api/journal/daily/",
@@ -11,12 +11,29 @@ export const journalApi = baseApi.injectEndpoints({
       providesTags: ["journal"],
     }),
 
-    // for daily journal tab ------------------------------>>
     createDailyJournalEntry: builder.mutation({
       query: (payload) => ({
         url: "/api/journal/daily/",
         method: "POST",
         body: payload,
+      }),
+      invalidatesTags: ["journal"],
+    }),
+    // Update daily journal entry
+    updateDailyJournalEntry: builder.mutation({
+      query: ({ id, payload }) => ({
+        url: `/api/journal/daily/${id}/`,
+        method: "PATCH",
+        body: payload,
+      }),
+      invalidatesTags: ["journal"],
+    }),
+
+    // Delete daily journal entry
+    deleteDailyJournalEntry: builder.mutation({
+      query: (id) => ({
+        url: `/api/journal/daily/${id}/`,
+        method: "DELETE",
       }),
       invalidatesTags: ["journal"],
     }),
@@ -202,6 +219,8 @@ export const journalApi = baseApi.injectEndpoints({
 export const {
   useGetAllDailyJournalQuery,
   useCreateDailyJournalEntryMutation,
+  useUpdateDailyJournalEntryMutation,
+  useDeleteDailyJournalEntryMutation,
 
   // for trade notes tab
   useCreateAddNoteMutation,
