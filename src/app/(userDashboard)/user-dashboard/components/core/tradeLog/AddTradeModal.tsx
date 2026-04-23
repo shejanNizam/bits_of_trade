@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import {
   useImportTradeManuallyMutation,
   useUpdateTradeManuallyMutation,
@@ -18,7 +20,7 @@ interface AddTradeModalProps {
   open: boolean;
   onClose: () => void;
   editData?: TradeData | null;
-  strategiesData?: { id: number; strategy_name: string }[] | null;
+  strategiesData?: { id: string; strategy_name: string }[] | null;
   rulesData?: {
     count: number;
     next: string | null;
@@ -63,7 +65,7 @@ type TradeFormValues = {
   emotional_state?: string;
   violation_modes?: string[];
   lessons_learned?: string;
-  rules?: string[];
+  rules_followed?: string[];
   mistakes?: string[];
 };
 
@@ -122,6 +124,9 @@ export default function AddTradeModal({
   useEffect(() => {
     if (open) {
       if (editData) {
+        console.log("Editing trade data:", editData);
+
+        // Set form values from editData
         form.setFieldsValue({
           market_type: editData.market_type,
           symbol: editData.symbol,
@@ -142,10 +147,12 @@ export default function AddTradeModal({
           trade_analysis: editData.trade_analysis,
           entry_confidence: editData.entry_confidence || 50,
           satisfaction_rating: editData.satisfaction_rating || 50,
-          emotional_state: editData.emotional_state ?? undefined,
+          emotional_state: editData.emotional_state || undefined,
           violation_modes: editData.violation_modes || [],
           lessons_learned: editData.lessons_learned,
-          rules: Array.isArray(editData.rules) ? editData.rules : [],
+          rules_followed: Array.isArray(editData.rules_followed)
+            ? editData.rules_followed
+            : [],
           mistakes: Array.isArray(editData.mistakes) ? editData.mistakes : [],
         });
 
@@ -167,13 +174,14 @@ export default function AddTradeModal({
           setFileList([]);
         }
       } else {
+        // Reset form for new trade
         form.resetFields();
         form.setFieldsValue({
           entry_confidence: 50,
           satisfaction_rating: 50,
           violation_modes: [],
           quantity: 1,
-          rules: [],
+          rules_followed: [],
           mistakes: [],
         });
         setFileList([]);
@@ -229,9 +237,8 @@ export default function AddTradeModal({
         emotional_state: values.emotional_state,
         violation_modes: values.violation_modes || [],
         lessons_learned: values.lessons_learned,
-        rules: values.rules || [],
+        rules_followed: values.rules_followed || [],
         mistakes: values.mistakes || [],
-        rules_followed: [],
         is_disciplined: values.violation_modes?.length === 0,
         is_tagged_complete: true,
         import_source: "manual",
@@ -329,7 +336,7 @@ export default function AddTradeModal({
           satisfaction_rating: 50,
           violation_modes: [],
           quantity: 1,
-          rules: [],
+          rules_followed: [],
           mistakes: [],
         }}
       >
@@ -394,7 +401,7 @@ export default function AddTradeModal({
                 satisfaction_rating: 50,
                 violation_modes: [],
                 quantity: 1,
-                rules: [],
+                rules_followed: [],
                 mistakes: [],
               });
               setFileList([]);
@@ -576,7 +583,7 @@ function GeneralTab({
   mistakesData,
 }: {
   editData?: TradeData | null;
-  strategiesData?: { id: number; strategy_name: string }[] | null;
+  strategiesData?: { id: string; strategy_name: string }[] | null;
   rulesData?: {
     count: number;
     next: string | null;
@@ -647,7 +654,7 @@ function GeneralTab({
           rules={[{ required: true, message: "Please enter the entry price" }]}
           className="mb-0"
         >
-          <NumberInput placeholder="0" step={1} min={0} integer={false} />
+          <NumberInput placeholder="0" step={0.01} min={0} integer={false} />
         </Form.Item>
         <Form.Item
           name="quantity"
@@ -680,12 +687,12 @@ function GeneralTab({
           name="exit_price"
           label={
             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
-              Exit Price*
+              Exit Price
             </span>
           }
           className="mb-0"
         >
-          <NumberInput placeholder="0" step={1} min={0} integer={true} />
+          <NumberInput placeholder="0" step={0.01} min={0} integer={false} />
         </Form.Item>
         <Form.Item
           name="fees"
@@ -696,7 +703,7 @@ function GeneralTab({
           }
           className="mb-0"
         >
-          <NumberInput placeholder="0" step={1} min={0} integer={true} />
+          <NumberInput placeholder="0" step={0.01} min={0} integer={false} />
         </Form.Item>
       </div>
 
@@ -770,7 +777,7 @@ function GeneralTab({
           }
           className="mb-0"
         >
-          <NumberInput placeholder="0" step={1} min={0} integer={true} />
+          <NumberInput placeholder="0" step={0.01} min={0} integer={false} />
         </Form.Item>
         <Form.Item
           name="target"
@@ -781,7 +788,7 @@ function GeneralTab({
           }
           className="mb-0"
         >
-          <NumberInput placeholder="0" step={1} min={0} integer={true} />
+          <NumberInput placeholder="0" step={0.01} min={0} integer={false} />
         </Form.Item>
 
         <Form.Item
@@ -810,16 +817,16 @@ function GeneralTab({
       {/* Rules and Mistakes Select Boxes */}
       <div className="grid grid-cols-2 gap-4">
         <Form.Item
-          name="rules"
+          name="rules_followed"
           label={
             <span className="text-gray-700 dark:text-gray-300 text-xs font-semibold">
-              Rules Violated
+              Rules Followed
             </span>
           }
           className="mb-0"
         >
           <Select
-            placeholder="Select rules violated"
+            placeholder="Select rules followed"
             size="large"
             // mode="multiple"
             showSearch
