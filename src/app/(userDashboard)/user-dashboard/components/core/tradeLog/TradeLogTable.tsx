@@ -65,6 +65,7 @@ export interface TradeData {
   trade_analysis?: string;
   user?: number;
   session?: string;
+  rules?: string;
 }
 
 export default function TradeLogTable() {

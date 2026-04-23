@@ -2,6 +2,15 @@ import baseApi from "@/redux/api/baseApi/baseApi";
 
 export const journalApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    //
+    getAllDailyJournal: builder.query({
+      query: () => ({
+        url: "/api/journal/daily/",
+        method: "GET",
+      }),
+      providesTags: ["journal"],
+    }),
+
     // for daily journal tab ------------------------------>>
     createDailyJournalEntry: builder.mutation({
       query: (payload) => ({
@@ -191,6 +200,7 @@ export const journalApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetAllDailyJournalQuery,
   useCreateDailyJournalEntryMutation,
 
   // for trade notes tab
