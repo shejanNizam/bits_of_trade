@@ -363,6 +363,13 @@ export default function CurrentStatus() {
     }, 300);
   };
 
+  const handleCooldownModalClose = () => {
+    setIsCooldownModalOpen(false);
+    setCooldownMessage("");
+    setCooldownSeconds(0);
+    setCooldownEndsAt(null);
+  };
+
   const handleCompleteButtonClick = () => {
     // Check if all questions are answered
     if (completedQuestions.length === questions.length) {
@@ -651,13 +658,17 @@ export default function CurrentStatus() {
         </div>
       </Modal>
 
-      {/* Cooldown Timer Modal */}
+      {/* Cooldown Timer Modal - Now closable */}
       <Modal
         open={isCooldownModalOpen}
+        onCancel={handleCooldownModalClose}
         footer={null}
         width={450}
-        closable={false}
-        maskClosable={false}
+        closable={true}
+        maskClosable={true}
+        closeIcon={
+          <IoCloseOutline className="text-gray-500 dark:text-gray-400 text-xl hover:text-gray-700 dark:hover:text-gray-200" />
+        }
         modalRender={(modal) => (
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl">
             {modal}
@@ -709,11 +720,19 @@ export default function CurrentStatus() {
           </div>
 
           {/* Info Text */}
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
             {
               "Please wait while the cooldown period ends. You'll be able to trade again automatically."
             }
           </p>
+
+          {/* Cancel Button */}
+          <button
+            onClick={handleCooldownModalClose}
+            className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-sm font-medium"
+          >
+            Close
+          </button>
         </div>
       </Modal>
     </>
