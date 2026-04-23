@@ -4,15 +4,13 @@ export const notificationApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // GET api - list all notifications
     listNotifications: builder.query({
-      query: ({ unread, type, severity, page = 1, limit = 20 }) => ({
+      query: ({ unread, type, severity }) => ({
         url: "/api/notifications/",
         method: "GET",
         params: {
           ...(unread !== undefined && { unread }),
           ...(type && { type }),
           ...(severity && { severity }),
-          page,
-          limit,
         },
       }),
       providesTags: ["notification"],

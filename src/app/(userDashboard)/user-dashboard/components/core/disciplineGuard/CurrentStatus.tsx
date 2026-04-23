@@ -55,7 +55,47 @@ export default function CurrentStatus() {
   const showTradeReviewChecked =
     tradeReviewCompleted || localTradeReviewCompleted;
 
-  // Real-time countdown timer effect
+  // Get cooldown ends at from session data
+  const sessionCooldownEndsAt = sessionViolations?.cooldown_ends_at || null;
+
+  // Real-time countdown for the main UI
+  const [remainingTimeText, setRemainingTimeText] = useState<string>("");
+
+  // Real-time countdown timer effect for main UI
+  useEffect(() => {
+    if (!sessionCooldownEndsAt) {
+      setRemainingTimeText("");
+      return;
+    }
+
+    const updateMainTimer = () => {
+      const now = new Date();
+      const endTime = new Date(sessionCooldownEndsAt);
+      const remainingMs = endTime.getTime() - now.getTime();
+
+      if (remainingMs <= 0) {
+        setRemainingTimeText("");
+        refetchSession(); // Refresh to get updated status
+        return;
+      }
+
+      const remainingSeconds = Math.floor(remainingMs / 1000);
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
+
+      if (minutes > 0) {
+        setRemainingTimeText(`${minutes}m ${seconds}s remaining`);
+      } else {
+        setRemainingTimeText(`${seconds}s remaining`);
+      }
+    };
+
+    updateMainTimer();
+    const interval = setInterval(updateMainTimer, 1000);
+    return () => clearInterval(interval);
+  }, [sessionCooldownEndsAt, refetchSession]);
+
+  // Real-time countdown timer effect for modal
   useEffect(() => {
     if (!isCooldownModalOpen || !cooldownEndsAt) return;
 
@@ -407,12 +447,35 @@ export default function CurrentStatus() {
           </div>
         )}
 
-        {/* Required Actions */}
+        {/* Required Actions with Countdown */}
         {statusData.requiredActions.length > 0 && (
           <div className="mb-6">
-            <h4 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-              Required Actions
-            </h4>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Required Actions
+              </h4>
+              {/* Countdown Timer beside the title */}
+              {remainingTimeText && (
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+                  <svg
+                    className="w-3 h-3 text-orange-600 dark:text-orange-400 animate-pulse"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span className="text-xs font-medium text-orange-700 dark:text-orange-300">
+                    {remainingTimeText}
+                  </span>
+                </div>
+              )}
+            </div>
             <div className="space-y-2">
               {/* Complete Quick Journal - Static checkbox, no API call */}
               <label className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed opacity-75">
@@ -590,7 +653,6 @@ export default function CurrentStatus() {
 
       {/* Cooldown Timer Modal */}
       <Modal
-        centered
         open={isCooldownModalOpen}
         footer={null}
         width={450}
