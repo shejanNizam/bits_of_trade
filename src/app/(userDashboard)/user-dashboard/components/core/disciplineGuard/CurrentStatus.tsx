@@ -1,356 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// "use client";
-
-// import { useAppSelector } from "@/redux/hooks";
-// import { RootState } from "@/redux/store";
-// import { Modal } from "antd";
-// import { useState } from "react";
-// import { BiListCheck } from "react-icons/bi";
-// import { FaBrain } from "react-icons/fa";
-// import { FiAlertTriangle, FiTarget } from "react-icons/fi";
-// import { IoCloseOutline, IoLockClosedOutline } from "react-icons/io5";
-// import { MdOutlineWarningAmber } from "react-icons/md";
-
-// export default function CurrentStatus() {
-//   const { user } = useAppSelector((state: RootState) => state.auth);
-//   console.log(user);
-
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-//   const [completedQuestions, setCompletedQuestions] = useState<number[]>([]);
-//   const [isCheckComplete, setIsCheckComplete] = useState(false);
-
-//   // This data will come from backend later
-//   const statusData = {
-//     status: "yellow", // "green" | "yellow" | "red"
-//     activeRestrictions: [
-//       "Max position size reduced by 50%",
-//       "Requires checklist before entry",
-//     ],
-//     reasonsDetected: [
-//       {
-//         type: "Rule Violation",
-//         message: "Max Trades Per Day approached",
-//       },
-//     ],
-//     requiredActions: [
-//       { id: 1, label: "Complete Quick Journal", completed: false },
-//       { id: 2, label: "Review last trade", completed: false },
-//     ],
-//   };
-
-//   const questions = [
-//     {
-//       id: 1,
-//       text: "Are you emotionally calm and focused?",
-//       icon: <FaBrain className="text-purple-500" />,
-//     },
-//     {
-//       id: 2,
-//       text: "Have you reviewed your rules and limits?",
-//       icon: <BiListCheck className="text-orange-500" />,
-//     },
-//     {
-//       id: 3,
-//       text: "Is your setup valid according to your strategy?",
-//       icon: <FiAlertTriangle className="text-blue-500" />,
-//     },
-//     {
-//       id: 4,
-//       text: "Are you trading within position size limits?",
-//       icon: <FiTarget className="text-orange-500" />,
-//     },
-//     {
-//       id: 5,
-//       text: "Have you identified your exit plan?",
-//       icon: <FiAlertTriangle className="text-blue-500" />,
-//     },
-//   ];
-
-//   const statusConfig = {
-//     green: {
-//       label: "GREEN",
-//       bgColor: "bg-green-100 dark:bg-green-900/50",
-//       textColor: "text-green-700 dark:text-green-300",
-//     },
-//     yellow: {
-//       label: "YELLOW",
-//       bgColor: "bg-yellow-100 dark:bg-yellow-900/50",
-//       textColor: "text-yellow-700 dark:text-yellow-300",
-//     },
-//     red: {
-//       label: "RED",
-//       bgColor: "bg-red-100 dark:bg-red-900/50",
-//       textColor: "text-red-700 dark:text-red-300",
-//     },
-//   };
-
-//   const config = statusConfig[statusData.status as keyof typeof statusConfig];
-
-//   const handleQuestionClick = (questionId: number) => {
-//     if (completedQuestions.includes(questionId)) {
-//       setCompletedQuestions(
-//         completedQuestions.filter((id) => id !== questionId),
-//       );
-//     } else {
-//       const newCompleted = [...completedQuestions, questionId];
-//       setCompletedQuestions(newCompleted);
-
-//       // Check if all questions are completed
-//       if (newCompleted.length === questions.length) {
-//         setTimeout(() => {
-//           setIsCheckComplete(true);
-//         }, 300);
-//       }
-//     }
-//   };
-
-//   const handleModalClose = () => {
-//     setIsModalOpen(false);
-//     setTimeout(() => {
-//       setCompletedQuestions([]);
-//       setIsCheckComplete(false);
-//     }, 300);
-//   };
-
-//   return (
-//     <>
-//       <div className="bg-white dark:bg-gray-800 rounded-xl lg:rounded-2xl p-5 sm:p-6 border border-gray-200 dark:border-gray-700">
-//         {/* Header */}
-//         <div className="flex items-center justify-between mb-6">
-//           <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
-//             Current Status
-//           </h3>
-//           <div
-//             className={`${config.bgColor} ${config.textColor} px-3 py-1 rounded-lg text-xs sm:text-sm font-bold uppercase`}
-//           >
-//             {config.label}
-//           </div>
-//         </div>
-
-//         {/* Active Restrictions */}
-//         <div className="mb-6">
-//           <h4 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-//             Active Restrictions
-//           </h4>
-//           <div className="space-y-2">
-//             {statusData.activeRestrictions.map((restriction, index) => (
-//               <div
-//                 key={index}
-//                 className="flex items-start gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400"
-//               >
-//                 <IoLockClosedOutline className="text-orange-500 dark:text-orange-400 text-base shrink-0 mt-0.5" />
-//                 <span>{restriction}</span>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* Reasons Detected */}
-//         <div className="mb-6">
-//           <h4 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-//             Reasons Detected
-//           </h4>
-//           {statusData.reasonsDetected.map((reason, index) => (
-//             <div
-//               key={index}
-//               className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-lg p-3"
-//             >
-//               <div className="flex items-start gap-2">
-//                 <MdOutlineWarningAmber className="text-red-600 dark:text-red-400 text-base shrink-0 mt-0.5" />
-//                 <div className="flex-1 min-w-0">
-//                   <p className="text-xs sm:text-sm font-medium text-red-800 dark:text-red-300">
-//                     {reason.type}: {reason.message}
-//                   </p>
-//                 </div>
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-
-//         {/* Required Actions */}
-//         <div className="mb-6">
-//           <h4 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-//             Required Actions
-//           </h4>
-//           <div className="space-y-2">
-//             {statusData.requiredActions.map((action) => (
-//               <label
-//                 key={action.id}
-//                 className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
-//               >
-//                 <input
-//                   type="checkbox"
-//                   className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
-//                   defaultChecked={action.completed}
-//                 />
-//                 <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
-//                   {action.label}
-//                 </span>
-//               </label>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* Action Buttons */}
-//         <div className="space-y-2">
-//           <button
-//             onClick={() => setIsModalOpen(true)}
-//             className="w-full bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg py-3 px-4 font-semibold text-sm sm:text-base transition-colors"
-//           >
-//             Complete
-//           </button>
-//           <button className="w-full bg-white dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg py-3 px-4 font-medium text-sm sm:text-base transition-colors">
-//             Edit Rules & Limit
-//           </button>
-//         </div>
-//       </div>
-
-//       {/* Quick Discipline Check Modal */}
-//       <Modal
-//         open={isModalOpen}
-//         onCancel={handleModalClose}
-//         footer={null}
-//         width={500}
-//         closeIcon={
-//           <IoCloseOutline className="text-gray-500 dark:text-gray-400 text-xl" />
-//         }
-//         modalRender={(modal) => (
-//           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl">
-//             {modal}
-//           </div>
-//         )}
-//       >
-//         <div className="p-2">
-//           {!isCheckComplete ? (
-//             <>
-//               {/* Modal Header */}
-//               <div className="mb-6">
-//                 <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-//                   Quick Discipline Check
-//                 </h3>
-//                 <p className="text-sm text-gray-600 dark:text-gray-400">
-//                   Answer these questions honestly before your next trade. This
-//                   protects you from impulsive decisions.
-//                 </p>
-//               </div>
-
-//               {/* Progress Bar */}
-//               <div className="mb-6">
-//                 <div className="flex items-center justify-between mb-2">
-//                   <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-//                     Progress
-//                   </span>
-//                   <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-//                     {completedQuestions.length}/{questions.length}
-//                   </span>
-//                 </div>
-//                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-//                   <div
-//                     className="bg-gray-800 dark:bg-gray-400 h-2 rounded-full transition-all duration-300"
-//                     style={{
-//                       width: `${(completedQuestions.length / questions.length) * 100}%`,
-//                     }}
-//                   ></div>
-//                 </div>
-//               </div>
-
-//               {/* Questions */}
-//               <div className="space-y-3 mb-6">
-//                 {questions.map((question) => (
-//                   <button
-//                     key={question.id}
-//                     onClick={() => handleQuestionClick(question.id)}
-//                     className={`w-full flex items-center gap-3 p-4 border-2 rounded-xl transition-all text-left ${
-//                       completedQuestions.includes(question.id)
-//                         ? "border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-950/30"
-//                         : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
-//                     }`}
-//                   >
-//                     <div
-//                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-//                         completedQuestions.includes(question.id)
-//                           ? "border-green-500 dark:border-green-400 bg-green-500 dark:bg-green-400"
-//                           : "border-gray-400 dark:border-gray-500"
-//                       }`}
-//                     >
-//                       {completedQuestions.includes(question.id) && (
-//                         <svg
-//                           width="12"
-//                           height="12"
-//                           viewBox="0 0 12 12"
-//                           fill="none"
-//                           xmlns="http://www.w3.org/2000/svg"
-//                         >
-//                           <path
-//                             d="M2 6L5 9L10 3"
-//                             stroke="white"
-//                             strokeWidth="2"
-//                             strokeLinecap="round"
-//                             strokeLinejoin="round"
-//                           />
-//                         </svg>
-//                       )}
-//                     </div>
-//                     <span className="flex-1 text-sm text-gray-900 dark:text-gray-100">
-//                       {question.text}
-//                     </span>
-//                     <div className="text-xl shrink-0">{question.icon}</div>
-//                   </button>
-//                 ))}
-//               </div>
-
-//               {/* Modal Footer */}
-//               <div className="flex items-center justify-end gap-3">
-//                 <button
-//                   onClick={handleModalClose}
-//                   className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-//                 >
-//                   Cancel
-//                 </button>
-//                 <button
-//                   className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-//                   disabled={completedQuestions.length !== questions.length}
-//                 >
-//                   {completedQuestions.length}/{questions.length} Complete
-//                 </button>
-//               </div>
-//             </>
-//           ) : (
-//             <>
-//               {/* Success State */}
-//               <div className="text-center py-8">
-//                 <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-//                   <svg
-//                     width="40"
-//                     height="40"
-//                     viewBox="0 0 40 40"
-//                     fill="none"
-//                     xmlns="http://www.w3.org/2000/svg"
-//                     className="text-green-600 dark:text-green-400"
-//                   >
-//                     <path
-//                       d="M12 20L18 26L28 14"
-//                       stroke="currentColor"
-//                       strokeWidth="3"
-//                       strokeLinecap="round"
-//                       strokeLinejoin="round"
-//                     />
-//                   </svg>
-//                 </div>
-//                 <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-//                   Quick Check Complete!
-//                 </h3>
-//                 <p className="text-gray-600 dark:text-gray-400">
-//                   {"You're"} cleared to trade. Stay disciplined.
-//                 </p>
-//               </div>
-//             </>
-//           )}
-//         </div>
-//       </Modal>
-//     </>
-//   );
-// }
 
 "use client";
 
@@ -362,7 +11,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import { message, Modal } from "antd";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiListCheck } from "react-icons/bi";
 import { FaBrain } from "react-icons/fa";
 import { FiAlertTriangle, FiTarget } from "react-icons/fi";
@@ -382,12 +31,21 @@ export default function CurrentStatus() {
   const [completedQuestions, setCompletedQuestions] = useState<number[]>([]);
   const [isCheckComplete, setIsCheckComplete] = useState(false);
 
+  // Cooldown modal state
+  const [isCooldownModalOpen, setIsCooldownModalOpen] = useState(false);
+  const [cooldownMessage, setCooldownMessage] = useState("");
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const [cooldownEndsAt, setCooldownEndsAt] = useState<string | null>(null);
+
   // Local state for review last trade checkbox (no API call)
   const [localTradeReviewCompleted, setLocalTradeReviewCompleted] =
     useState(false);
 
   // Get session state from API response
   const sessionState = sessionData?.session_state || "green";
+
+  // Get session data from API response
+  const sessionViolations = sessionData?.session || null;
 
   // Get journal completed status from API response
   const journalCompleted = sessionData?.journal_completed || false;
@@ -396,6 +54,50 @@ export default function CurrentStatus() {
   // For UI - use local state for checkbox, but show actual status from API if already completed
   const showTradeReviewChecked =
     tradeReviewCompleted || localTradeReviewCompleted;
+
+  // Real-time countdown timer effect
+  useEffect(() => {
+    if (!isCooldownModalOpen || !cooldownEndsAt) return;
+
+    const updateTimer = () => {
+      const now = new Date();
+      const endTime = new Date(cooldownEndsAt);
+      const remainingMs = endTime.getTime() - now.getTime();
+
+      if (remainingMs <= 0) {
+        // Cooldown finished
+        setIsCooldownModalOpen(false);
+        setCooldownMessage("");
+        setCooldownSeconds(0);
+        setCooldownEndsAt(null);
+        refetchSession(); // Refresh session data
+        return;
+      }
+
+      const remainingSeconds = Math.floor(remainingMs / 1000);
+      setCooldownSeconds(remainingSeconds);
+
+      // Update message with remaining time
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
+      if (minutes > 0) {
+        setCooldownMessage(
+          `Cooldown active. ${minutes} minute(s) and ${seconds} second(s) remaining.`,
+        );
+      } else {
+        setCooldownMessage(`Cooldown active. ${seconds} second(s) remaining.`);
+      }
+    };
+
+    // Update immediately
+    updateTimer();
+
+    // Set interval to update every second
+    const interval = setInterval(updateTimer, 1000);
+
+    // Cleanup interval on unmount or modal close
+    return () => clearInterval(interval);
+  }, [isCooldownModalOpen, cooldownEndsAt, refetchSession]);
 
   // Dynamic status data based on API response
   const getStatusData = () => {
@@ -551,15 +253,53 @@ export default function CurrentStatus() {
   const handleModalSubmit = async () => {
     try {
       // Call unlock API when submitting the modal
-      await unlockJournal({ action: "complete_trade_review" }).unwrap();
-      message.success("Trade review completed successfully!");
-      setLocalTradeReviewCompleted(false); // Reset local state
-      refetchSession(); // Refetch to get updated status from backend
-      setIsModalOpen(false);
-      setCompletedQuestions([]);
-      setIsCheckComplete(false);
-    } catch (error) {
-      message.error("Failed to complete trade review");
+      const response = await unlockJournal({
+        action: "complete_trade_review",
+      }).unwrap();
+
+      console.log(response);
+
+      // Check if response contains cooldown message
+      if (response.message && response.message.includes("Cooldown active")) {
+        // Show cooldown modal
+        setCooldownMessage(response.message);
+        setCooldownEndsAt(response.cooldown_ends_at);
+        setIsCooldownModalOpen(true);
+
+        // Close the discipline check modal
+        setIsModalOpen(false);
+        setCompletedQuestions([]);
+        setIsCheckComplete(false);
+        setLocalTradeReviewCompleted(false);
+
+        message.info(response.message);
+      } else {
+        // Success - no cooldown
+        message.success("Trade review completed successfully!");
+        setLocalTradeReviewCompleted(false);
+        refetchSession();
+        setIsModalOpen(false);
+        setCompletedQuestions([]);
+        setIsCheckComplete(false);
+      }
+    } catch (error: any) {
+      // Check if error contains cooldown message
+      if (
+        error?.data?.message &&
+        error.data.message.includes("Cooldown active")
+      ) {
+        setCooldownMessage(error.data.message);
+        setCooldownEndsAt(error.data.cooldown_ends_at);
+        setIsCooldownModalOpen(true);
+        setIsModalOpen(false);
+        setCompletedQuestions([]);
+        setIsCheckComplete(false);
+        setLocalTradeReviewCompleted(false);
+      } else {
+        message.error(
+          error?.data?.message || "Failed to complete trade review",
+        );
+      }
     }
   };
 
@@ -579,7 +319,7 @@ export default function CurrentStatus() {
     setTimeout(() => {
       setCompletedQuestions([]);
       setIsCheckComplete(false);
-      setLocalTradeReviewCompleted(false); // Reset local state on close
+      setLocalTradeReviewCompleted(false);
     }, 300);
   };
 
@@ -596,6 +336,17 @@ export default function CurrentStatus() {
 
   // Check if the Complete button should be disabled (in main card)
   const isCompleteButtonDisabled = !areAllActionsCompleted();
+
+  // Format time display
+  const formatTimeDisplay = () => {
+    const minutes = Math.floor(cooldownSeconds / 60);
+    const seconds = cooldownSeconds % 60;
+
+    if (minutes > 0) {
+      return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    }
+    return `${seconds} seconds`;
+  };
 
   return (
     <>
@@ -683,7 +434,7 @@ export default function CurrentStatus() {
                   className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
                   checked={showTradeReviewChecked}
                   onChange={(e) => handleTradeReviewChange(e.target.checked)}
-                  disabled={tradeReviewCompleted} // Disable if already completed from backend
+                  disabled={tradeReviewCompleted}
                 />
                 <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                   Review last trade
@@ -705,7 +456,6 @@ export default function CurrentStatus() {
                   : "bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white"
               }`}
             >
-              {/* Complete */}
               Complete Quick Check
             </button>
           )}
@@ -835,6 +585,73 @@ export default function CurrentStatus() {
               {isUnlocking ? "Submitting..." : "Submit"}
             </button>
           </div>
+        </div>
+      </Modal>
+
+      {/* Cooldown Timer Modal */}
+      <Modal
+        centered
+        open={isCooldownModalOpen}
+        footer={null}
+        width={450}
+        closable={false}
+        maskClosable={false}
+        modalRender={(modal) => (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl">
+            {modal}
+          </div>
+        )}
+      >
+        <div className="p-6 text-center">
+          {/* Warning Icon */}
+          <div className="mb-4 flex justify-center">
+            <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
+              <IoLockClosedOutline className="text-orange-600 dark:text-orange-400 text-3xl" />
+            </div>
+          </div>
+
+          {/* Title */}
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            Cooldown Active
+          </h3>
+
+          {/* Message */}
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            {cooldownMessage}
+          </p>
+
+          {/* Timer Display */}
+          <div className="mb-6">
+            <div className="inline-flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg px-6 py-3">
+              <div className="text-center">
+                <div className="text-3xl font-bold font-mono text-gray-900 dark:text-gray-100">
+                  {formatTimeDisplay()}
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Remaining Time
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="mb-6">
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-orange-500 dark:bg-orange-400 h-2 rounded-full transition-all duration-1000"
+                style={{
+                  width: `${(cooldownSeconds / (parseInt(cooldownMessage.match(/\d+/)?.[0] || "60") * 60)) * 100}%`,
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Info Text */}
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {
+              "Please wait while the cooldown period ends. You'll be able to trade again automatically."
+            }
+          </p>
         </div>
       </Modal>
     </>
