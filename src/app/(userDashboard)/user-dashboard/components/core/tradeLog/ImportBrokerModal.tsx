@@ -5,7 +5,7 @@ import { ApiError } from "@/types/auth";
 import { ImportBrokerModalProps } from "@/types/trade-log";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import type { UploadFile, UploadProps } from "antd";
-import { Modal, Upload, message } from "antd";
+import { Input, Modal, Upload, message } from "antd";
 import Image from "next/image";
 import { useState } from "react";
 import { IoCloseOutline, IoInformationCircleOutline } from "react-icons/io5";
@@ -28,6 +28,8 @@ export default function ImportBrokerModal({
   const { Dragger } = Upload;
 
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [showOtherBrokerInput, setShowOtherBrokerInput] = useState(false);
+  const [otherBrokerName, setOtherBrokerName] = useState("");
 
   const [importTrade, { isLoading }] = useImportTradeMutation();
 
@@ -75,6 +77,11 @@ export default function ImportBrokerModal({
     const formData = new FormData();
     formData.append("file", file);
 
+    // Add broker info if needed
+    if (otherBrokerName) {
+      formData.append("broker", otherBrokerName);
+    }
+
     try {
       const response = await importTrade(formData).unwrap();
 
@@ -84,7 +91,10 @@ export default function ImportBrokerModal({
           response.message || "Your trades have been imported successfully.",
       });
 
+      // Reset form
       setFileList([]);
+      setShowOtherBrokerInput(false);
+      setOtherBrokerName("");
       onClose();
     } catch (error) {
       const apiError = error as ApiError;
@@ -97,6 +107,16 @@ export default function ImportBrokerModal({
           "Failed to import trades. Please check your file format.",
       });
     }
+  };
+
+  const handleOtherBrokerClick = () => {
+    setShowOtherBrokerInput(true);
+    setOtherBrokerName("");
+  };
+
+  const handleCancelOtherBroker = () => {
+    setShowOtherBrokerInput(false);
+    setOtherBrokerName("");
   };
 
   const uploadProps: UploadProps = {
@@ -186,26 +206,71 @@ export default function ImportBrokerModal({
           </div>
 
           {/* Broker Static Grid Using next/image */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {BROKERS.map((broker) => (
-              <div
-                key={broker.value}
-                className="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-[#0f172a]"
-              >
-                <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center shrink-0 overflow-hidden">
-                  <Image
-                    src={broker.icon}
-                    alt={broker.label}
-                    width={32}
-                    height={32}
-                    className="object-contain p-1"
-                  />
+          <div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {BROKERS.map((broker) => (
+                <div
+                  key={broker.value}
+                  className="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-[#0f172a]"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center shrink-0 overflow-hidden">
+                    <Image
+                      src={broker.icon}
+                      alt={broker.label}
+                      width={32}
+                      height={32}
+                      className="object-contain p-1"
+                    />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {broker.label}
+                  </span>
                 </div>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {broker.label}
-                </span>
+              ))}
+
+              {/* Other Broker Button */}
+              {!showOtherBrokerInput && (
+                <button
+                  onClick={handleOtherBrokerClick}
+                  className="flex items-center justify-center gap-2 p-3 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-[#0f172a] hover:bg-gray-100 dark:hover:bg-[#1a2335] transition-all cursor-pointer"
+                >
+                  <span className="text-2xl text-gray-500 dark:text-gray-400">
+                    +
+                  </span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    Other
+                  </span>
+                </button>
+              )}
+            </div>
+
+            {/* Other Broker Input Field */}
+            {showOtherBrokerInput && (
+              <div className="mt-3 p-3 border border-emerald-200 dark:border-emerald-800 rounded-lg bg-emerald-50 dark:bg-emerald-950/20">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <Input
+                      placeholder="Enter broker name (e.g., Kotak Securities, ICICI Direct, etc.)"
+                      value={otherBrokerName}
+                      onChange={(e) => setOtherBrokerName(e.target.value)}
+                      className="w-full dark:bg-gray-800 dark:border-gray-700"
+                      autoFocus
+                      onPressEnter={handleImport}
+                    />
+                  </div>
+                  <button
+                    onClick={handleCancelOtherBroker}
+                    className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                    aria-label="Cancel"
+                  >
+                    <IoCloseOutline className="text-xl" />
+                  </button>
+                </div>
+                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2">
+                  Your broker will be saved with the imported trades
+                </p>
               </div>
-            ))}
+            )}
           </div>
 
           {/* Custom Dragger Section */}
@@ -262,9 +327,11 @@ export default function ImportBrokerModal({
                 Maximum file size: <strong>10MB</strong>
               </li>
             </ul>
+
             <div className="pt-2 text-center">
               <a
-                href="#"
+                href="/templates/BitsOfTrade_Universal_Import_Template.xlsx"
+                download="trade_import_template.xlsx"
                 className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 text-xs sm:text-sm font-medium underline underline-offset-4"
               >
                 Download Sample CSV Template
