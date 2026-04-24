@@ -40,6 +40,7 @@ const baseApi = createApi({
     "Videos",
     "UserCourseProgress",
     "review",
+    "pricing",
   ],
   endpoints: () => ({}),
 });
