@@ -146,6 +146,12 @@ export default function Header({ toggleSidebar }: HeaderProps) {
   };
 
   const handleApplyAdvanced = (advancedFilters: FilterState, count: number) => {
+    // If count is 0 (Reset All was clicked), do a full reset of everything
+    if (count === 0) {
+      handleResetAll();
+      return;
+    }
+
     const apiFilters: any = {};
     if (advancedFilters.direction !== "All Directions") {
       apiFilters.direction =
@@ -155,11 +161,27 @@ export default function Header({ toggleSidebar }: HeaderProps) {
       apiFilters.outcome =
         advancedFilters.outcome === "Wins Only" ? "win" : "loss";
     }
-    if (advancedFilters.instrument !== "All Instruments") {
-      if (advancedFilters.instrument === "F&O (Options/Futures)")
-        apiFilters.market_type = "options";
-      else if (advancedFilters.instrument === "Equities")
-        apiFilters.market_type = "indian_market";
+    if (advancedFilters.instrumentType !== "All Instruments") {
+      let marketTypeValue = "";
+      switch (advancedFilters.instrumentType) {
+        case "Indian Market":
+          marketTypeValue = "indian_market";
+          break;
+        case "Forex":
+          marketTypeValue = "forex";
+          break;
+        case "Crypto":
+          marketTypeValue = "crypto";
+          break;
+        case "Options":
+          marketTypeValue = "options";
+          break;
+      }
+      apiFilters.market_type = marketTypeValue;
+      setSelectedMarket(marketTypeValue);
+    } else {
+      apiFilters.market_type = undefined;
+      setSelectedMarket("all");
     }
     if (advancedFilters.strategy !== "All Strategies")
       apiFilters.strategy = advancedFilters.strategy;

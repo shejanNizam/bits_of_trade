@@ -1,4 +1,7 @@
+"use client";
+
 import CustomHeading from "@/components/shared/CustomHeading";
+import { useGetAllReviewQuery } from "@/redux/features/review/reviewApi";
 import { BsQuote } from "react-icons/bs";
 
 interface Testimonial {
@@ -9,6 +12,9 @@ interface Testimonial {
 }
 
 export default function TradersReview() {
+  const { data } = useGetAllReviewQuery({});
+  console.log(data);
+
   const testimonials: Testimonial[] = [
     {
       id: 1,

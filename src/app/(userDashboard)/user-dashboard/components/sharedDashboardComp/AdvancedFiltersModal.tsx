@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { FilterParams } from "@/contexts/FilterContext";
@@ -9,7 +8,7 @@ import { MdClose, MdRefresh } from "react-icons/md";
 export interface FilterState {
   direction: string;
   outcome: string;
-  instrument: string;
+  instrumentType: string;
   strategy: string;
   emotionalState: string;
   disciplineStatus: string;
@@ -39,7 +38,7 @@ const MISTAKES: string[] = [
 const DEFAULT_FILTERS: FilterState = {
   direction: "All Directions",
   outcome: "All Outcomes",
-  instrument: "All Instruments",
+  instrumentType: "All Instruments",
   strategy: "All Strategies",
   emotionalState: "All States",
   disciplineStatus: "All Trades",
@@ -51,6 +50,27 @@ const DEFAULT_FILTERS: FilterState = {
 };
 
 function mapInitialFilters(initialFilters: FilterParams): FilterState {
+  // Map market_type to instrumentType
+  let instrumentType = "All Instruments";
+  if (initialFilters.market_type) {
+    switch (initialFilters.market_type) {
+      case "indian_market":
+        instrumentType = "Indian Market";
+        break;
+      case "forex":
+        instrumentType = "Forex";
+        break;
+      case "crypto":
+        instrumentType = "Crypto";
+        break;
+      case "options":
+        instrumentType = "Options";
+        break;
+      default:
+        instrumentType = "All Instruments";
+    }
+  }
+
   return {
     direction:
       initialFilters.direction === "long"
@@ -64,12 +84,7 @@ function mapInitialFilters(initialFilters: FilterParams): FilterState {
         : initialFilters.outcome === "loss"
           ? "Losses Only"
           : "All Outcomes",
-    instrument:
-      initialFilters.market_type === "options"
-        ? "F&O (Options/Futures)"
-        : initialFilters.market_type === "indian_market"
-          ? "Equities"
-          : "All Instruments",
+    instrumentType,
     strategy: initialFilters.strategy || "All Strategies",
     emotionalState: initialFilters.emotional_state
       ? initialFilters.emotional_state.charAt(0).toUpperCase() +
@@ -116,13 +131,13 @@ export default function AdvancedFiltersModal({
     setFilters(
       initialFilters ? mapInitialFilters(initialFilters) : DEFAULT_FILTERS,
     );
-  }, [isOpen]); // intentionally only on isOpen — not initialFilters
+  }, [isOpen, initialFilters]); // Added initialFilters to deps
 
   const activeCount = useMemo(() => {
     let count = 0;
     if (filters.direction !== "All Directions") count++;
     if (filters.outcome !== "All Outcomes") count++;
-    if (filters.instrument !== "All Instruments") count++;
+    if (filters.instrumentType !== "All Instruments") count++;
     if (filters.strategy !== "All Strategies") count++;
     if (filters.emotionalState !== "All States") count++;
     if (filters.disciplineStatus !== "All Trades") count++;
@@ -149,7 +164,7 @@ export default function AdvancedFiltersModal({
     updateFilter("mistakes", newMistakes);
   };
 
-  // KEY FIX: Reset All applies defaults immediately to context AND closes modal
+  // Reset All applies defaults immediately to context AND closes modal
   const handleResetAll = (): void => {
     setFilters(DEFAULT_FILTERS);
     onApply(DEFAULT_FILTERS, 0);
@@ -163,7 +178,7 @@ export default function AdvancedFiltersModal({
   type SelectKeys =
     | "direction"
     | "outcome"
-    | "instrument"
+    | "instrumentType"
     | "strategy"
     | "emotionalState"
     | "disciplineStatus"
@@ -184,8 +199,14 @@ export default function AdvancedFiltersModal({
       },
       {
         label: "Instrument Type",
-        key: "instrument",
-        options: ["All Instruments", "F&O (Options/Futures)", "Equities"],
+        key: "instrumentType",
+        options: [
+          "All Instruments",
+          "Indian Market",
+          "Forex",
+          "Crypto",
+          "Options",
+        ],
       },
       {
         label: "Strategy",
