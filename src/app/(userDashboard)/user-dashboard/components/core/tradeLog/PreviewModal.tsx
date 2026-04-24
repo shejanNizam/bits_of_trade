@@ -384,14 +384,14 @@ export default function PreviewModal({
         </div>
 
         {/* Violation Modes */}
-        {trade.violation_modes && trade.violation_modes.length > 0 && (
+        {trade.rules_violation && trade.rules_violation.length > 0 && (
           <div className="bg-orange-50 dark:bg-orange-900/10 rounded-lg p-3">
             <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase flex items-center gap-2 mb-2">
               <IoWarningOutline className="text-orange-500" />
-              Violation Modes ({trade.violation_modes.length})
+              Violation Modes ({trade.rules_violation.length})
             </label>
             <div className="flex flex-wrap gap-2">
-              {trade.violation_modes.map((mode, idx) => (
+              {trade.rules_violation.map((mode, idx) => (
                 <Tag key={idx} color="orange" className="text-xs">
                   {mode}
                 </Tag>

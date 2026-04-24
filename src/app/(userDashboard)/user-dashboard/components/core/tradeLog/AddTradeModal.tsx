@@ -63,7 +63,7 @@ type TradeFormValues = {
   entry_confidence?: number;
   satisfaction_rating?: number;
   emotional_state?: string;
-  violation_modes?: string[];
+  rules_violation?: string[];
   lessons_learned?: string;
   rules_followed?: string[];
   mistakes?: string[];
@@ -148,7 +148,7 @@ export default function AddTradeModal({
           entry_confidence: editData.entry_confidence || 50,
           satisfaction_rating: editData.satisfaction_rating || 50,
           emotional_state: editData.emotional_state || undefined,
-          violation_modes: editData.violation_modes || [],
+          rules_violation: editData.rules_violation || [],
           lessons_learned: editData.lessons_learned,
           rules_followed: Array.isArray(editData.rules_followed)
             ? editData.rules_followed
@@ -179,7 +179,7 @@ export default function AddTradeModal({
         form.setFieldsValue({
           entry_confidence: 50,
           satisfaction_rating: 50,
-          violation_modes: [],
+          rules_violation: [],
           quantity: 1,
           rules_followed: [],
           mistakes: [],
@@ -235,11 +235,11 @@ export default function AddTradeModal({
         entry_confidence: values.entry_confidence,
         satisfaction_rating: values.satisfaction_rating,
         emotional_state: values.emotional_state,
-        violation_modes: values.violation_modes || [],
+        rules_violation: values.rules_violation || [],
         lessons_learned: values.lessons_learned,
         rules_followed: values.rules_followed || [],
         mistakes: values.mistakes || [],
-        is_disciplined: values.violation_modes?.length === 0,
+        is_disciplined: values.rules_violation?.length === 0,
         is_tagged_complete: true,
         import_source: "manual",
         screenshot_urls: allScreenshotUrls,
@@ -334,7 +334,7 @@ export default function AddTradeModal({
         initialValues={{
           entry_confidence: 50,
           satisfaction_rating: 50,
-          violation_modes: [],
+          rules_violation: [],
           quantity: 1,
           rules_followed: [],
           mistakes: [],
@@ -399,7 +399,7 @@ export default function AddTradeModal({
               form.setFieldsValue({
                 entry_confidence: 50,
                 satisfaction_rating: 50,
-                violation_modes: [],
+                rules_violation: [],
                 quantity: 1,
                 rules_followed: [],
                 mistakes: [],
@@ -891,7 +891,7 @@ function GeneralTab({
 function PsychologyTab({ form }: { form: FormInstance<TradeFormValues> }) {
   return (
     <div className="space-y-6 py-4">
-      <Form.Item name="violation_modes" noStyle>
+      <Form.Item name="rules_violation" noStyle>
         <input type="hidden" />
       </Form.Item>
 
@@ -949,11 +949,11 @@ function PsychologyTab({ form }: { form: FormInstance<TradeFormValues> }) {
         <Form.Item
           noStyle
           shouldUpdate={(prev, curr) =>
-            prev.violation_modes !== curr.violation_modes
+            prev.rules_violation !== curr.rules_violation
           }
         >
           {({ getFieldValue, setFieldsValue }) => {
-            const selectedModes = getFieldValue("violation_modes") || [];
+            const selectedModes = getFieldValue("rules_violation") || [];
 
             const toggleMode = (mode: string) => {
               const currentValues = Array.isArray(selectedModes)
@@ -963,7 +963,7 @@ function PsychologyTab({ form }: { form: FormInstance<TradeFormValues> }) {
                 ? currentValues.filter((m) => m !== mode)
                 : [...currentValues, mode];
 
-              setFieldsValue({ violation_modes: nextValue });
+              setFieldsValue({ rules_violation: nextValue });
             };
 
             return (

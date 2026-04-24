@@ -506,8 +506,8 @@ export default function TradeLogTable() {
     },
     {
       title: "Violations",
-      dataIndex: "violation_modes",
-      key: "violation_modes",
+      dataIndex: "rules_violation",
+      key: "rules_violation",
       align: "center",
       render: (violations) => (
         <div className="flex gap-1 flex-wrap justify-center">
