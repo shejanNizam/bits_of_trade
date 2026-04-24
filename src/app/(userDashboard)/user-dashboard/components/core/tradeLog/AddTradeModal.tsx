@@ -828,7 +828,7 @@ function GeneralTab({
           <Select
             placeholder="Select rules followed"
             size="large"
-            // mode="multiple"
+            mode="multiple"
             showSearch
             optionFilterProp="children"
             allowClear
@@ -854,7 +854,7 @@ function GeneralTab({
           <Select
             placeholder="Select mistakes made"
             size="large"
-            // mode="multiple"
+            mode="multiple"
             showSearch
             optionFilterProp="children"
             allowClear
