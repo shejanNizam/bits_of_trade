@@ -12,6 +12,8 @@ import {
   useGetRulesQuery,
   useGetStrategyForTradeQuery,
 } from "@/redux/features/utils/utilsApi";
+import { RootState } from "@/redux/store";
+import { User } from "@/types/auth";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import { message, Pagination, Spin, Table } from "antd";
 import type { ColumnsType, TableRowSelection } from "antd/es/table/interface";
@@ -24,6 +26,7 @@ import {
   IoTrashOutline,
 } from "react-icons/io5";
 import { MdInfoOutline } from "react-icons/md";
+import { useSelector } from "react-redux";
 import AddTradeModal from "./AddTradeModal";
 import ImportBrokerModal from "./ImportBrokerModal";
 import PreviewModal from "./PreviewModal";
@@ -79,7 +82,18 @@ export default function TradeLogTable() {
   const [pageSize, setPageSize] = useState(10);
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
-  // const { user } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
+  console.log(user);
+
+  // Type assertion to add session_state
+  const typedUser = user as User & {
+    session_state?: "green" | "yellow" | "red";
+  };
+
+  // Check if buttons should be disabled based on session_state
+  const isSessionBlocked =
+    typedUser?.session_state === "red" || typedUser?.session_state === "yellow";
+  const sessionState = typedUser?.session_state || "green";
 
   // Get filters from context
   const { filters } = useFilters();
@@ -597,14 +611,24 @@ export default function TradeLogTable() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsImportModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium text-sm"
+            disabled={isSessionBlocked}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors ${
+              isSessionBlocked
+                ? "bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed"
+                : "bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+            }`}
           >
             <IoDownloadOutline className="text-lg" />
             <span>Import</span>
           </button>
           <button
             onClick={handleOpenAddModal}
-            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-semibold text-sm"
+            disabled={isSessionBlocked}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-sm transition-colors ${
+              isSessionBlocked
+                ? "bg-blue-300 dark:bg-blue-700 text-white cursor-not-allowed opacity-50"
+                : "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
+            }`}
           >
             <IoAddOutline className="text-lg" />
             <span>Add Trade</span>
@@ -612,15 +636,30 @@ export default function TradeLogTable() {
         </div>
       </div>
 
-      {/* Warning Banner */}
-      <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
-        <div className="flex items-start gap-3">
-          <MdInfoOutline className="text-yellow-600 dark:text-yellow-400 text-xl shrink-0 mt-0.5" />
-          <p className="text-sm text-yellow-800 dark:text-yellow-200">
-            Complete Quick Check before logging new trades.
-          </p>
+      {/* Session Warning Banner - Show only for red or yellow session */}
+      {isSessionBlocked && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+          <div className="flex items-start gap-3">
+            <MdInfoOutline className="text-red-600 dark:text-red-400 text-xl shrink-0 mt-0.5" />
+            <p className="text-sm text-red-800 dark:text-red-200">
+              Your session is {sessionState}. Please complete journal and
+              discipline guard.
+            </p>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Warning Banner - Show for green session */}
+      {!isSessionBlocked && (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
+          <div className="flex items-start gap-3">
+            <MdInfoOutline className="text-yellow-600 dark:text-yellow-400 text-xl shrink-0 mt-0.5" />
+            <p className="text-sm text-yellow-800 dark:text-yellow-200">
+              Complete Quick Check before logging new trades.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Filter Tabs with Delete All Button */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
