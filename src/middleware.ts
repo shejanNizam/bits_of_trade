@@ -10,7 +10,7 @@ const PUBLIC_ROUTES = [
   "/pricing",
   "/faqs",
 ];
-const AUTH_ROUTES = ["/login", "/signup", "/forgot-password", "/onboarding"];
+const AUTH_ROUTES = ["/login", "/signup", "/forgot-password"];
 const AUTHENTICATED_HOME = "/user-dashboard";
 
 export function middleware(request: NextRequest) {
