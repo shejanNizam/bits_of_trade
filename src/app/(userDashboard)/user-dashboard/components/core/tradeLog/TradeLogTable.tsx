@@ -50,7 +50,7 @@ export interface TradeData {
   entry_confidence: number | null;
   satisfaction_rating: number | null;
   emotional_state: string | null;
-  violation_modes: string[];
+  rules_violation: string[];
   lessons_learned: string;
   is_disciplined: boolean;
   is_tagged_complete: boolean;
@@ -207,7 +207,7 @@ export default function TradeLogTable() {
       (trade: TradeData) => trade.is_disciplined,
     ).length;
     const violations = trades.filter(
-      (trade: TradeData) => trade.violation_modes?.length > 0,
+      (trade: TradeData) => trade.rules_violation?.length > 0,
     ).length;
 
     return { total, wins, losses, disciplined, violations };
@@ -238,7 +238,7 @@ export default function TradeLogTable() {
         return trades.filter((trade: TradeData) => trade.is_disciplined);
       case "violations":
         return trades.filter(
-          (trade: TradeData) => trade.violation_modes?.length > 0,
+          (trade: TradeData) => trade.rules_violation?.length > 0,
         );
       default:
         return trades;
