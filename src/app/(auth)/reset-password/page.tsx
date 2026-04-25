@@ -47,8 +47,6 @@ const ResetPassword: React.FC = () => {
   // ==================== FORM SUBMIT HANDLER ====================
   const onFinish = async (values: ResetPasswordFormValues): Promise<void> => {
     try {
-      console.log("Reset password form values:", values);
-
       // ==================== PASSWORD MATCH VALIDATION ====================
       // Note: This is also handled by Form.Item validation, but keeping as double-check
       if (values.password !== values.confirmPassword) {

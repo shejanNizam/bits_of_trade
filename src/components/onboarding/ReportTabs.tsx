@@ -164,8 +164,6 @@ export function ReportTabs() {
         risk_level: riskLevel,
       }).unwrap();
 
-      console.log("Report sent to:", values.email, "Risk Level:", riskLevel);
-
       // Show success message
       Modal.success({
         title: "Success!",

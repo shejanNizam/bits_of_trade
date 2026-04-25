@@ -1,9 +1,92 @@
-// static design --------------->>
+"use client";
 
 import PricingCard from "@/components/pricing/PricingCard";
 import CustomHeading from "@/components/shared/CustomHeading";
+import { useGetAllPricingQuery } from "@/redux/features/pricing/pricingApi";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type BillingCycle = "forever" | "monthly" | "quarterly" | "biannual" | "annual";
+
+interface PricingPlan {
+  id: string;
+  card_key:
+    | "discipline_tools"
+    | "learning_hub"
+    | "combo_monthly"
+    | "combo_annual";
+  name: string;
+  tagline: string;
+  badge: string;
+  cta_label: string;
+  footer_note: string;
+  price: string;
+  price_yearly: string | null;
+  billing_cycle: BillingCycle;
+  is_popular: boolean;
+  is_active: boolean;
+  features: string[];
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// ─── Billing cycle → display period string ────────────────────────────────────
+const CYCLE_PERIOD: Record<BillingCycle, string> = {
+  forever: "forever",
+  monthly: "/ month",
+  quarterly: "/ 3 months",
+  biannual: "/ 6 months",
+  annual: "/ year",
+};
+
+function getPeriod(cycle: BillingCycle): string {
+  return CYCLE_PERIOD[cycle] ?? "";
+}
+
+// ─── Format price with Indian locale ─────────────────────────────────────────
+function fmt(price: string | number): string {
+  return `₹${Number(price).toLocaleString("en-IN")}`;
+}
+
+// ─── Helper: find a plan by card_key ─────────────────────────────────────────
+function findPlan(
+  plans: PricingPlan[],
+  cardKey: PricingPlan["card_key"],
+): PricingPlan | null {
+  return plans.find((p) => p.card_key === cardKey) ?? null;
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function Pricing() {
+  const { data: plans = [], isLoading, isError } = useGetAllPricingQuery({});
+
+  const disciplinePlan = findPlan(plans as PricingPlan[], "discipline_tools");
+  const learningPlan = findPlan(plans as PricingPlan[], "learning_hub");
+  const comboMonthly = findPlan(plans as PricingPlan[], "combo_monthly");
+  const comboAnnual = findPlan(plans as PricingPlan[], "combo_annual");
+
+  if (isLoading) {
+    return (
+      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-900">
+        <div className="container mx-auto max-w-7xl text-center text-gray-500 py-24">
+          Loading pricing...
+        </div>
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-900">
+        <div className="container mx-auto max-w-7xl text-center text-red-500 py-24">
+          Failed to load pricing. Please try again later.
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-16 px-4 bg-gray-50 dark:bg-gray-900 transition-colors">
       <div className="container mx-auto max-w-7xl">
@@ -18,93 +101,113 @@ export default function Pricing() {
 
         {/* Pricing Cards */}
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
-          {/* Card 1: Discipline Tools - WITH TOGGLE */}
-          <PricingCard
-            badge="Behavior Control & Prevention"
-            title="Discipline Tools"
-            description="Traders who want to control activity, reduce overtrading, and introduce structure."
-            colorScheme="blue"
-            hasToggle={true}
-            monthlyOption={{
-              price: "₹499",
-              period: "/ month",
-              features: [
-                "Discipline Guard",
-                "Behavior-First Journal",
-                "Session & Rule Monitoring",
-                "Behavior-Based Reports",
-                "Strategy Frameworks",
-                "AI Based Insights",
-              ],
-              buttonText: "Activate Discipline Tools",
-              note: "Discipline infrastructure only. No learning included.",
-            }}
-            yearlyOption={{
-              price: "₹4,999",
-              period: "/ year",
-              features: [
-                "Discipline Guard",
-                "Behavior-First Journal",
-                "Session & Rule Monitoring",
-                "Behavior-Based Reports",
-                "Strategy Frameworks",
-                "AI Based Insights",
-              ],
-              buttonText: "Activate Discipline Tools (Yearly)",
-              note: "Discipline infrastructure only. No learning included.",
-              savings: "Save ₹989 with yearly plan",
-            }}
-          />
+          {/* Card 1: Discipline Tools — monthly/yearly toggle */}
+          {disciplinePlan && (
+            <PricingCard
+              badge={disciplinePlan.badge}
+              title={disciplinePlan.name}
+              description={disciplinePlan.tagline}
+              colorScheme="blue"
+              hasToggle={true}
+              monthlyOption={{
+                price: fmt(disciplinePlan.price),
+                period: getPeriod(disciplinePlan.billing_cycle),
+                features: disciplinePlan.features,
+                buttonText:
+                  disciplinePlan.cta_label || "Activate Discipline Tools",
+                note: disciplinePlan.footer_note,
+              }}
+              yearlyOption={{
+                // price_yearly is string | null — fall back to empty string so type is always string
+                price: disciplinePlan.price_yearly
+                  ? fmt(disciplinePlan.price_yearly)
+                  : fmt(disciplinePlan.price),
+                period: getPeriod("annual"),
+                features: disciplinePlan.features,
+                buttonText: disciplinePlan.cta_label
+                  ? `${disciplinePlan.cta_label} (Yearly)`
+                  : "Activate Discipline Tools (Yearly)",
+                note: disciplinePlan.footer_note,
+                savings: disciplinePlan.price_yearly
+                  ? `Save ${fmt(
+                      Number(disciplinePlan.price) * 12 -
+                        Number(disciplinePlan.price_yearly),
+                    )} with yearly plan`
+                  : undefined,
+              }}
+            />
+          )}
 
-          {/* Card 2: Learning Hub - NO TOGGLE */}
-          <PricingCard
-            badge="Structured Trading Education"
-            title="Learning Hub"
-            description="Traders building long-term understanding and process."
-            colorScheme="amber"
-            singleOption={{
-              price: "₹2,999",
-              period: "/ 6 months",
-              features: [
-                "Full Learning Hub Access",
-                "Risk & Discipline Modules",
-                "Structured Curriculum",
-                "Access for 6 months",
-              ],
-              buttonText: "Unlock Learning Hub",
-              note: "Educational access only. No discipline tools included.",
-            }}
-          />
+          {/* Card 2: Learning Hub — single price, no toggle */}
+          {learningPlan && (
+            <PricingCard
+              badge={learningPlan.badge}
+              title={learningPlan.name}
+              description={learningPlan.tagline}
+              colorScheme="amber"
+              singleOption={{
+                price: fmt(learningPlan.price),
+                period: getPeriod(learningPlan.billing_cycle),
+                features: learningPlan.features,
+                buttonText: learningPlan.cta_label || "Unlock Learning Hub",
+                note: learningPlan.footer_note,
+              }}
+            />
+          )}
 
-          {/* Card 3: Complete System - COMBO CARD */}
-          <PricingCard
-            badge="Structure + Understanding"
-            title="Complete System"
-            description="For traders who want both structure and understanding, working together."
-            colorScheme="purple"
-            isCombo={true}
-            comboOptions={{
-              monthly: {
-                title: "Monthly Combo",
-                price: "₹2,799",
-                features: ["1 month Discipline Tools", "6 months Learning Hub"],
-                buttonText: "Get Complete System",
-                note: "Ideal for trying the full system before committing long-term.",
-              },
-              yearly: {
-                title: "Annual Combo",
-                price: "₹6,999",
-                period: "/yr",
-                features: [
-                  "12 months Discipline Tools",
-                  "6 months Learning Hub",
-                ],
-                buttonText: "Commit for a Year",
-                note: "Best value for traders committed to consistency",
-                buttonVariant: "solid",
-              },
-            }}
-          />
+          {/* Card 3: Complete System — combo card, both options must be non-null */}
+          {comboMonthly && comboAnnual && (
+            <PricingCard
+              badge={comboMonthly.badge || "Structure + Understanding"}
+              title="Complete System"
+              description={comboMonthly.tagline}
+              colorScheme="purple"
+              isCombo={true}
+              comboOptions={{
+                // Both are guaranteed non-null here — no null assignability issue
+                monthly: {
+                  title: comboMonthly.name || "Monthly Combo",
+                  price: fmt(comboMonthly.price),
+                  period: getPeriod(comboMonthly.billing_cycle),
+                  features: comboMonthly.features,
+                  buttonText: comboMonthly.cta_label || "Get Complete System",
+                  note: comboMonthly.footer_note,
+                },
+                yearly: {
+                  title: comboAnnual.name || "Annual Combo",
+                  price: fmt(comboAnnual.price),
+                  period: getPeriod(comboAnnual.billing_cycle),
+                  features: comboAnnual.features,
+                  buttonText: comboAnnual.cta_label || "Commit for a Year",
+                  note: comboAnnual.footer_note,
+                  buttonVariant: "solid" as const,
+                },
+              }}
+            />
+          )}
+
+          {/* Fallback: render combo card if only one combo plan is active */}
+          {(comboMonthly || comboAnnual) && !(comboMonthly && comboAnnual) && (
+            <PricingCard
+              badge={
+                comboMonthly?.badge ??
+                comboAnnual?.badge ??
+                "Structure + Understanding"
+              }
+              title="Complete System"
+              description={comboMonthly?.tagline ?? comboAnnual?.tagline ?? ""}
+              colorScheme="purple"
+              singleOption={{
+                price: fmt((comboMonthly ?? comboAnnual)!.price),
+                period: getPeriod((comboMonthly ?? comboAnnual)!.billing_cycle),
+                features: (comboMonthly ?? comboAnnual)!.features,
+                buttonText:
+                  (comboMonthly ?? comboAnnual)!.cta_label ||
+                  "Get Complete System",
+                note: (comboMonthly ?? comboAnnual)!.footer_note,
+              }}
+            />
+          )}
         </div>
 
         {/* Footer Disclaimer */}
@@ -116,195 +219,3 @@ export default function Pricing() {
     </section>
   );
 }
-
-// // dynamic --------------------->>
-
-// "use client";
-
-// import PricingCard, {
-//   type ColorScheme,
-//   type Plan,
-// } from "@/components/pricing/PricingCard";
-// import CustomHeading from "@/components/shared/CustomHeading";
-// import { useGetAllPricingQuery } from "@/redux/features/pricing/pricingApi";
-
-// // ─── Static card config ────────────────────────────────────────────────────────
-// // These are the static display strings that wrap each API plan.
-// // Map them by display_order (0, 1, 2) to match your backend ordering.
-// // If you add more plans, extend this array.
-
-// interface CardConfig {
-//   badge: string;
-//   description: string;
-//   note: string;
-//   buttonText?: string;
-//   savings?: string;
-//   colorScheme: ColorScheme;
-//   variant: "toggle" | "single" | "combo";
-//   yearlyOrder?: number;
-//   comboMonthlyOrder?: number;
-//   comboYearlyOrder?: number;
-// }
-
-// const CARD_CONFIGS: CardConfig[] = [
-//   {
-//     badge: "Behavior Control & Prevention",
-//     description:
-//       "Traders who want to control activity, reduce overtrading, and introduce structure.",
-//     note: "Discipline infrastructure only. No learning included.",
-//     buttonText: "Activate Discipline Tools",
-//     savings: "Save ₹989 with yearly plan",
-//     colorScheme: "blue",
-//     variant: "toggle",
-//     yearlyOrder: 1, // display_order of the yearly counterpart plan
-//   },
-//   {
-//     badge: "Structured Trading Education",
-//     description: "Traders building long-term understanding and process.",
-//     note: "Educational access only. No discipline tools included.",
-//     buttonText: "Unlock Learning Hub",
-//     colorScheme: "amber",
-//     variant: "single",
-//   },
-//   {
-//     badge: "Structure + Understanding",
-//     description:
-//       "For traders who want both structure and understanding, working together.",
-//     colorScheme: "purple",
-//     variant: "combo",
-//     comboMonthlyOrder: 3, // display_order of monthly combo plan
-//     comboYearlyOrder: 4, // display_order of yearly combo plan
-//     note: "",
-//   },
-// ];
-
-// // ─── Helpers ───────────────────────────────────────────────────────────────────
-// const byOrder = (plans: Plan[], order: number): Plan | undefined =>
-//   plans.find((p) => p.display_order === order);
-
-// // ─── Component ─────────────────────────────────────────────────────────────────
-// export default function Pricing() {
-//   const { data: plans = [], isLoading, isError } = useGetAllPricingQuery({});
-
-//   // Active plans only
-//   const activePlans: Plan[] = plans.filter((p: Plan) => p.is_active);
-
-//   // The first 3 display_order values are the "primary" cards (0, 1, 2)
-//   const primaryPlans = activePlans
-//     .filter((p) => [0, 1, 2].includes(p.display_order))
-//     .sort((a, b) => a.display_order - b.display_order);
-
-//   return (
-//     <section className="py-16 px-4 bg-gray-50 dark:bg-gray-900 transition-colors">
-//       <div className="container mx-auto max-w-7xl">
-//         {/* ── Header ── */}
-//         <div className="mb-12 text-center">
-//           <CustomHeading>Choose the structure you need</CustomHeading>
-//           <p className="text-gray-600 dark:text-gray-400 mt-2 transition-colors">
-//             BitsOfTrade is priced by access to systems — not by promises or
-//             outcomes.
-//           </p>
-//         </div>
-
-//         {/* ── Loading ── */}
-//         {isLoading && (
-//           <div className="text-center text-gray-500 dark:text-gray-400 py-16">
-//             Loading plans...
-//           </div>
-//         )}
-
-//         {/* ── Error ── */}
-//         {isError && (
-//           <div className="text-center text-red-500 py-16">
-//             Failed to load pricing plans. Please try again later.
-//           </div>
-//         )}
-
-//         {/* ── Pricing Cards ── */}
-//         {!isLoading && !isError && (
-//           <div className="grid lg:grid-cols-3 gap-6 mb-8">
-//             {primaryPlans.map((plan, index) => {
-//               const config = CARD_CONFIGS[index];
-//               if (!config) return null;
-
-//               // ── Toggle card
-//               if (config.variant === "toggle") {
-//                 const yearlyPlan =
-//                   config.yearlyOrder !== undefined
-//                     ? byOrder(activePlans, config.yearlyOrder)
-//                     : undefined;
-
-//                 return (
-//                   <PricingCard
-//                     key={plan.id}
-//                     plan={plan}
-//                     yearlyPlan={yearlyPlan}
-//                     colorScheme={config.colorScheme}
-//                     badge={config.badge}
-//                     description={config.description}
-//                     note={config.note}
-//                     buttonText={config.buttonText}
-//                     savings={config.savings}
-//                     onSubscribe={(selected) =>
-//                       console.log("Subscribe:", selected)
-//                     }
-//                   />
-//                 );
-//               }
-
-//               // ── Combo card
-//               if (config.variant === "combo") {
-//                 const comboMonthlyPlan =
-//                   config.comboMonthlyOrder !== undefined
-//                     ? byOrder(activePlans, config.comboMonthlyOrder)
-//                     : undefined;
-//                 const comboYearlyPlan =
-//                   config.comboYearlyOrder !== undefined
-//                     ? byOrder(activePlans, config.comboYearlyOrder)
-//                     : undefined;
-
-//                 return (
-//                   <PricingCard
-//                     key={plan.id}
-//                     plan={plan}
-//                     isCombo={true}
-//                     comboMonthlyPlan={comboMonthlyPlan}
-//                     comboYearlyPlan={comboYearlyPlan}
-//                     colorScheme={config.colorScheme}
-//                     badge={config.badge}
-//                     description={config.description}
-//                     onSubscribe={(selected) =>
-//                       console.log("Subscribe:", selected)
-//                     }
-//                   />
-//                 );
-//               }
-
-//               // ── Single card (no toggle)
-//               return (
-//                 <PricingCard
-//                   key={plan.id}
-//                   plan={plan}
-//                   colorScheme={config.colorScheme}
-//                   badge={config.badge}
-//                   description={config.description}
-//                   note={config.note}
-//                   buttonText={config.buttonText}
-//                   onSubscribe={(selected) =>
-//                     console.log("Subscribe:", selected)
-//                   }
-//                 />
-//               );
-//             })}
-//           </div>
-//         )}
-
-//         {/* ── Footer Disclaimer ── */}
-//         <p className="text-center text-xs text-gray-500 dark:text-gray-400 max-w-4xl mx-auto transition-colors">
-//           BitsOfTrade does not provide investment advice. All pricing reflects
-//           access to tools and educational content only.
-//         </p>
-//       </div>
-//     </section>
-//   );
-// }

@@ -84,8 +84,6 @@ export default function TradeIntelligentPage() {
       payload.broker = selectedBroker;
     }
 
-    console.log("Request payload:", payload);
-
     try {
       const result = await createAnalyze(payload).unwrap();
       setIntelligenceData(result);

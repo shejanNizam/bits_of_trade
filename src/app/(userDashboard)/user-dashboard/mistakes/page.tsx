@@ -19,8 +19,6 @@ export default function MistakesPage() {
   const { data: analyticsData, isLoading: isAnalyticsLoading } =
     useGetAllAnalyticsQuery({});
 
-  console.log(analyticsData);
-
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">

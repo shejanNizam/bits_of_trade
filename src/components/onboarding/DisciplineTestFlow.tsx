@@ -156,10 +156,6 @@ export function DisciplineTestFlow() {
         const totalScore = calculateTotalScore(answers);
         const riskLevel = calculateRiskLevel(totalScore);
 
-        console.log("Discipline test answers:", answers);
-        console.log("Total score:", totalScore);
-        console.log("Risk level:", riskLevel);
-
         // Store risk level in sessionStorage or query params to pass to report view
         sessionStorage.setItem("disciplineRiskLevel", riskLevel);
         sessionStorage.setItem("disciplineTotalScore", totalScore.toString());

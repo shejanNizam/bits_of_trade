@@ -28,7 +28,6 @@ export default function LearningHubPage() {
     isLoading: progressLoading,
     isError: progressError,
   } = useGetAllUserCourseProgressQuery();
-  console.log(progress);
 
   const isLoading = lessonsLoading || coursesLoading || progressLoading;
   const isError = lessonsError || coursesError || progressError;
