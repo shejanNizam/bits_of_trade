@@ -85,6 +85,29 @@ export const learninghubApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["UserCourseProgress"],
     }),
+
+    //
+    watchVideo: builder.mutation<
+      { message: string; course_progress: CourseProgressAPI },
+      { progressId: number; videoId: number }
+    >({
+      query: ({ progressId, videoId }) => ({
+        url: `/api/learninghub/course-progress/${progressId}/watch/${videoId}/`,
+        method: "POST",
+      }),
+      invalidatesTags: ["UserCourseProgress"],
+    }),
+
+    unwatchVideo: builder.mutation<
+      { message: string; course_progress: CourseProgressAPI },
+      { progressId: number; videoId: number }
+    >({
+      query: ({ progressId, videoId }) => ({
+        url: `/api/learninghub/course-progress/${progressId}/unwatch/${videoId}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["UserCourseProgress"],
+    }),
   }),
 });
 
@@ -98,6 +121,9 @@ export const {
   useGetVideoByIdQuery,
   useGetAllUserCourseProgressQuery,
   useCreateCourseProgressMutation,
+  //
+  useWatchVideoMutation,
+  useUnwatchVideoMutation,
 } = learninghubApi;
 
 // ─── Shared API Types (exported for components) ───────────────────────────────

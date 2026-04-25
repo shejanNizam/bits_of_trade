@@ -3,6 +3,7 @@
 import {
   CourseProgressAPI,
   useCreateCourseProgressMutation,
+  useWatchVideoMutation,
   VideoAPI,
 } from "@/redux/features/learninghub/learninghubApi";
 import {
@@ -143,6 +144,7 @@ export default function LearningPathModal({
           video={activeVideo}
           path={nonNullPath}
           watchedIds={watchedIds}
+          progressId={courseProgress?.id ?? null}
           onBack={() => setActiveVideo(null)}
           onSelectVideo={setActiveVideo}
         />
@@ -182,7 +184,7 @@ export default function LearningPathModal({
 // ─── Course Overview ──────────────────────────────────────────────────────────
 
 interface CourseOverviewProps {
-  path: LearningPath; // Now non-null
+  path: LearningPath;
   hasStarted: boolean;
   watchedIds: Set<number>;
   percentage: number;
@@ -414,8 +416,9 @@ function CourseOverview({
 
 interface VideoPlayerViewProps {
   video: VideoAPI;
-  path: LearningPath; // Now non-null
+  path: LearningPath;
   watchedIds: Set<number>;
+  progressId: number | null;
   onBack: () => void;
   onSelectVideo: (video: VideoAPI) => void;
 }
@@ -424,9 +427,15 @@ function VideoPlayerView({
   video,
   path,
   watchedIds,
+  progressId,
   onBack,
   onSelectVideo,
 }: VideoPlayerViewProps) {
+  const [watchVideo, { isLoading: isMarking }] = useWatchVideoMutation();
+  const [localWatched, setLocalWatched] = useState<Set<number>>(
+    new Set(watchedIds),
+  );
+
   const currentIdx = path.videos.findIndex((v) => v.id === video.id);
   const prevVideo = currentIdx > 0 ? path.videos[currentIdx - 1] : null;
   const nextVideo =
@@ -435,6 +444,24 @@ function VideoPlayerView({
   const videoUrl = video.video.startsWith("http")
     ? video.video
     : `${process.env.NEXT_PUBLIC_API_URL ?? ""}${video.video}`;
+
+  async function handleMarkWatched() {
+    if (!progressId || localWatched.has(video.id) || isMarking) return;
+    try {
+      await watchVideo({ progressId, videoId: video.id }).unwrap();
+      setLocalWatched((prev) => new Set([...prev, video.id]));
+    } catch {
+      // silently fail — progress will still refresh on next query cycle
+    }
+  }
+
+  function handleSelectVideo(v: VideoAPI) {
+    // Sync local watched from parent before switching video
+    setLocalWatched(new Set(watchedIds));
+    onSelectVideo(v);
+  }
+
+  const isCurrentWatched = localWatched.has(video.id);
 
   return (
     <div className="flex flex-col">
@@ -461,12 +488,13 @@ function VideoPlayerView({
           autoPlay
           className="w-full h-full object-contain"
           controlsList="nodownload"
+          onEnded={handleMarkWatched}
         >
           Your browser does not support the video tag.
         </video>
       </div>
 
-      {/* Video info */}
+      {/* Video info + mark watched */}
       <div className="px-5 pt-4 pb-2 flex items-start justify-between gap-3">
         <div>
           <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">
@@ -478,24 +506,35 @@ function VideoPlayerView({
             </p>
           )}
         </div>
-        {watchedIds.has(video.id) && (
-          <span className="shrink-0 flex items-center gap-1 text-[10px] font-bold text-emerald-500 uppercase tracking-wide mt-1">
-            <CheckCircleFilled /> Watched
-          </span>
-        )}
+
+        <div className="flex items-center gap-2 shrink-0 mt-1">
+          {isCurrentWatched ? (
+            <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-500 uppercase tracking-wide">
+              <CheckCircleFilled /> Watched
+            </span>
+          ) : progressId ? (
+            <button
+              onClick={handleMarkWatched}
+              disabled={isMarking}
+              className="text-[10px] font-bold text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 uppercase tracking-wide transition-colors disabled:opacity-50"
+            >
+              {isMarking ? "Saving…" : "Mark as watched"}
+            </button>
+          ) : null}
+        </div>
       </div>
 
       {/* Prev / Next */}
       <div className="flex gap-3 px-5 py-3 border-t border-slate-100 dark:border-slate-800 mt-1">
         <button
-          onClick={() => prevVideo && onSelectVideo(prevVideo)}
+          onClick={() => prevVideo && handleSelectVideo(prevVideo)}
           disabled={!prevVideo}
           className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           ← Previous
         </button>
         <button
-          onClick={() => nextVideo && onSelectVideo(nextVideo)}
+          onClick={() => nextVideo && handleSelectVideo(nextVideo)}
           disabled={!nextVideo}
           className="flex-1 py-2.5 rounded-xl bg-indigo-600 dark:bg-indigo-500 text-white text-sm font-bold hover:bg-indigo-700 dark:hover:bg-indigo-600 shadow-md shadow-indigo-200 dark:shadow-none transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
@@ -509,12 +548,12 @@ function VideoPlayerView({
           All Modules
         </p>
         {path.videos.map((v, idx) => {
-          const isWatched = watchedIds.has(v.id);
+          const isWatched = localWatched.has(v.id);
           const isActive = v.id === video.id;
           return (
             <button
               key={v.id}
-              onClick={() => onSelectVideo(v)}
+              onClick={() => handleSelectVideo(v)}
               className={`w-full text-left flex items-center gap-3 p-2.5 rounded-lg transition-all ${
                 isActive
                   ? "bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800"
