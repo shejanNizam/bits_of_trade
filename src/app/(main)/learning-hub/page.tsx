@@ -88,6 +88,7 @@ export default function LearningHub() {
           </div>
         </div>
 
+        {/* ==================== DYNAMIC CURRICULUM ==================== */}
         <LearningEverything />
 
         <WhyDifferent />
