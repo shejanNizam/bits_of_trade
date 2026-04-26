@@ -306,8 +306,8 @@ export default function AdvancedFiltersModal({
           </div>
           <Slider
             range
-            min={-100000}
-            max={100000}
+            min={-10000000}
+            max={10000000}
             step={500}
             value={filters.plRange}
             onChange={(val: number[]) =>
@@ -320,9 +320,9 @@ export default function AdvancedFiltersModal({
             ]}
           />
           <div className="flex justify-between mt-2">
-            <span className="text-[10px] text-gray-400">-₹100,000</span>
+            <span className="text-[10px] text-gray-400">-₹100,00,000</span>
             <span className="text-[10px] text-gray-400">₹0</span>
-            <span className="text-[10px] text-gray-400">+₹100,000</span>
+            <span className="text-[10px] text-gray-400">+₹100,00,000</span>
           </div>
         </div>
 

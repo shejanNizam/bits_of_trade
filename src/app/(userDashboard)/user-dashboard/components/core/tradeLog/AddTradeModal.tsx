@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
@@ -121,12 +122,90 @@ export default function AddTradeModal({
 
   const isLoading = isCreating || isUpdating || isUploading;
 
+  // Helper function to transform rules_followed data
+  const transformRulesFollowed = (
+    rulesFollowed: any[] | undefined | null,
+  ): string[] => {
+    if (!rulesFollowed || !Array.isArray(rulesFollowed)) return [];
+
+    return rulesFollowed
+      .map((rule: any) => {
+        // If it's already an object with id, extract it
+        if (typeof rule === "object" && rule !== null && rule.id) {
+          return rule.id;
+        }
+        // If it's a string that might be the rule name or ID
+        if (typeof rule === "string") {
+          // First check if it's already a valid UUID format
+          const uuidRegex =
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+          if (uuidRegex.test(rule)) {
+            return rule;
+          }
+          // Try to find matching rule by name in rulesData
+          if (rulesData?.results) {
+            const matchedRule = rulesData.results.find(
+              (r) => r.rule_name === rule,
+            );
+            if (matchedRule) {
+              return matchedRule.id;
+            }
+          }
+        }
+        return null;
+      })
+      .filter((id): id is string => id !== null);
+  };
+
+  // Helper function to transform mistakes data
+  const transformMistakes = (mistakes: any[] | undefined | null): string[] => {
+    if (!mistakes || !Array.isArray(mistakes)) return [];
+
+    return mistakes
+      .map((mistake: any) => {
+        // If it's already an object with id, extract it
+        if (typeof mistake === "object" && mistake !== null && mistake.id) {
+          return mistake.id;
+        }
+        // If it's a string that might be the mistake name or ID
+        if (typeof mistake === "string") {
+          // First check if it's already a valid UUID format
+          const uuidRegex =
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+          if (uuidRegex.test(mistake)) {
+            return mistake;
+          }
+          // Try to find matching mistake by name in mistakesData
+          if (mistakesData?.results) {
+            const matchedMistake = mistakesData.results.find(
+              (m) => m.mistake_name === mistake,
+            );
+            if (matchedMistake) {
+              return matchedMistake.id;
+            }
+          }
+        }
+        return null;
+      })
+      .filter((id): id is string => id !== null);
+  };
+
   useEffect(() => {
     if (open) {
       if (editData) {
         console.log("Editing trade data:", editData);
 
-        // Set form values from editData
+        // Transform rules_followed to get the actual rule IDs
+        const rulesFollowedIds = transformRulesFollowed(
+          editData.rules_followed,
+        );
+
+        // Transform mistakes to get the actual mistake IDs
+        const mistakesIds = transformMistakes(editData.mistakes);
+
+        console.log("Transformed rules_followed IDs:", rulesFollowedIds);
+        console.log("Transformed mistakes IDs:", mistakesIds);
+
         form.setFieldsValue({
           market_type: editData.market_type,
           symbol: editData.symbol,
@@ -150,10 +229,8 @@ export default function AddTradeModal({
           emotional_state: editData.emotional_state || undefined,
           rules_violation: editData.rules_violation || [],
           lessons_learned: editData.lessons_learned,
-          rules_followed: Array.isArray(editData.rules_followed)
-            ? editData.rules_followed
-            : [],
-          mistakes: Array.isArray(editData.mistakes) ? editData.mistakes : [],
+          rules_followed: rulesFollowedIds,
+          mistakes: mistakesIds,
         });
 
         // Load existing screenshots if any
@@ -187,7 +264,7 @@ export default function AddTradeModal({
         setFileList([]);
       }
     }
-  }, [editData, open, form]);
+  }, [editData, open, form, rulesData, mistakesData]);
 
   const handleFinish = async (values: TradeFormValues) => {
     try {
@@ -217,6 +294,10 @@ export default function AddTradeModal({
       // Format current time in HH:MM:SS format
       const currentTime = formatTime(new Date());
 
+      // Ensure rules_followed and mistakes are arrays of strings (UUIDs)
+      const rulesFollowed = values.rules_followed || [];
+      const mistakes = values.mistakes || [];
+
       const payload = {
         trade_date: values.trade_date,
         trade_time: currentTime,
@@ -237,13 +318,15 @@ export default function AddTradeModal({
         emotional_state: values.emotional_state,
         rules_violation: values.rules_violation || [],
         lessons_learned: values.lessons_learned,
-        rules_followed: values.rules_followed || [],
-        mistakes: values.mistakes || [],
-        is_disciplined: values.rules_violation?.length === 0,
+        rules_followed: rulesFollowed,
+        mistakes: mistakes,
+        is_disciplined: (values.rules_violation?.length || 0) === 0,
         is_tagged_complete: true,
         import_source: "manual",
         screenshot_urls: allScreenshotUrls,
       };
+
+      console.log("Final payload being sent:", payload);
 
       if (editData?.id) {
         // Update existing trade
@@ -429,14 +512,14 @@ export default function AddTradeModal({
   );
 }
 
-// Number Input Component with native up/down arrows
+// Number Input Component with 4 decimal places
 function NumberInput({
   value,
   onChange,
   min = 0,
   max,
-  step = 1,
-  placeholder = "0",
+  step = 0.0001,
+  placeholder = "0.0000",
   integer = false,
   ...props
 }: {
@@ -454,7 +537,9 @@ function NumberInput({
       if (integer) {
         return Math.floor(Number(value)).toString();
       }
-      return value.toString();
+      // Format with 4 decimal places for non-integer numbers
+      const numValue = Number(value);
+      return numValue.toFixed(4);
     }
     return "";
   });
@@ -465,7 +550,8 @@ function NumberInput({
         setLocalValue(Math.floor(Number(value)).toString());
       } else {
         const numValue = Number(value);
-        setLocalValue(numValue.toString());
+        // Always show 4 decimal places
+        setLocalValue(numValue.toFixed(4));
       }
     } else {
       setLocalValue("");
@@ -505,7 +591,7 @@ function NumberInput({
           finalValue = Math.floor(finalValue);
         }
 
-        // Round to avoid floating point issues
+        // Round to 4 decimal places for non-integer numbers
         if (!integer) {
           finalValue = parseFloat(finalValue.toFixed(4));
         }
@@ -513,11 +599,10 @@ function NumberInput({
         if (onChange) onChange(finalValue);
 
         // Update display if value was adjusted
-        const displayValue = integer
-          ? Math.floor(finalValue).toString()
-          : finalValue.toString();
-        if (displayValue !== localValue) {
-          setLocalValue(displayValue);
+        if (!integer && finalValue !== numValue) {
+          setLocalValue(finalValue.toFixed(4));
+        } else if (!integer && inputValue !== finalValue.toString()) {
+          setLocalValue(finalValue.toFixed(4));
         }
       } else if (onChange) {
         onChange(null);
@@ -545,15 +630,15 @@ function NumberInput({
           finalValue = Math.floor(finalValue);
         }
 
-        // Round to avoid floating point issues
+        // Round to 4 decimal places for non-integer numbers
         if (!integer) {
           finalValue = parseFloat(finalValue.toFixed(4));
+          // Always show 4 decimal places on blur
+          setLocalValue(finalValue.toFixed(4));
+        } else {
+          setLocalValue(Math.floor(finalValue).toString());
         }
 
-        const displayValue = integer
-          ? Math.floor(finalValue).toString()
-          : finalValue.toString();
-        setLocalValue(displayValue);
         if (onChange) onChange(finalValue);
       }
     }
@@ -654,7 +739,12 @@ function GeneralTab({
           rules={[{ required: true, message: "Please enter the entry price" }]}
           className="mb-0"
         >
-          <NumberInput placeholder="0" step={0.01} min={0} integer={false} />
+          <NumberInput
+            placeholder="0.0000"
+            step={0.0001}
+            min={0}
+            integer={false}
+          />
         </Form.Item>
         <Form.Item
           name="quantity"
@@ -692,7 +782,12 @@ function GeneralTab({
           }
           className="mb-0"
         >
-          <NumberInput placeholder="0" step={0.01} min={0} integer={false} />
+          <NumberInput
+            placeholder="0.0000"
+            step={0.0001}
+            min={0}
+            integer={false}
+          />
         </Form.Item>
         <Form.Item
           name="fees"
@@ -703,7 +798,12 @@ function GeneralTab({
           }
           className="mb-0"
         >
-          <NumberInput placeholder="0" step={0.01} min={0} integer={false} />
+          <NumberInput
+            placeholder="0.0000"
+            step={0.0001}
+            min={0}
+            integer={false}
+          />
         </Form.Item>
       </div>
 
@@ -777,7 +877,12 @@ function GeneralTab({
           }
           className="mb-0"
         >
-          <NumberInput placeholder="0" step={0.01} min={0} integer={false} />
+          <NumberInput
+            placeholder="0.0000"
+            step={0.0001}
+            min={0}
+            integer={false}
+          />
         </Form.Item>
         <Form.Item
           name="target"
@@ -788,7 +893,12 @@ function GeneralTab({
           }
           className="mb-0"
         >
-          <NumberInput placeholder="0" step={0.01} min={0} integer={false} />
+          <NumberInput
+            placeholder="0.0000"
+            step={0.0001}
+            min={0}
+            integer={false}
+          />
         </Form.Item>
 
         <Form.Item

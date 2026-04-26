@@ -315,7 +315,9 @@ export default function CurrentStatus() {
         message.info(response.message);
       } else {
         // Success - no cooldown
-        message.success("Trade review completed successfully!");
+        message.success(
+          response.message || "Trade review completed successfully!",
+        );
         setLocalTradeReviewCompleted(false);
         refetchSession();
         setIsModalOpen(false);
