@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import DeleteConfirmationModal from "@/components/shared/DeleteConfirmationModal";
 import { useUnlockJournalMutation } from "@/redux/features/discipline/disciplineApi";
 import {
   useCreateDailyJournalEntryMutation,
@@ -11,12 +12,11 @@ import {
 } from "@/redux/features/journal/journalApi";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import { SuccessSwal } from "@/utils/allSwal";
+import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Input, Modal, message } from "antd";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import DeleteConfirmationModal from "@/components/shared/DeleteConfirmationModal";
 
 const { TextArea } = Input;
 
