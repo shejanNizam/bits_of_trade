@@ -280,10 +280,6 @@ export default function TemplatesTab({ searchTerm }: { searchTerm: string }) {
             <Button
               type="primary"
               className="bg-purple-600 h-11 font-semibold hover:bg-purple-700"
-              onClick={() => {
-                console.log("View template strategy:", strategy.id);
-                // Add navigation to view strategy details
-              }}
             >
               View Template
             </Button>

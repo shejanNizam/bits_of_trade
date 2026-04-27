@@ -186,9 +186,6 @@ export default function CommunityTab({ searchTerm }: { searchTerm: string }) {
             <Button
               type="primary"
               className="bg-purple-600 h-11 font-semibold hover:bg-purple-700"
-              onClick={() => {
-                console.log("View strategy:", strategy.id);
-              }}
             >
               View Strategy
             </Button>

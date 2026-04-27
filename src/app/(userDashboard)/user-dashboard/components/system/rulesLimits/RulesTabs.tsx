@@ -112,9 +112,6 @@ export default function RulesTabs({ onEdit, onDelete }: RulesTabsProps) {
     (rule) => !rule.isSystemRule,
   );
 
-  console.log("All rules (including system):", allRules);
-  console.log("User rules only (excluding system):", userRules);
-
   const groupedRules = groupRulesByCategory(userRules);
 
   const renderList = (rulesList: RuleCardProps[]) => {

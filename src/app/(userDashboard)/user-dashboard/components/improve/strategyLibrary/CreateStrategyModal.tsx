@@ -108,6 +108,7 @@ const CreateStrategyModal: React.FC<CreateStrategyModalProps> = ({
       onCancel={onCancel}
       width={800}
       footer={null}
+      forceRender
     >
       <Form
         form={form}

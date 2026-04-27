@@ -10,9 +10,13 @@ import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useSelector } from "react-redux";
 // import default_img from "../../assets/user_img_default.png";
-import CustomPrimaryButton from "./CustomPrimaryButton";
-import CustomSecondaryButton from "./CustomSecondaryButton";
 import ThemeToggle from "./ThemeToggle";
+
+const primaryLinkClass =
+  "h-11 sm:h-12 md:h-14 rounded-full bg-primary hover:bg-secondary dark:bg-primary dark:hover:bg-secondary shadow-lg dark:shadow-blue-500/20 hover:shadow-sm text-white font-medium text-sm sm:text-base md:text-lg px-6 sm:px-8 transition-all duration-300 hover:scale-105 active:scale-95 touch-manipulation inline-flex items-center justify-center";
+
+const secondaryLinkClass =
+  "h-11 sm:h-12 md:h-14 rounded-full px-6 sm:px-8 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 font-medium text-sm sm:text-base md:text-lg transition-all duration-300 hover:bg-secondary dark:hover:bg-secondary hover:text-white hover:border-secondary hover:scale-105 active:scale-95 shadow-sm hover:shadow-md touch-manipulation inline-flex items-center justify-center";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -117,11 +121,11 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link href="/signup">
-                <CustomPrimaryButton>Get Started</CustomPrimaryButton>
+              <Link href="/signup" className={primaryLinkClass}>
+                Get Started
               </Link>
-              <Link href="/login">
-                <CustomSecondaryButton>Login</CustomSecondaryButton>
+              <Link href="/login" className={secondaryLinkClass}>
+                Login
               </Link>
             </>
           )}
@@ -261,15 +265,19 @@ export default function Navbar() {
             ) : (
               // When user is NOT logged in - show Login button
               <>
-                <Link href="/signup" onClick={toggleDrawer}>
-                  <CustomPrimaryButton className="w-full">
-                    Get Started
-                  </CustomPrimaryButton>
+                <Link
+                  href="/signup"
+                  onClick={toggleDrawer}
+                  className={`${primaryLinkClass} w-full`}
+                >
+                  Get Started
                 </Link>
-                <Link href="/login" onClick={toggleDrawer}>
-                  <CustomSecondaryButton className="w-full">
-                    Login
-                  </CustomSecondaryButton>
+                <Link
+                  href="/login"
+                  onClick={toggleDrawer}
+                  className={`${secondaryLinkClass} w-full`}
+                >
+                  Login
                 </Link>
               </>
             )}

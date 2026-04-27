@@ -89,7 +89,7 @@ export default function PreviewModal({
       onCancel={onClose}
       footer={null}
       width={900}
-      destroyOnClose
+      destroyOnHidden
       closeIcon={
         <IoCloseOutline className="text-xl text-gray-500 hover:text-gray-700 dark:text-gray-400" />
       }

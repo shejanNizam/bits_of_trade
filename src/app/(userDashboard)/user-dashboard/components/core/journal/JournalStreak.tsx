@@ -2,13 +2,23 @@
 import { useGetAllJournalStreakQuery } from "@/redux/features/journal/journalApi";
 import { useEffect, useState } from "react";
 
+const INITIAL_MONTH = 0;
+const INITIAL_YEAR = 1970;
+
 export default function JournalStreak() {
   const { data, isLoading } = useGetAllJournalStreakQuery({});
   const [calendarData, setCalendarData] = useState<boolean[]>(
     Array(31).fill(false),
   );
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(INITIAL_MONTH);
+  const [currentYear, setCurrentYear] = useState(INITIAL_YEAR);
+
+  useEffect(() => {
+    const now = new Date();
+
+    setCurrentMonth(now.getMonth());
+    setCurrentYear(now.getFullYear());
+  }, []);
 
   useEffect(() => {
     if (data?.this_month_active_dates) {
@@ -16,6 +26,9 @@ export default function JournalStreak() {
       const now = new Date();
       const year = now.getFullYear();
       const month = now.getMonth();
+
+      setCurrentMonth(month);
+      setCurrentYear(year);
 
       // Create an array for all days in the current month
       const daysInMonth = new Date(year, month + 1, 0).getDate();

@@ -20,7 +20,6 @@ export default function ViolationsTimeline() {
     isLoading,
     error,
   } = useGetViolationsTimelineQuery({});
-  console.log(violationTimelineData);
 
   // Transform API data to chart format
   const transformData = () => {
@@ -114,8 +113,11 @@ export default function ViolationsTimeline() {
   if (isLoading) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-xl lg:rounded-2xl p-5 sm:p-6 border border-gray-200 dark:border-gray-700 mb-4 sm:mb-6">
-        <div className="flex items-center justify-center h-64">
-          <Spin size="large" tip="Loading violations data..." />
+        <div className="flex flex-col items-center justify-center gap-3 h-64">
+          <Spin size="large" />
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            Loading violations data...
+          </p>
         </div>
       </div>
     );

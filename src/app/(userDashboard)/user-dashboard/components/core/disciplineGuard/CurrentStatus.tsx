@@ -323,8 +323,6 @@ export default function CurrentStatus() {
         action: "complete_trade_review",
       }).unwrap();
 
-      console.log(response);
-
       // Check if response contains cooldown message
       if (response.message && response.message.includes("Cooldown active")) {
         // Show cooldown modal
@@ -564,10 +562,11 @@ export default function CurrentStatus() {
               Complete
             </button>
           )}
-          <Link href="/user-dashboard/rules-limit">
-            <button className="w-full bg-white dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg py-3 px-4 font-medium text-sm sm:text-base transition-colors">
-              Edit Rules & Limit
-            </button>
+          <Link
+            href="/user-dashboard/rules-limit"
+            className="block w-full bg-white dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg py-3 px-4 font-medium text-sm sm:text-base transition-colors text-center"
+          >
+            Edit Rules & Limit
           </Link>
         </div>
 

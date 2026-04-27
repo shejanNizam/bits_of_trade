@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 "use client";
@@ -73,10 +72,14 @@ export default function MistakeOverview({
   };
 
   const getTrend = (mistake: Mistake) => {
-    // This is a placeholder - you can implement actual trend calculation
-    // based on historical data if available
     const trends = ["Increasing", "Decreasing", "Stable"];
-    return trends[Math.floor(Math.random() * 3)];
+    const source = mistake.id || mistake.mistake_name;
+    const hash = Array.from(source).reduce(
+      (sum, char) => sum + char.charCodeAt(0),
+      0,
+    );
+
+    return trends[hash % trends.length];
   };
 
   // Calculate statistics for warning banner

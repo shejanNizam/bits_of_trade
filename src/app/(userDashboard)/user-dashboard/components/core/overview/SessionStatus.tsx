@@ -115,33 +115,35 @@ export default function SessionStatus({ sessionHealth }: SessionStatusProps) {
           {/* Buttons Container */}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             {/* View Guidelines Button */}
-            <Link href="/user-dashboard/discipline-guard">
-              <button className="px-4 sm:px-5 py-2 sm:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors whitespace-nowrap">
-                View Guidelines
-              </button>
+            <Link
+              href="/user-dashboard/discipline-guard"
+              className="px-4 sm:px-5 py-2 sm:py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors whitespace-nowrap text-center"
+            >
+              View Guidelines
             </Link>
 
             {/* Start Review Button */}
-            <Link href="/user-dashboard/discipline-guard">
-              <button className="px-4 sm:px-5 py-2 sm:py-2.5 bg-blue-600 dark:bg-blue-500 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 whitespace-nowrap">
-                Start Review
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-3.5 h-3.5 sm:w-4 sm:h-4"
-                >
-                  <path
-                    d="M6 12L10 8L6 4"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
+            <Link
+              href="/user-dashboard/discipline-guard"
+              className="px-4 sm:px-5 py-2 sm:py-2.5 bg-blue-600 dark:bg-blue-500 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
+            >
+              Start Review
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4"
+              >
+                <path
+                  d="M6 12L10 8L6 4"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </Link>
           </div>
         </div>

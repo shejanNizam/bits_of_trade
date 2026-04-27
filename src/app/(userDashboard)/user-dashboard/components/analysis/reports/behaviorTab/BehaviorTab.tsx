@@ -7,7 +7,6 @@
 
 // export default function BehaviorTab() {
 //   const { data } = useGetAllBehaviorQuery({});
-//   console.log(data);
 
 //   // Extract data from API response
 //   const kpis = data?.kpis || {};
@@ -51,8 +50,6 @@ export default function BehaviorTab() {
 
   // Refetch when filters change
   useReportFilters(refetch);
-
-  console.log(data);
 
   // Extract data from API response
   const kpis = data?.kpis || {};

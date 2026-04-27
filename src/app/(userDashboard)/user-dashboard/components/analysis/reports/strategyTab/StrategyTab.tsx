@@ -6,7 +6,6 @@
 
 // export default function StrategyTab() {
 //   const { data, isLoading, error } = useGetAllStrategiesQuery({});
-//   console.log(data);
 
 //   if (isLoading) {
 //     return (
@@ -52,8 +51,6 @@ export default function StrategyTab() {
 
   // Refetch when filters change
   useReportFilters(refetch);
-
-  console.log(data);
 
   if (isLoading) {
     return (

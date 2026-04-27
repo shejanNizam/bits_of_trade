@@ -277,6 +277,7 @@ export function ReportTabs() {
         onCancel={handleCloseModal}
         footer={null}
         centered
+        forceRender
         width={500}
         closeIcon={
           <IoMdClose className="text-gray-500 hover:text-gray-700 text-2xl" />

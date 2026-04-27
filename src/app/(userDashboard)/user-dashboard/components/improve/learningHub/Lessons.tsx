@@ -46,7 +46,6 @@ interface LessonsProps {
 
 export default function Lessons({ lessons, progress }: LessonsProps) {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
-  console.log(lessons);
 
   const sections = lessons
     ?.filter((l) => l.is_active)

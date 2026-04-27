@@ -193,8 +193,6 @@ export default function AddTradeModal({
   useEffect(() => {
     if (open) {
       if (editData) {
-        console.log("Editing trade data:", editData);
-
         // Transform rules_followed to get the actual rule IDs
         const rulesFollowedIds = transformRulesFollowed(
           editData.rules_followed,
@@ -202,9 +200,6 @@ export default function AddTradeModal({
 
         // Transform mistakes to get the actual mistake IDs
         const mistakesIds = transformMistakes(editData.mistakes);
-
-        console.log("Transformed rules_followed IDs:", rulesFollowedIds);
-        console.log("Transformed mistakes IDs:", mistakesIds);
 
         form.setFieldsValue({
           market_type: editData.market_type,
@@ -326,8 +321,6 @@ export default function AddTradeModal({
         screenshot_urls: allScreenshotUrls,
       };
 
-      console.log("Final payload being sent:", payload);
-
       if (editData?.id) {
         // Update existing trade
         await updateTradeManually({
@@ -399,6 +392,7 @@ export default function AddTradeModal({
       onCancel={onClose}
       footer={null}
       width={650}
+      forceRender
       destroyOnHidden
       closeIcon={
         <IoCloseOutline className="text-xl text-gray-500 hover:text-gray-700 dark:text-gray-400" />
@@ -463,7 +457,7 @@ export default function AddTradeModal({
         {/* Image Preview Modal */}
         {previewImage && (
           <Image
-            alt=""
+            alt="Trade screenshot preview"
             wrapperStyle={{ display: "none" }}
             preview={{
               visible: previewOpen,

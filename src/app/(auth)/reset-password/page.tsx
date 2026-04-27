@@ -92,7 +92,6 @@ const ResetPassword: React.FC = () => {
 
       // ==================== MOCK SUCCESS ====================
       // 🔥 Remove this block when API is integrated
-      console.log("Mock reset password");
       message.success("Password reset successful! (Mock - Remove when API ready)");
 
       // Mock redirect

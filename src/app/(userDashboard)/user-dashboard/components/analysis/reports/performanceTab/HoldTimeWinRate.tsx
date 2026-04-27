@@ -11,8 +11,6 @@ interface HoldTimeWinRateProps {
 export default function HoldTimeWinRate({
   holdTimeVsWinRate,
 }: HoldTimeWinRateProps) {
-  console.log(holdTimeVsWinRate);
-
   if (!holdTimeVsWinRate || holdTimeVsWinRate.length === 0) {
     return (
       <div className="w-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm">

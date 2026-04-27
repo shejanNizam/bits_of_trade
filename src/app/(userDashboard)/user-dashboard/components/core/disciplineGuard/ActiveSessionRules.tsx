@@ -3,7 +3,6 @@ import Link from "next/link";
 
 export default function ActiveSessionRules() {
   const { data } = useGetAllRulesQuery({});
-  console.log(data);
 
   // Filter active rules from API response
   const activeRules =
@@ -56,10 +55,11 @@ export default function ActiveSessionRules() {
             Breaching these will trigger locks
           </p>
         </div>
-        <Link href="/user-dashboard/rules-limit">
-          <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors cursor-pointer">
-            Edit Rules
-          </button>
+        <Link
+          href="/user-dashboard/rules-limit"
+          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors cursor-pointer"
+        >
+          Edit Rules
         </Link>
       </div>
 

@@ -3,7 +3,6 @@
 
 // export default function Rules() {
 //   const { data: rulesData, isLoading: isLoadingRules } = useGetRulesQuery({});
-//   console.log(rulesData);
 
 //   return <div>Rules</div>;
 // }

@@ -100,7 +100,7 @@ export default function LessonModal({
       footer={null}
       width={700}
       centered
-      destroyOnClose
+      destroyOnHidden
       closeIcon={
         <CloseOutlined className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors mt-2 mr-2" />
       }

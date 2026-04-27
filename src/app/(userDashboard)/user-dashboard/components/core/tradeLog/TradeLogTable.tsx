@@ -83,7 +83,6 @@ export default function TradeLogTable() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
   const { user } = useSelector((state: RootState) => state.auth);
-  console.log(user);
 
   // Type assertion to add session_state
   const typedUser = user as User & {
@@ -208,8 +207,6 @@ export default function TradeLogTable() {
     page: 1,
     limit: 100,
   });
-  console.log(rulesData);
-  console.log(mistakesData);
 
   const [deleteTrade] = useDeleteTradeMutation();
   const [bulkDeleteTrades] = useBulkDeleteTradesMutation();

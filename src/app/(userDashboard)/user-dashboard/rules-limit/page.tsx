@@ -23,7 +23,6 @@ export default function RulesLimitPage() {
     page: 1,
     limit: 100,
   });
-  // console.log(data);
 
   // Calculate statistics from the API data
   const calculateStats = () => {
@@ -92,9 +91,7 @@ export default function RulesLimitPage() {
   };
 
   const handleDeleteConfirm = () => {
-    // This will be called after successful deletion
-    console.log("Rule deleted successfully");
-    // Refetch will be called in handleDeleteClose
+    refetch();
   };
 
   if (isLoading) {

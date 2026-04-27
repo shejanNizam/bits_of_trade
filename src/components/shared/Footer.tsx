@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+const COPYRIGHT_YEAR = 2026;
+
 export default function Footer() {
   const homeLinks = [
     { label: "How It Works", href: "/how-it-works" },
@@ -110,7 +112,7 @@ export default function Footer() {
 
           {/* Copyright */}
           <p className="text-gray-500 text-xs">
-            © {new Date().getFullYear()} BitsOfTrade. All rights reserved.
+            © {COPYRIGHT_YEAR} BitsOfTrade. All rights reserved.
           </p>
         </div>
       </div>

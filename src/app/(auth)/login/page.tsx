@@ -237,7 +237,6 @@ const LoginContent: React.FC = () => {
       }
     } catch (error) {
       const apiError = error as ApiError;
-      console.log(apiError);
       ErrorSwal({
         title: "Login failed!",
         text:

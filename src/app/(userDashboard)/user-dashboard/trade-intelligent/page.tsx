@@ -127,8 +127,11 @@ export default function TradeIntelligentPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-100">
-        <Spin size="large" tip="Analyzing your trading data..." />
+      <div className="flex flex-col justify-center items-center gap-3 min-h-100">
+        <Spin size="large" />
+        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          Analyzing your trading data...
+        </p>
       </div>
     );
   }

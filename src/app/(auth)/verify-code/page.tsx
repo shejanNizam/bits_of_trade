@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Form, Input, InputRef, message, theme } from "antd";
+import { Button, Input, InputRef, message, theme } from "antd";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
@@ -11,10 +11,6 @@ import { FaArrowLeft } from "react-icons/fa";
 // import { useVerifyOTPMutation, useResendOTPMutation } from "@/lib/redux/features/authApi";
 
 // ==================== TYPES ====================
-interface VerifyCodeFormValues {
-  code: string[];
-}
-
 // 🔥 Uncomment when API is ready
 // interface VerifyOTPResponse {
 //   success: boolean;
@@ -41,10 +37,7 @@ interface VerifyCodeFormValues {
 const VerifyCodeContent: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [form] = Form.useForm<VerifyCodeFormValues>();
   const { token } = theme.useToken();
-
-  console.log(form);
 
   // Get email from URL params
   const email = searchParams.get("email") || "";
@@ -130,10 +123,10 @@ const VerifyCodeContent: React.FC = () => {
   };
 
   // ==================== VERIFY OTP HANDLER ====================
-  const handleVerify = async (otp: string): Promise<void> => {
-    try {
-      console.log("Verifying OTP:", otp, "for email:", email);
+  const handleVerify = async (_otp: string): Promise<void> => {
+    void _otp;
 
+    try {
       // ==================== API CALL ====================
       // 🔥 Uncomment when backend is ready
       /*
@@ -162,7 +155,6 @@ const VerifyCodeContent: React.FC = () => {
       message.success(
         `OTP verified successfully! (Mock - Remove when API ready)`,
       );
-      console.log("Mock verify OTP - Code:", otp);
 
       // Mock redirect
       setTimeout(() => {
@@ -196,8 +188,6 @@ const VerifyCodeContent: React.FC = () => {
     if (!canResend) return;
 
     try {
-      console.log("Resending OTP to:", email);
-
       // ==================== API CALL ====================
       // 🔥 Uncomment when backend is ready
       /*

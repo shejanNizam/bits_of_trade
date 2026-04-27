@@ -4,7 +4,6 @@ import { smoothScrollToElement } from "@/utils/scroll";
 import Image from "next/image";
 import Link from "next/link";
 import bannerImage from "../../assets/dashboard_image_for_banner.png";
-import CustomPrimaryButton from "../shared/CustomPrimaryButton";
 import CustomSecondaryButton from "../shared/CustomSecondaryButton";
 
 export default function Banner() {
@@ -61,8 +60,11 @@ export default function Banner() {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap items-center gap-3 pt-1">
-              <Link href="/onboarding/discipline-test">
-                <CustomPrimaryButton>Take Discipline Test</CustomPrimaryButton>
+              <Link
+                href="/onboarding/discipline-test"
+                className="h-11 sm:h-12 md:h-14 rounded-full bg-primary hover:bg-secondary dark:bg-primary dark:hover:bg-secondary shadow-lg dark:shadow-blue-500/20 hover:shadow-sm text-white font-medium text-sm sm:text-base md:text-lg px-6 sm:px-8 transition-all duration-300 hover:scale-105 active:scale-95 touch-manipulation inline-flex items-center justify-center"
+              >
+                Take Discipline Test
               </Link>
 
               <CustomSecondaryButton

@@ -243,6 +243,7 @@ export default function Profile() {
         onCancel={handleCloseModal}
         footer={null}
         width={500}
+        forceRender
         className="dark:bg-gray-900"
         styles={{
           body: { padding: "24px" },

@@ -6,7 +6,6 @@
 
 // export default function JournalTab() {
 //   const { data, isLoading, error } = useGetAllJournalQuery({});
-//   console.log(data);
 
 //   if (isLoading) {
 //     return (
@@ -49,8 +48,6 @@ export default function JournalTab() {
 
   // Refetch when filters change
   useReportFilters(refetch);
-
-  console.log(data);
 
   if (isLoading) {
     return (

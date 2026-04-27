@@ -409,7 +409,6 @@ export default function InsightsCards({ scorecard }: InsightsCardsProps) {
   const displayMetrics = scorecard.filter((metric) =>
     cardMetrics.includes(metric.code),
   );
-  console.log(displayMetrics);
 
   if (displayMetrics.length === 0) {
     return (
