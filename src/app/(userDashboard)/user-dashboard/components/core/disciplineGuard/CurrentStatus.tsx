@@ -11,7 +11,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import { message, Modal } from "antd";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BiListCheck } from "react-icons/bi";
 import { FaBrain } from "react-icons/fa";
 import { FiAlertTriangle, FiTarget } from "react-icons/fi";
@@ -36,6 +36,10 @@ export default function CurrentStatus() {
   const [cooldownMessage, setCooldownMessage] = useState("");
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
   const [cooldownEndsAt, setCooldownEndsAt] = useState<string | null>(null);
+  const [inlineCooldownEndsAt, setInlineCooldownEndsAt] = useState<
+    string | null
+  >(null);
+  const hasReloadedAfterCooldownRef = useRef(false);
 
   // Local state for review last trade checkbox (no API call)
   const [localTradeReviewCompleted, setLocalTradeReviewCompleted] =
@@ -58,10 +62,20 @@ export default function CurrentStatus() {
 
   // Get cooldown ends at from session data
   const sessionCooldownEndsAt = sessionViolations?.cooldown_ends_at || null;
-  const activeCooldownEndsAt = cooldownEndsAt || sessionCooldownEndsAt;
+  const activeCooldownEndsAt =
+    inlineCooldownEndsAt || cooldownEndsAt || sessionCooldownEndsAt;
 
   // Real-time countdown for the main UI
   const [remainingTimeText, setRemainingTimeText] = useState<string>("");
+
+  useEffect(() => {
+    const nextCooldownEndsAt = cooldownEndsAt || sessionCooldownEndsAt;
+
+    if (!nextCooldownEndsAt) return;
+
+    setInlineCooldownEndsAt(nextCooldownEndsAt);
+    hasReloadedAfterCooldownRef.current = false;
+  }, [cooldownEndsAt, sessionCooldownEndsAt]);
 
   // Real-time countdown timer effect for main UI
   useEffect(() => {
@@ -77,7 +91,17 @@ export default function CurrentStatus() {
 
       if (remainingMs <= 0) {
         setRemainingTimeText("");
-        refetchSession(); // Refresh to get updated status
+        setInlineCooldownEndsAt(null);
+        setIsCooldownModalOpen(false);
+        setCooldownMessage("");
+        setCooldownSeconds(0);
+        setCooldownEndsAt(null);
+
+        if (!hasReloadedAfterCooldownRef.current) {
+          hasReloadedAfterCooldownRef.current = true;
+          window.location.reload();
+        }
+
         return;
       }
 
