@@ -110,7 +110,7 @@ export default function TradeLogTable() {
             iconClassName: "text-yellow-600 dark:text-yellow-400",
             textClassName: "text-yellow-800 dark:text-yellow-200",
             message:
-              'Your last session flagged a rule violation. Complete the Discipline Check below before importing new trades.',
+              "Your last session flagged a rule violation. Complete the Discipline Check before importing new trades.",
           }
         : null;
 

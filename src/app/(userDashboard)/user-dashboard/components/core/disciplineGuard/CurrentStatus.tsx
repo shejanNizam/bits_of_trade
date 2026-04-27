@@ -576,7 +576,8 @@ export default function CurrentStatus() {
           statusData.requiredActions.length === 0 && (
             <div className="mt-4 p-3 bg-green-50 dark:bg-green-950/30 rounded-lg text-center">
               <p className="text-sm text-green-700 dark:text-green-300">
-                {"✓ All systems normal. You're cleared to trade."}
+                No active restrictions. Keep journaling and reviewing your
+                trades.
               </p>
             </div>
           )}

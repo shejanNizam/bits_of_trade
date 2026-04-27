@@ -34,7 +34,7 @@ export default function SessionStatus({ sessionHealth }: SessionStatusProps) {
       badgeText: "text-yellow-700 dark:text-yellow-300",
       title: "Session Status: Warning",
       description:
-        "Some restrictions may apply. Review your guidelines carefully.",
+        "Your last session flagged a rule violation. Complete the Discipline Check before importing new trades.",
       label: "Yellow",
     },
     red: {
@@ -45,7 +45,7 @@ export default function SessionStatus({ sessionHealth }: SessionStatusProps) {
       badgeText: "text-red-700 dark:text-red-300",
       title: "Session Status: Restricted",
       description:
-        "Active restrictions in place. Please review guidelines before trading.",
+        "You've hit a hard limit. BitsOfTrade has locked your next session to protect your capital. A 45-minute cooling period has started.",
       label: "Red",
     },
   };
