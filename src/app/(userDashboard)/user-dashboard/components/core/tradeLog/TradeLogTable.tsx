@@ -92,8 +92,27 @@ export default function TradeLogTable() {
 
   // Check if buttons should be disabled based on session_state
   const sessionState = (typedUser?.session_state || "green").toLowerCase();
-  const isSessionBlocked =
-    sessionState === "red" || sessionState === "yellow";
+  const isSessionBlocked = sessionState === "red" || sessionState === "yellow";
+  const sessionWarning =
+    sessionState === "red"
+      ? {
+          className:
+            "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800",
+          iconClassName: "text-red-600 dark:text-red-400",
+          textClassName: "text-red-800 dark:text-red-200",
+          message:
+            "You've hit a hard limit. BitsOfTrade has locked your next session to protect your capital. A 45-minute cooling period has started.",
+        }
+      : sessionState === "yellow"
+        ? {
+            className:
+              "bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800",
+            iconClassName: "text-yellow-600 dark:text-yellow-400",
+            textClassName: "text-yellow-800 dark:text-yellow-200",
+            message:
+              'Your last session flagged a rule violation. Complete the Discipline Check below before importing new trades.',
+          }
+        : null;
 
   // Get filters from context
   const { filters } = useFilters();
@@ -653,25 +672,14 @@ export default function TradeLogTable() {
       </div>
 
       {/* Session Warning Banner - Show only for red or yellow session */}
-      {isSessionBlocked && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+      {sessionWarning && (
+        <div className={`${sessionWarning.className} rounded-xl p-4`}>
           <div className="flex items-start gap-3">
-            <MdInfoOutline className="text-red-600 dark:text-red-400 text-xl shrink-0 mt-0.5" />
-            <p className="text-sm text-red-800 dark:text-red-200">
-              Your session is {sessionState}. Please complete journal and
-              discipline guard.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Warning Banner - Show for green session */}
-      {!isSessionBlocked && (
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
-          <div className="flex items-start gap-3">
-            <MdInfoOutline className="text-yellow-600 dark:text-yellow-400 text-xl shrink-0 mt-0.5" />
-            <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              Complete Quick Check before logging new trades.
+            <MdInfoOutline
+              className={`${sessionWarning.iconClassName} text-xl shrink-0 mt-0.5`}
+            />
+            <p className={`text-sm ${sessionWarning.textClassName}`}>
+              {sessionWarning.message}
             </p>
           </div>
         </div>
