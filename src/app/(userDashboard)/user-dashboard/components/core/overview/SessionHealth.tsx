@@ -57,6 +57,7 @@ export default function SessionHealth({ sessionHealth }: SessionHealthProps) {
           {config.label}
         </div>
       </div>
+      {/*  */}
 
       {/* Health Metrics */}
       <div className="space-y-4 sm:space-y-5">
