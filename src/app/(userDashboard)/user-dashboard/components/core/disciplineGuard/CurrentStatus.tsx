@@ -58,20 +58,21 @@ export default function CurrentStatus() {
 
   // Get cooldown ends at from session data
   const sessionCooldownEndsAt = sessionViolations?.cooldown_ends_at || null;
+  const activeCooldownEndsAt = cooldownEndsAt || sessionCooldownEndsAt;
 
   // Real-time countdown for the main UI
   const [remainingTimeText, setRemainingTimeText] = useState<string>("");
 
   // Real-time countdown timer effect for main UI
   useEffect(() => {
-    if (!sessionCooldownEndsAt) {
+    if (!activeCooldownEndsAt) {
       setRemainingTimeText("");
       return;
     }
 
     const updateMainTimer = () => {
       const now = new Date();
-      const endTime = new Date(sessionCooldownEndsAt);
+      const endTime = new Date(activeCooldownEndsAt);
       const remainingMs = endTime.getTime() - now.getTime();
 
       if (remainingMs <= 0) {
@@ -94,7 +95,7 @@ export default function CurrentStatus() {
     updateMainTimer();
     const interval = setInterval(updateMainTimer, 1000);
     return () => clearInterval(interval);
-  }, [sessionCooldownEndsAt, refetchSession]);
+  }, [activeCooldownEndsAt, refetchSession]);
 
   // Real-time countdown timer effect for modal
   useEffect(() => {
@@ -457,35 +458,31 @@ export default function CurrentStatus() {
           </div>
         )}
 
+        {/* Cooldown Period */}
+        {remainingTimeText && (
+          <div className="mb-6 rounded-lg border border-orange-200 dark:border-orange-900/50 bg-orange-50 dark:bg-orange-950/30 p-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/40">
+                <IoLockClosedOutline className="text-lg text-orange-600 dark:text-orange-400" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase text-orange-700 dark:text-orange-300">
+                  Cooldown Period
+                </p>
+                <p className="mt-0.5 text-sm font-mono font-bold text-orange-900 dark:text-orange-100">
+                  {remainingTimeText}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Required Actions with Countdown */}
         {statusData.requiredActions.length > 0 && (
           <div className="mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">
-                Required Actions
-              </h4>
-              {/* Countdown Timer beside the title */}
-              {remainingTimeText && (
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-                  <svg
-                    className="w-3 h-3 text-orange-600 dark:text-orange-400 animate-pulse"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="text-xs font-medium text-orange-700 dark:text-orange-300">
-                    {remainingTimeText}
-                  </span>
-                </div>
-              )}
-            </div>
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+              Required Actions
+            </h4>
             <div className="space-y-2">
               {/* Complete Quick Journal - Static checkbox, no API call */}
               <label className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed opacity-75">
