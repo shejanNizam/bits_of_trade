@@ -49,6 +49,7 @@ export default function CurrentStatus() {
 
   // Get journal completed status from API response
   const journalCompleted = sessionData?.journal_completed || false;
+  const tagAllMistake = sessionData?.trades_tag_status?.all_tagged || false;
   const tradeReviewCompleted = sessionData?.trade_review_completed || false;
 
   // For UI - use local state for checkbox, but show actual status from API if already completed
@@ -498,6 +499,17 @@ export default function CurrentStatus() {
                   Complete Quick Journal
                 </span>
               </label>
+              <label className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed opacity-75">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600"
+                  checked={tagAllMistake}
+                  disabled={true}
+                />
+                <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                  Tags all mistake
+                </span>
+              </label>
 
               {/* Review last trade - Checkbox with local state only, no API call */}
               <label className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
@@ -528,7 +540,7 @@ export default function CurrentStatus() {
                   : "bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white"
               }`}
             >
-              Complete Quick Check
+              Complete
             </button>
           )}
           <Link href="/user-dashboard/rules-limit">
