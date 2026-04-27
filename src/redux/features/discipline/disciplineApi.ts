@@ -28,7 +28,7 @@ export const disciplineApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["discipline"],
+      invalidatesTags: ["discipline", "user", "tradelog", "journal"],
     }),
   }),
 });

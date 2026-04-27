@@ -9,7 +9,14 @@ export const tradelogApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["tradelog"],
+      invalidatesTags: [
+        "tradelog",
+        "overview",
+        "reports",
+        "insights",
+        "discipline",
+        "user",
+      ],
     }),
 
     // POST api --> trade import manually (raw body)
@@ -19,7 +26,14 @@ export const tradelogApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["tradelog"],
+      invalidatesTags: [
+        "tradelog",
+        "overview",
+        "reports",
+        "insights",
+        "discipline",
+        "user",
+      ],
     }),
 
     // PUT api --> update trade manually
@@ -29,7 +43,14 @@ export const tradelogApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: payload,
       }),
-      invalidatesTags: ["tradelog"],
+      invalidatesTags: [
+        "tradelog",
+        "overview",
+        "reports",
+        "insights",
+        "discipline",
+        "user",
+      ],
     }),
 
     // GET api --> get all trades (pagination)
@@ -57,7 +78,14 @@ export const tradelogApi = baseApi.injectEndpoints({
         url: `/api/tradelog/trades/${id}/`,
         method: "DELETE",
       }),
-      invalidatesTags: ["tradelog"],
+      invalidatesTags: [
+        "tradelog",
+        "overview",
+        "reports",
+        "insights",
+        "discipline",
+        "user",
+      ],
     }),
 
     // POST api --> bulk delete trades
@@ -67,7 +95,14 @@ export const tradelogApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["tradelog"],
+      invalidatesTags: [
+        "tradelog",
+        "overview",
+        "reports",
+        "insights",
+        "discipline",
+        "user",
+      ],
     }),
 
     // post screenshots

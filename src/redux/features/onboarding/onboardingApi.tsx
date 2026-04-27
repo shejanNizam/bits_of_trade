@@ -8,7 +8,7 @@ export const onboardingApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["onboarding"],
+      invalidatesTags: ["onboarding", "user"],
     }),
   }),
 });

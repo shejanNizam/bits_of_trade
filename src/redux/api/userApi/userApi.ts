@@ -32,7 +32,7 @@ export const userApi = baseApi.injectEndpoints({
         body: formData,
         formData: true, // Important for file upload
       }),
-      invalidatesTags: ["auth"],
+      invalidatesTags: ["auth", "user"],
     }),
   }),
 });

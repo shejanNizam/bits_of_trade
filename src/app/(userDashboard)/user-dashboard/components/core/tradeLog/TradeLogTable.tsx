@@ -369,7 +369,7 @@ export default function TradeLogTable() {
     }
 
     const result = await ErrorSwal({
-      title: "Bulk Delete Trades?",
+      title: "Delete All Trades?",
       text: confirmText,
     });
 

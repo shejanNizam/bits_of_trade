@@ -17,7 +17,7 @@ export const utilsApi = baseApi.injectEndpoints({
         url: `/api/strategies/names/`,
         method: "GET",
       }),
-      providesTags: ["tradelog"],
+      providesTags: ["strategy"],
     }),
 
     // get mistake id and title for tag with trade

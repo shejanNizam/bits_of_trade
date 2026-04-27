@@ -15,6 +15,7 @@ export const blogs = baseApi.injectEndpoints({
           },
         };
       },
+      providesTags: ["blog"],
     }),
 
     singleBlogs: builder.query({
@@ -22,6 +23,7 @@ export const blogs = baseApi.injectEndpoints({
         url: `/blog/single/${id}`,
         method: "GET",
       }),
+      providesTags: ["blog"],
     }),
 
     AllCategoryblogs: builder.query({
@@ -29,6 +31,7 @@ export const blogs = baseApi.injectEndpoints({
         url: `/blog/category/blogs`,
         method: "GET",
       }),
+      providesTags: ["blog"],
     }),
     // post jobs
   }),

@@ -17,7 +17,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "discipline", "user", "reports"],
     }),
     // Update daily journal entry
     updateDailyJournalEntry: builder.mutation({
@@ -26,7 +26,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: payload,
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "discipline", "user", "reports"],
     }),
 
     // Delete daily journal entry
@@ -35,7 +35,7 @@ export const journalApi = baseApi.injectEndpoints({
         url: `/api/journal/daily/${id}/`,
         method: "DELETE",
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "discipline", "user", "reports"],
     }),
 
     //  for  trade note tab ------------------------------>>
@@ -46,7 +46,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "reports"],
     }),
 
     // PATCH api --> update rules
@@ -56,7 +56,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: payload,
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "reports"],
     }),
 
     // GET api --> get all trades (pagination)
@@ -75,7 +75,7 @@ export const journalApi = baseApi.injectEndpoints({
         url: `/api/journal/trade-notes/${id}/`,
         method: "DELETE",
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "reports"],
     }),
 
     // for psychology log tab ------------------------------>>
@@ -85,7 +85,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "reports"],
     }),
 
     updatePsychologyLog: builder.mutation({
@@ -94,7 +94,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: payload,
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "reports"],
     }),
 
     getAllPsychologyLog: builder.query({
@@ -111,7 +111,7 @@ export const journalApi = baseApi.injectEndpoints({
         url: `/api/journal/psychology/${id}/`,
         method: "DELETE",
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "reports"],
     }),
 
     // for mistakes tab ------------------------------>>
@@ -121,7 +121,15 @@ export const journalApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: [
+        "journal",
+        "tradelog",
+        "mistake",
+        "discipline",
+        "user",
+        "overview",
+        "reports",
+      ],
     }),
 
     tradeLinkWithRules: builder.mutation({
@@ -130,7 +138,15 @@ export const journalApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: [
+        "journal",
+        "tradelog",
+        "rules",
+        "discipline",
+        "user",
+        "overview",
+        "reports",
+      ],
     }),
 
     // for session recape tab ------------------------------>>
@@ -140,7 +156,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "discipline", "user", "reports"],
     }),
 
     updateSessionRecap: builder.mutation({
@@ -149,7 +165,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: payload,
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "discipline", "user", "reports"],
     }),
 
     getAllSessionRecap: builder.query({
@@ -166,7 +182,7 @@ export const journalApi = baseApi.injectEndpoints({
         url: `/api/journal/recaps/${id}/`,
         method: "DELETE",
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "discipline", "user", "reports"],
     }),
 
     // for learning notes tab ------------------------------>>
@@ -176,7 +192,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "reports"],
     }),
 
     updateLearningNotes: builder.mutation({
@@ -185,7 +201,7 @@ export const journalApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: payload,
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "reports"],
     }),
 
     getAllLearningNotes: builder.query({
@@ -202,7 +218,7 @@ export const journalApi = baseApi.injectEndpoints({
         url: `/api/journal/learning-notes/${id}/`,
         method: "DELETE",
       }),
-      invalidatesTags: ["journal"],
+      invalidatesTags: ["journal", "reports"],
     }),
 
     // Journal Streak get api

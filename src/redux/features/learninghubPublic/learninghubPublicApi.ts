@@ -8,7 +8,7 @@ export const learninghubPublicApi = baseApi.injectEndpoints({
         method: "GET",
         params: { page, limit },
       }),
-      providesTags: ["insights"],
+      providesTags: ["LearningHubPublic"],
     }),
   }),
 });
