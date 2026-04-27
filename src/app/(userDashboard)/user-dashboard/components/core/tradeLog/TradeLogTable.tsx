@@ -91,9 +91,9 @@ export default function TradeLogTable() {
   };
 
   // Check if buttons should be disabled based on session_state
+  const sessionState = (typedUser?.session_state || "green").toLowerCase();
   const isSessionBlocked =
-    typedUser?.session_state === "red" || typedUser?.session_state === "yellow";
-  const sessionState = typedUser?.session_state || "green";
+    sessionState === "red" || sessionState === "yellow";
 
   // Get filters from context
   const { filters } = useFilters();
@@ -276,7 +276,18 @@ export default function TradeLogTable() {
     setIsPreviewModalOpen(true);
   };
 
+  const showDeleteBlockedModal = () =>
+    ErrorSwal({
+      title: "Delete Restricted",
+      text: "Please complete discipline guard to perform delete operation",
+    });
+
   const handleDeleteTrade = async (trade: TradeData) => {
+    if (isSessionBlocked) {
+      await showDeleteBlockedModal();
+      return;
+    }
+
     const result = await ErrorSwal({
       title: "Delete Trade?",
       text: `Are you sure you want to delete trade for ${trade.symbol}? This action cannot be undone.`,
@@ -301,6 +312,11 @@ export default function TradeLogTable() {
   };
 
   const handleBulkDelete = async (type: "selected" | "all" | "filtered") => {
+    if (isSessionBlocked) {
+      await showDeleteBlockedModal();
+      return;
+    }
+
     let confirmText = "";
     let payload: any = {};
 
