@@ -1,6 +1,9 @@
-//
+"use client";
 
+import { RootState } from "@/redux/store";
+import { User } from "@/types/auth";
 import { IoCheckmarkCircle, IoCloseCircle } from "react-icons/io5";
+import { useSelector } from "react-redux";
 
 interface SessionHealthProps {
   sessionHealth?: {
@@ -14,6 +17,8 @@ interface SessionHealthProps {
 }
 
 export default function SessionHealth({ sessionHealth }: SessionHealthProps) {
+  const user = useSelector((state: RootState) => state.auth.user) as User | null;
+
   const healthData = sessionHealth || {
     status: "green",
     tradesToday: 0,
@@ -21,6 +26,12 @@ export default function SessionHealth({ sessionHealth }: SessionHealthProps) {
     mistakesLogged: 0,
     journalCompleted: false,
   };
+
+  const sessionState = (
+    user?.session_state ||
+    healthData.status ||
+    "green"
+  ).toLowerCase() as "green" | "yellow" | "red";
 
   const statusConfig = {
     green: {
@@ -40,9 +51,7 @@ export default function SessionHealth({ sessionHealth }: SessionHealthProps) {
     },
   };
 
-  const config =
-    statusConfig[healthData.status as keyof typeof statusConfig] ||
-    statusConfig.green;
+  const config = statusConfig[sessionState] || statusConfig.green;
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl lg:rounded-2xl p-5 sm:p-6 border border-gray-200 dark:border-gray-700">
