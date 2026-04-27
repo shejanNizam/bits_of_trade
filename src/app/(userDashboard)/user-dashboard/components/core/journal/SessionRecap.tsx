@@ -10,9 +10,10 @@ import {
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Checkbox, DatePicker, Input, message, Popconfirm } from "antd";
+import { Button, Checkbox, DatePicker, Input, message } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
+import DeleteConfirmationModal from "@/components/shared/DeleteConfirmationModal";
 
 interface SessionRecapFormData {
   recap_date: string;
@@ -37,6 +38,13 @@ interface SessionRecap {
 export default function SessionRecap() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    open: boolean;
+    id: string | null;
+  }>({
+    open: false,
+    id: null,
+  });
   const [formData, setFormData] = useState<SessionRecapFormData>({
     recap_date: dayjs().format("YYYY-MM-DD"),
     outcome: "good",
@@ -469,33 +477,41 @@ export default function SessionRecap() {
                   >
                     <EditOutlined className="text-gray-500 dark:text-gray-400" />
                   </button>
-                  <Popconfirm
-                    title="Delete Session Recap"
-                    description="Are you sure you want to delete this session recap?"
-                    onConfirm={() => handleDelete(recap.id)}
-                    okText="Yes"
-                    cancelText="No"
-                    okButtonProps={{ loading: isDeleting }}
-                  >
                     <button
+                      onClick={() =>
+                        setDeleteModal({ open: true, id: recap.id })
+                      }
                       className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                       disabled={isLoading}
                     >
                       <DeleteOutlined className="text-red-500 dark:text-red-400" />
                     </button>
-                  </Popconfirm>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8 bg-gray-50 dark:bg-gray-900/30 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              No session recaps yet. Create your first recap above!
-            </p>
-          </div>
-        )}
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 bg-gray-50 dark:bg-gray-900/30 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                No session recaps yet. Create your first recap above!
+              </p>
+            </div>
+          )}
+        </div>
+
+        <DeleteConfirmationModal
+          open={deleteModal.open}
+          loading={isDeleting}
+          onCancel={() => setDeleteModal({ open: false, id: null })}
+          onConfirm={() => {
+            if (deleteModal.id) {
+              handleDelete(deleteModal.id);
+              setDeleteModal({ open: false, id: null });
+            }
+          }}
+          title="Delete Session Recap"
+          description="Are you sure you want to delete this session recap?"
+        />
       </div>
-    </div>
-  );
-}
+    );
+  }

@@ -6,10 +6,11 @@ import {
   useGetAllAddNoteQuery,
 } from "@/redux/features/journal/journalApi";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { message, Popconfirm, Tag } from "antd";
+import { message, Tag } from "antd";
 import { useState } from "react";
 import { IoAddOutline } from "react-icons/io5";
 import AddTradeNoteModal from "./AddTradeNoteModal";
+import DeleteConfirmationModal from "@/components/shared/DeleteConfirmationModal";
 
 interface TradeNote {
   id: string;
@@ -28,6 +29,13 @@ interface TradeNote {
 export default function TradeNotes() {
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<TradeNote | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    open: boolean;
+    id: string | null;
+  }>({
+    open: false,
+    id: null,
+  });
 
   // Fetch all trade notes
   const {
@@ -173,21 +181,13 @@ export default function TradeNotes() {
                   >
                     <EditOutlined className="text-gray-500 dark:text-gray-400" />
                   </button>
-                  <Popconfirm
-                    title="Delete Trade Note"
-                    description="Are you sure you want to delete this trade note?"
-                    onConfirm={() => handleDelete(note.id)}
-                    okText="Yes"
-                    cancelText="No"
-                    okButtonProps={{ loading: isDeleting }}
+                  <button
+                    onClick={() => setDeleteModal({ open: true, id: note.id })}
+                    className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                    disabled={isDeleting}
                   >
-                    <button
-                      className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
-                      disabled={isDeleting}
-                    >
-                      <DeleteOutlined className="text-red-500 dark:text-red-400" />
-                    </button>
-                  </Popconfirm>
+                    <DeleteOutlined className="text-red-500 dark:text-red-400" />
+                  </button>
                 </div>
               </div>
 
@@ -227,6 +227,20 @@ export default function TradeNotes() {
         open={isAddNoteModalOpen}
         onClose={handleModalClose}
         editingNote={editingNote}
+      />
+
+      <DeleteConfirmationModal
+        open={deleteModal.open}
+        loading={isDeleting}
+        onCancel={() => setDeleteModal({ open: false, id: null })}
+        onConfirm={() => {
+          if (deleteModal.id) {
+            handleDelete(deleteModal.id);
+            setDeleteModal({ open: false, id: null });
+          }
+        }}
+        title="Delete Trade Note"
+        description="Are you sure you want to delete this trade note?"
       />
     </div>
   );

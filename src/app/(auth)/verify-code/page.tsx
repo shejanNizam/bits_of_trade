@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Form, Input, InputRef, theme } from "antd";
+import { Button, Form, Input, InputRef, message, theme } from "antd";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
@@ -112,7 +112,7 @@ const VerifyCodeContent: React.FC = () => {
 
     // Only process if pasted data contains only digits
     if (!/^\d+$/.test(pastedData)) {
-      alert("Please paste only numeric digits");
+      message.error("Please paste only numeric digits");
       return;
     }
 
@@ -159,10 +159,10 @@ const VerifyCodeContent: React.FC = () => {
 
       // ==================== MOCK SUCCESS ====================
       // 🔥 Remove this block when API is integrated
-      console.log("Mock verify OTP - Code:", otp);
-      alert(
-        `OTP verified successfully! (Mock - Remove when API ready)\n\nCode: ${otp}\nEmail: ${email}\n\nRedirecting to reset password...`,
+      message.success(
+        `OTP verified successfully! (Mock - Remove when API ready)`,
       );
+      console.log("Mock verify OTP - Code:", otp);
 
       // Mock redirect
       setTimeout(() => {
@@ -187,7 +187,7 @@ const VerifyCodeContent: React.FC = () => {
 
       // 🔥 Mock error - Remove when API integrated
       const errorMessage = (error as Error)?.message || "Invalid OTP!";
-      alert(`Verification failed: ${errorMessage} (Mock error)`);
+      message.error(`Verification failed: ${errorMessage} (Mock error)`);
     }
   };
 
@@ -220,8 +220,8 @@ const VerifyCodeContent: React.FC = () => {
 
       // ==================== MOCK SUCCESS ====================
       // 🔥 Remove this block when API is integrated
-      alert(
-        `New OTP sent successfully! (Mock - Remove when API ready)\n\nA new code has been sent to:\n${email}`,
+      message.success(
+        `New OTP sent successfully! (Mock - Remove when API ready)`,
       );
 
       // Reset timer and code
@@ -244,7 +244,7 @@ const VerifyCodeContent: React.FC = () => {
 
       // 🔥 Mock error - Remove when API integrated
       const errorMessage = (error as Error)?.message || "Failed to resend!";
-      alert(`Resend failed: ${errorMessage} (Mock error)`);
+      message.error(`Resend failed: ${errorMessage} (Mock error)`);
     }
   };
 

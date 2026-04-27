@@ -9,9 +9,10 @@ import {
 } from "@/redux/features/journal/journalApi";
 import { useGetTradeQuery } from "@/redux/features/utils/utilsApi";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, DatePicker, message, Popconfirm, Select, Slider } from "antd";
+import { Button, DatePicker, message, Select, Slider } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
+import DeleteConfirmationModal from "@/components/shared/DeleteConfirmationModal";
 
 const { Option } = Select;
 
@@ -45,6 +46,13 @@ export default function PsychologyLog() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [deleteModal, setDeleteModal] = useState<{
+    open: boolean;
+    id: string | null;
+  }>({
+    open: false,
+    id: null,
+  });
   const [formData, setFormData] = useState<PsychologyLogFormData>({
     log_date: dayjs().format("YYYY-MM-DD"),
     trade: null,
@@ -513,33 +521,41 @@ export default function PsychologyLog() {
                   >
                     <EditOutlined className="text-gray-500 dark:text-gray-400" />
                   </button>
-                  <Popconfirm
-                    title="Delete Psychology Log"
-                    description="Are you sure you want to delete this psychology log?"
-                    onConfirm={() => handleDelete(log.id)}
-                    okText="Yes"
-                    cancelText="No"
-                    okButtonProps={{ loading: isDeleting }}
-                  >
                     <button
+                      onClick={() =>
+                        setDeleteModal({ open: true, id: log.id })
+                      }
                       className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                       disabled={isLoading}
                     >
                       <DeleteOutlined className="text-red-500 dark:text-red-400" />
                     </button>
-                  </Popconfirm>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8 bg-gray-50 dark:bg-gray-900/30 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              No psychology logs yet. Create your first log above!
-            </p>
-          </div>
-        )}
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 bg-gray-50 dark:bg-gray-900/30 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                No psychology logs yet. Create your first log above!
+              </p>
+            </div>
+          )}
+        </div>
+
+        <DeleteConfirmationModal
+          open={deleteModal.open}
+          loading={isDeleting}
+          onCancel={() => setDeleteModal({ open: false, id: null })}
+          onConfirm={() => {
+            if (deleteModal.id) {
+              handleDelete(deleteModal.id);
+              setDeleteModal({ open: false, id: null });
+            }
+          }}
+          title="Delete Psychology Log"
+          description="Are you sure you want to delete this psychology log?"
+        />
       </div>
-    </div>
-  );
-}
+    );
+  }

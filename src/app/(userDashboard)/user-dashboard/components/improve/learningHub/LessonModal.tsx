@@ -14,7 +14,7 @@ import {
   LockOutlined,
   PlayCircleFilled,
 } from "@ant-design/icons";
-import { Modal } from "antd";
+import { Modal, message } from "antd";
 import { useState } from "react";
 import type { Lesson } from "./Lessons";
 
@@ -63,7 +63,7 @@ export default function LessonModal({
     if (!hasStarted) {
       const userId = Number(localStorage.getItem("user_id") ?? 0);
       if (!userId) {
-        alert("Please log in to start this course.");
+        message.error("Please log in to start this course.");
         return;
       }
       try {

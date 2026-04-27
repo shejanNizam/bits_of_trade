@@ -11,11 +11,12 @@ import {
 } from "@/redux/features/journal/journalApi";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
+import { SuccessSwal } from "@/utils/allSwal";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Input, Modal, Popconfirm, message } from "antd";
+import { Button, Input, Modal, message } from "antd";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import DeleteConfirmationModal from "@/components/shared/DeleteConfirmationModal";
 
 const { TextArea } = Input;
 
@@ -62,6 +63,13 @@ export default function DailyJournal() {
   // Edit modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<JournalEntry | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    open: boolean;
+    id: string | null;
+  }>({
+    open: false,
+    id: null,
+  });
   const [editFormData, setEditFormData] = useState<JournalFormData>({
     reflection: "",
     intention_next_session: "",
@@ -426,21 +434,13 @@ export default function DailyJournal() {
                 >
                   <EditOutlined className="text-gray-500 dark:text-gray-400 text-sm" />
                 </button>
-                <Popconfirm
-                  title="Delete Journal Entry"
-                  description="Are you sure you want to delete this journal entry?"
-                  onConfirm={() => handleDelete(journal.id)}
-                  okText="Yes"
-                  cancelText="No"
-                  okButtonProps={{ loading: isDeleting }}
+                <button
+                  onClick={() => setDeleteModal({ open: true, id: journal.id })}
+                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                  disabled={isDeleting || isUpdating}
                 >
-                  <button
-                    className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
-                    disabled={isDeleting || isUpdating}
-                  >
-                    <DeleteOutlined className="text-red-500 dark:text-red-400 text-sm" />
-                  </button>
-                </Popconfirm>
+                  <DeleteOutlined className="text-red-500 dark:text-red-400 text-sm" />
+                </button>
               </div>
             </div>
 
@@ -597,6 +597,20 @@ export default function DailyJournal() {
           </div>
         </div>
       </Modal>
+
+      <DeleteConfirmationModal
+        open={deleteModal.open}
+        loading={isDeleting}
+        onCancel={() => setDeleteModal({ open: false, id: null })}
+        onConfirm={() => {
+          if (deleteModal.id) {
+            handleDelete(deleteModal.id);
+            setDeleteModal({ open: false, id: null });
+          }
+        }}
+        title="Delete Journal Entry"
+        description="Are you sure you want to delete this journal entry?"
+      />
     </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Form, Input, theme } from "antd";
+import { Button, Form, Input, message, theme } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaArrowLeft } from "react-icons/fa";
@@ -50,7 +50,7 @@ const ResetPassword: React.FC = () => {
       // ==================== PASSWORD MATCH VALIDATION ====================
       // Note: This is also handled by Form.Item validation, but keeping as double-check
       if (values.password !== values.confirmPassword) {
-        alert("Passwords do not match!");
+        message.error("Passwords do not match!");
         return;
       }
 
@@ -93,9 +93,7 @@ const ResetPassword: React.FC = () => {
       // ==================== MOCK SUCCESS ====================
       // 🔥 Remove this block when API is integrated
       console.log("Mock reset password");
-      alert(
-        "Password reset successful! (Mock - Remove when API ready)\n\nYour password has been updated.\nRedirecting to login...",
-      );
+      message.success("Password reset successful! (Mock - Remove when API ready)");
 
       // Mock redirect
       setTimeout(() => {
@@ -116,7 +114,7 @@ const ResetPassword: React.FC = () => {
 
       // 🔥 Mock error - Remove when API integrated
       const errorMessage = (error as Error)?.message || "Something went wrong!";
-      alert(`Password reset failed: ${errorMessage} (Mock error)`);
+      message.error(`Password reset failed: ${errorMessage} (Mock error)`);
     }
   };
 
