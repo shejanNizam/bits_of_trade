@@ -5,69 +5,71 @@ import {
   CourseProgressAPI,
   LearningLessonAPI,
 } from "@/redux/features/learninghub/learninghubApi";
-import { PlayCircleFilled } from "@ant-design/icons";
+import { ClockCircleOutlined, PlayCircleFilled } from "@ant-design/icons";
 import { useState } from "react";
 import LessonModal from "./LessonModal";
-
-// ─── Public lesson type used by LessonModal ───────────────────────────────────
 
 export interface Lesson {
   courseId: number;
   title: string;
-  type: string; // course_type
-  level: string; // course_level
-  time: string; // derived from video count
-  outcome: string; // about field
-  insight: string; // description field
+  type: string;
+  level: string;
+  time: string;
+  outcome: string;
+  insight: string;
   about: string | null;
   videos: CourseAPI["videos"];
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
 function deriveTime(videos: CourseAPI["videos"]): string {
   const count = videos.length;
-  if (count === 0) return "—";
+  if (count === 0) return "No videos";
   return `${count} video${count !== 1 ? "s" : ""}`;
 }
 
-function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+function formatLabel(value: string): string {
+  return value
+    .replace(/[_-]/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
-
-// ─── Props ────────────────────────────────────────────────────────────────────
 
 interface LessonsProps {
   lessons: LearningLessonAPI[];
   progress: CourseProgressAPI[];
+  onProgressRefresh: () => Promise<CourseProgressAPI[] | undefined>;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
-export default function Lessons({ lessons, progress }: LessonsProps) {
+export default function Lessons({
+  lessons,
+  progress,
+  onProgressRefresh,
+}: LessonsProps) {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
 
   const sections = lessons
-    ?.filter((l) => l.is_active)
-    ?.map((l) => ({
-      category: l.title,
-      lessons: l.courses
-        .filter((c) => c.is_active)
-        .map(
-          (c): Lesson => ({
-            courseId: c.id,
-            title: c.title,
-            type: capitalize(c.course_type),
-            level: capitalize(c.course_level),
-            time: deriveTime(c.videos),
-            outcome: c.about ?? "Complete this course to level up your skills.",
+    .filter((lesson) => lesson.is_active)
+    .map((lesson) => ({
+      category: lesson.title,
+      lessons: lesson.courses
+        .filter((course) => course.is_active)
+        .map((course): Lesson => {
+          const activeVideos = course.videos.filter((video) => video.is_active);
+
+          return {
+            courseId: course.id,
+            title: course.title,
+            type: formatLabel(course.course_type),
+            level: formatLabel(course.course_level),
+            time: deriveTime(activeVideos),
+            outcome:
+              course.about ?? "Complete this course to level up your skills.",
             insight:
-              c.description ??
-              "This course is recommended based on your recent activity.",
-            about: c.about,
-            videos: c.videos,
-          }),
-        ),
+              course.description ??
+              "This course is recommended based on your learning activity.",
+            about: course.about,
+            videos: activeVideos,
+          };
+        }),
     }));
 
   if (sections.length === 0) {
@@ -80,8 +82,8 @@ export default function Lessons({ lessons, progress }: LessonsProps) {
 
   return (
     <div className="p-6 space-y-12">
-      {sections.map((section, idx) => (
-        <section key={idx} className="space-y-6">
+      {sections.map((section) => (
+        <section key={section.category} className="space-y-6">
           <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
             {section.category}
           </h2>
@@ -92,13 +94,14 @@ export default function Lessons({ lessons, progress }: LessonsProps) {
             </p>
           ) : (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {section.lessons.map((lesson, lIdx) => {
+              {section.lessons.map((lesson) => {
                 const courseProgress = progress.find(
                   (p) => p.course.id === lesson.courseId,
                 );
+
                 return (
                   <LessonCard
-                    key={`${idx}-${lIdx}`}
+                    key={lesson.courseId}
                     lesson={lesson}
                     courseProgress={courseProgress}
                     onStart={() => setSelectedLesson(lesson)}
@@ -115,12 +118,11 @@ export default function Lessons({ lessons, progress }: LessonsProps) {
         open={!!selectedLesson}
         onClose={() => setSelectedLesson(null)}
         progress={progress}
+        onProgressRefresh={onProgressRefresh}
       />
     </div>
   );
 }
-
-// ─── Lesson Card ──────────────────────────────────────────────────────────────
 
 function LessonCard({
   lesson,
@@ -136,7 +138,6 @@ function LessonCard({
 
   return (
     <div className="flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
-      {/* Type & Level badges */}
       <div className="flex items-center justify-between mb-4">
         <span className="rounded-md bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
           {lesson.type}
@@ -146,13 +147,14 @@ function LessonCard({
         </span>
       </div>
 
-      {/* Title */}
       <h4 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">
         {lesson.title}
       </h4>
-      <p className="mt-1 text-sm text-slate-400">🕒 {lesson.time}</p>
+      <p className="mt-1 flex items-center gap-1 text-sm text-slate-400">
+        <ClockCircleOutlined />
+        {lesson.time}
+      </p>
 
-      {/* Progress bar — only shown if user has started */}
       {hasStarted && (
         <div className="mt-3 space-y-1">
           <div className="flex justify-between text-[10px] font-bold text-slate-400">
@@ -168,7 +170,6 @@ function LessonCard({
         </div>
       )}
 
-      {/* Outcome & insight */}
       <div className="mt-6 space-y-4">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -181,7 +182,7 @@ function LessonCard({
 
         <div className="rounded-lg border-l-4 border-orange-400 bg-orange-50 p-3 dark:bg-orange-900/10">
           <p className="text-[10px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">
-            Why Now:
+            Why Now
           </p>
           <p className="text-xs text-orange-800 dark:text-orange-200">
             {lesson.insight}

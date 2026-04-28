@@ -20,8 +20,8 @@ export interface UserCourseProgress {
   total_videos: number;
   completed_videos: number;
   is_completed: boolean;
-  total_UserCourseStart: number;
-  total_completed_UserCourseStart: number;
+  total_UserCourseStart?: number;
+  total_completed_UserCourseStart?: number;
 }
 
 export interface Video {
@@ -55,7 +55,7 @@ export interface Course {
   lessons: {
     id: number;
     title: string;
-    description: string;
+    description: string | null;
   };
   videos: Video[];
 }
@@ -70,7 +70,6 @@ export interface LearningLesson {
   courses: Course[];
 }
 
-// For your API Response with Pagination
 export interface ApiResponse<T> {
   count: number;
   next: string | null;

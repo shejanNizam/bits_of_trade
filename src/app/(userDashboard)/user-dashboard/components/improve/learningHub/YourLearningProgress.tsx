@@ -2,34 +2,36 @@ import {
   CourseAPI,
   CourseProgressAPI,
 } from "@/redux/features/learninghub/learninghubApi";
+import { CheckCircleFilled } from "@ant-design/icons";
 
 interface YourLearningProgressProps {
   progress: CourseProgressAPI[];
   courses: CourseAPI[];
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export default function YourLearningProgress({
   progress,
   courses,
 }: YourLearningProgressProps) {
-  // Courses completed vs total available
-  const totalCourses = courses.length;
-  const completedCourses = progress.filter((p) => p.is_completed).length;
+  const activeCourses = courses.filter((course) => course.is_active);
+  const activeCourseIds = new Set(activeCourses.map((course) => course.id));
+  const visibleProgress = progress.filter((item) =>
+    activeCourseIds.has(item.course.id),
+  );
+
+  const totalCourses = activeCourses.length;
+  const completedCourses = visibleProgress.filter((p) => p.is_completed).length;
   const coursesPercent =
     totalCourses > 0 ? Math.round((completedCourses / totalCourses) * 100) : 0;
 
-  // Active learning days (unique started_at dates) as streak proxy
-  const activeDays = new Set(progress.map((p) => p.started_at.slice(0, 10)))
-    .size;
+  const activeDays = new Set(
+    visibleProgress.map((p) => p.started_at.slice(0, 10)),
+  ).size;
   const streakPercent = Math.min(100, activeDays * 7);
 
-  // In-progress courses (started but not complete)
-  const inProgress = progress.filter((p) => !p.is_completed);
+  const inProgress = visibleProgress.filter((p) => !p.is_completed);
 
-  // Recently completed, sorted newest first
-  const recentlyCompleted = progress
+  const recentlyCompleted = [...visibleProgress]
     .filter((p) => p.is_completed && p.completed_at)
     .sort(
       (a, b) =>
@@ -45,7 +47,6 @@ export default function YourLearningProgress({
       </h2>
 
       <div className="space-y-8">
-        {/* Courses Completed */}
         <div className="space-y-3">
           <div className="flex justify-between items-end">
             <span className="text-sm font-medium text-slate-500">
@@ -63,11 +64,10 @@ export default function YourLearningProgress({
           </div>
         </div>
 
-        {/* Learning Streak */}
         <div className="space-y-3">
           <div className="flex justify-between items-end">
             <span className="text-sm font-medium text-slate-500">
-              Learning Streak
+              Active Learning Days
             </span>
             <span className="text-sm font-bold text-slate-900 dark:text-white">
               {activeDays} day{activeDays !== 1 ? "s" : ""}
@@ -81,7 +81,6 @@ export default function YourLearningProgress({
           </div>
         </div>
 
-        {/* In-Progress courses */}
         {inProgress.length > 0 && (
           <div className="space-y-3">
             <h4 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -90,9 +89,13 @@ export default function YourLearningProgress({
             <div className="space-y-2">
               {inProgress.map((p) => (
                 <div key={p.id} className="space-y-1">
-                  <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
-                    <span className="font-medium">{p.course.title}</span>
-                    <span>{Math.round(p.completion_percentage)}%</span>
+                  <div className="flex justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
+                    <span className="font-medium truncate">
+                      {p.course.title}
+                    </span>
+                    <span className="shrink-0">
+                      {Math.round(p.completion_percentage)}%
+                    </span>
                   </div>
                   <div className="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                     <div
@@ -106,7 +109,6 @@ export default function YourLearningProgress({
           </div>
         )}
 
-        {/* Recently Completed */}
         <div className="pt-4">
           <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-3">
             Recently Completed
@@ -114,7 +116,7 @@ export default function YourLearningProgress({
 
           {recentlyCompleted.length === 0 ? (
             <p className="text-sm text-slate-400 dark:text-slate-500">
-              No completed courses yet. Keep going! 🚀
+              No completed courses yet.
             </p>
           ) : (
             <div className="space-y-2">
@@ -123,10 +125,10 @@ export default function YourLearningProgress({
                   key={p.id}
                   className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
                 >
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full border border-emerald-500 text-[10px] text-emerald-500">
-                    ✓
+                  <div className="flex h-5 w-5 items-center justify-center text-emerald-500">
+                    <CheckCircleFilled />
                   </div>
-                  {p.course.title}
+                  <span className="truncate">{p.course.title}</span>
                 </div>
               ))}
             </div>

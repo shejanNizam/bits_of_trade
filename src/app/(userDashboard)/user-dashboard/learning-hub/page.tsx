@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  CourseProgressAPI,
   useGetAllCoursesQuery,
   useGetAllLearningLessonsQuery,
   useGetAllUserCourseProgressQuery,
@@ -27,10 +28,22 @@ export default function LearningHubPage() {
     data: progress = [],
     isLoading: progressLoading,
     isError: progressError,
+    refetch: refetchProgress,
   } = useGetAllUserCourseProgressQuery();
 
   const isLoading = lessonsLoading || coursesLoading || progressLoading;
   const isError = lessonsError || coursesError || progressError;
+  const activeCourses = courses.filter((course) => course.is_active);
+  const activeLessons = lessons.filter((lesson) => lesson.is_active);
+  const inProgressCourses = progress.filter((item) => !item.is_completed);
+  const completedCourses = progress.filter((item) => item.is_completed);
+  const recommendedCourse =
+    inProgressCourses[0]?.course.title ?? activeCourses[0]?.title;
+
+  async function refreshProgress(): Promise<CourseProgressAPI[] | undefined> {
+    const result = await refetchProgress();
+    return result.data;
+  }
 
   if (isLoading) {
     return (
@@ -50,7 +63,6 @@ export default function LearningHubPage() {
 
   return (
     <div className="space-y-4 min-h-screen transition-colors duration-300">
-      {/* Page Header */}
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
           Learning Hub
@@ -61,39 +73,47 @@ export default function LearningHubPage() {
         </p>
       </header>
 
-      {/* Recommended Section Banner */}
       <section className="relative mb-12 overflow-hidden rounded-2xl bg-indigo-600 p-6 text-white shadow-lg dark:bg-indigo-700">
         <div className="relative z-10 flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div>
-            <h2 className="text-xl font-bold">Recommended for You</h2>
+            <h2 className="text-xl font-bold">
+              {recommendedCourse ? recommendedCourse : "Ready to Learn"}
+            </h2>
             <p className="mt-1 text-indigo-100">
-              Based on your recent performance and risk profile, these learning
-              paths may improve your results.
+              {inProgressCourses.length > 0
+                ? "Continue the course you already started, or browse every available path below."
+                : "Start a course from the Learning Hub and track watched videos automatically."}
             </p>
-            <div className="mt-3 flex items-center gap-2 text-sm font-medium text-orange-200">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-200 text-xs text-indigo-900">
-                !
-              </span>
-              Your trend-following win rate dropped 8% this week
+            <div className="mt-3 flex flex-wrap gap-3 text-sm font-medium text-indigo-100">
+              <span>{activeLessons.length} active sections</span>
+              <span>{activeCourses.length} active courses</span>
+              <span>{completedCourses.length} completed</span>
             </div>
           </div>
-          <button className="whitespace-nowrap rounded-lg bg-white/20 px-6 py-2.5 font-semibold backdrop-blur-md transition-hover hover:bg-white/30">
-            Start Learning Path
-          </button>
+          <a
+            href="#learning-paths"
+            className="whitespace-nowrap rounded-lg bg-white/20 px-6 py-2.5 text-center font-semibold backdrop-blur-md transition-hover hover:bg-white/30"
+          >
+            Browse Paths
+          </a>
         </div>
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
       </section>
 
-      {/* Lesson sections grouped by LearningLesson */}
-      <Lessons lessons={lessons} progress={progress} />
+      <Lessons
+        lessons={lessons}
+        progress={progress}
+        onProgressRefresh={refreshProgress}
+      />
 
-      {/* All flat courses as learning paths */}
-      <AllLearningPaths courses={courses} progress={progress} />
+      <AllLearningPaths
+        courses={courses}
+        progress={progress}
+        onProgressRefresh={refreshProgress}
+      />
 
-      {/* User progress summary */}
       <YourLearningProgress progress={progress} courses={courses} />
 
-      {/* Platform-level impact stats */}
       <LearningImpactOnPerformance progress={progress} />
     </div>
   );

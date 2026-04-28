@@ -3,11 +3,9 @@
 import {
   CourseProgressAPI,
   useCreateCourseProgressMutation,
-  useWatchVideoMutation,
   VideoAPI,
 } from "@/redux/features/learninghub/learninghubApi";
 import {
-  ArrowLeftOutlined,
   CheckCircleFilled,
   ClockCircleOutlined,
   CloseOutlined,
@@ -15,81 +13,165 @@ import {
   PlayCircleFilled,
 } from "@ant-design/icons";
 import { Modal, message } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Lesson } from "./Lessons";
-
-// ─── Props ────────────────────────────────────────────────────────────────────
+import VideoPlayerView from "./VideoPlayerView";
 
 interface LessonModalProps {
   lesson: Lesson | null;
   open: boolean;
   onClose: () => void;
   progress: CourseProgressAPI[];
+  onProgressRefresh: () => Promise<CourseProgressAPI[] | undefined>;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+function getStoredUserId(): number {
+  return (
+    Number(localStorage.getItem("user_id")) ||
+    Number(localStorage.getItem("userId")) ||
+    Number(localStorage.getItem("id")) ||
+    0
+  );
+}
+
+function isDuplicateProgressError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+
+  const data = (error as { data?: unknown }).data;
+  if (!data || typeof data !== "object") return false;
+
+  const nonFieldErrors = (data as { non_field_errors?: unknown })
+    .non_field_errors;
+
+  return Array.isArray(nonFieldErrors) && nonFieldErrors.length > 0;
+}
+
+function getApiErrorMessage(error: unknown): string {
+  if (!error || typeof error !== "object") {
+    return "Failed to enrol. Please try again.";
+  }
+
+  const record = error as Record<string, unknown>;
+  if (typeof record.error === "string") return record.error;
+  if (typeof record.message === "string") return record.message;
+
+  if (record.data && typeof record.data === "object") {
+    return JSON.stringify(record.data);
+  }
+
+  return "Failed to enrol. Please try again.";
+}
 
 export default function LessonModal({
   lesson,
   open,
   onClose,
   progress,
+  onProgressRefresh,
 }: LessonModalProps) {
-  const [createCourseProgress, { isLoading: starting, error: createError }] =
+  const [createCourseProgress, { isLoading: starting }] =
     useCreateCourseProgressMutation();
-
-  // null = course overview, VideoAPI object = video player view
   const [activeVideo, setActiveVideo] = useState<VideoAPI | null>(null);
+  const [enrolError, setEnrolError] = useState<string | null>(null);
+  const [localCourseProgress, setLocalCourseProgress] =
+    useState<CourseProgressAPI | null>(null);
+  const selectedCourseId = lesson?.courseId;
+
+  useEffect(() => {
+    if (!selectedCourseId) {
+      setLocalCourseProgress(null);
+      return;
+    }
+
+    const latestProgress = progress.find(
+      (item) => item.course.id === selectedCourseId,
+    );
+
+    if (latestProgress) {
+      setLocalCourseProgress(latestProgress);
+    }
+  }, [selectedCourseId, progress]);
 
   if (!lesson) return null;
 
-  const courseProgress = progress.find((p) => p.course.id === lesson.courseId);
+  const selectedLesson = lesson;
+  const courseProgress =
+    localCourseProgress ??
+    progress.find((p) => p.course.id === selectedLesson.courseId);
   const hasStarted = !!courseProgress;
-
   const watchedIds = new Set<number>(
     courseProgress?.videos_watched.map((v) => v.id) ?? [],
   );
 
-  const apiError = createError
-    ? "error" in createError
-      ? (createError as { error: string }).error
-      : "Failed to enrol. Please try again."
-    : null;
+  async function ensureCourseProgress(): Promise<CourseProgressAPI | null> {
+    if (courseProgress) return courseProgress;
 
-  // Enrol user (if not started) then open first available video
-  async function handleStartOrContinue() {
-    if (!lesson) return;
+    const userId = getStoredUserId();
 
-    if (!hasStarted) {
-      const userId = Number(localStorage.getItem("user_id") ?? 0);
-      if (!userId) {
-        message.error("Please log in to start this course.");
-        return;
-      }
-      try {
-        await createCourseProgress({
-          user: userId,
-          course: lesson.courseId,
-        }).unwrap();
-      } catch {
-        return;
+    if (!userId) {
+      message.error("Please log in to start this course.");
+      return null;
+    }
+
+    try {
+      await createCourseProgress({
+        user: userId,
+        course: selectedLesson.courseId,
+      }).unwrap();
+    } catch (error) {
+      if (!isDuplicateProgressError(error)) {
+        setEnrolError(getApiErrorMessage(error));
+        return null;
       }
     }
 
-    // Jump to first unwatched video (or first video if all watched)
+    const refreshedProgress = await onProgressRefresh();
+    const nextProgress = refreshedProgress?.find(
+      (item) => item.course.id === selectedLesson.courseId,
+    );
+
+    if (!nextProgress) {
+      setEnrolError("Course started, but progress is still loading.");
+      return null;
+    }
+
+    setLocalCourseProgress(nextProgress);
+    return nextProgress;
+  }
+
+  function openFirstVideo(nextProgress = courseProgress) {
+    const nextWatchedIds = new Set<number>(
+      nextProgress?.videos_watched.map((video) => video.id) ?? [],
+    );
     const firstPlayable =
-      lesson.videos.find((v) => !watchedIds.has(v.id)) ?? lesson.videos[0];
+      selectedLesson.videos.find((video) => !nextWatchedIds.has(video.id)) ??
+      selectedLesson.videos[0];
+
     if (firstPlayable) setActiveVideo(firstPlayable);
   }
 
-  // Click a specific video row in the list
-  function handleVideoRowClick(video: VideoAPI, isLocked: boolean) {
-    if (isLocked) return;
+  async function handleStartOrContinue() {
+    setEnrolError(null);
+
+    const progressForPlayback = await ensureCourseProgress();
+    if (!progressForPlayback) return;
+
+    openFirstVideo(progressForPlayback);
+  }
+
+  async function handleVideoRowClick(video: VideoAPI, isLocked: boolean) {
+    if (isLocked || starting) return;
+
+    const progressForPlayback = await ensureCourseProgress();
+    if (!progressForPlayback) return;
+
     setActiveVideo(video);
   }
 
   function handleClose() {
     setActiveVideo(null);
+    setEnrolError(null);
+    setLocalCourseProgress(null);
     onClose();
   }
 
@@ -112,21 +194,21 @@ export default function LessonModal({
       {activeVideo ? (
         <VideoPlayerView
           video={activeVideo}
-          lesson={lesson}
+          videos={selectedLesson.videos}
           watchedIds={watchedIds}
           progressId={courseProgress?.id ?? null}
           onBack={() => setActiveVideo(null)}
-          onClose={handleClose}
           onSelectVideo={setActiveVideo}
+          onProgressChange={setLocalCourseProgress}
         />
       ) : (
         <CourseOverview
-          lesson={lesson}
+          lesson={selectedLesson}
           hasStarted={hasStarted}
           courseProgress={courseProgress}
           watchedIds={watchedIds}
           starting={starting}
-          apiError={apiError}
+          enrolError={enrolError}
           onVideoRowClick={handleVideoRowClick}
           onStartOrContinue={handleStartOrContinue}
           onClose={handleClose}
@@ -152,15 +234,13 @@ export default function LessonModal({
   );
 }
 
-// ─── Course Overview ──────────────────────────────────────────────────────────
-
 interface CourseOverviewProps {
   lesson: Lesson;
   hasStarted: boolean;
   courseProgress: CourseProgressAPI | undefined;
   watchedIds: Set<number>;
   starting: boolean;
-  apiError: string | null;
+  enrolError: string | null;
   onVideoRowClick: (video: VideoAPI, isLocked: boolean) => void;
   onStartOrContinue: () => void;
   onClose: () => void;
@@ -172,15 +252,18 @@ function CourseOverview({
   courseProgress,
   watchedIds,
   starting,
-  apiError,
+  enrolError,
   onVideoRowClick,
   onStartOrContinue,
   onClose,
 }: CourseOverviewProps) {
+  const firstUnwatchedIdx = lesson.videos.findIndex(
+    (video) => !watchedIds.has(video.id),
+  );
+
   return (
     <div className="p-5 sm:p-8 transition-colors duration-300">
       <div className="flex flex-col gap-6">
-        {/* Badges */}
         <div className="flex flex-wrap gap-2">
           <span className="bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wide">
             {lesson.type}
@@ -190,43 +273,34 @@ function CourseOverview({
           </span>
         </div>
 
-        {/* Title */}
         <div className="space-y-2">
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-tight">
             {lesson.title}
           </h2>
           <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 text-sm font-medium">
             <ClockCircleOutlined />
-            <span>{lesson.time} total duration</span>
+            <span>{lesson.time}</span>
           </div>
         </div>
 
-        {/* Outcome */}
-        <div className="bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 rounded-xl p-4 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 text-xl border border-indigo-100 dark:border-indigo-800 shadow-sm">
-            🎯
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-              Learning Outcome
-            </p>
-            <p className="text-sm sm:text-base font-semibold text-slate-700 dark:text-slate-200">
-              {lesson.outcome}
-            </p>
-          </div>
+        <div className="bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 rounded-xl p-4">
+          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+            Learning Outcome
+          </p>
+          <p className="mt-1 text-sm sm:text-base font-semibold text-slate-700 dark:text-slate-200">
+            {lesson.outcome}
+          </p>
         </div>
 
-        {/* Why Now */}
         <div className="bg-orange-50 dark:bg-orange-900/10 border border-orange-100 dark:border-orange-900/30 p-4 rounded-xl">
           <p className="text-xs font-bold text-orange-700 dark:text-orange-400 uppercase tracking-wider">
-            Why you should take this now:
+            Why you should take this now
           </p>
           <p className="text-sm text-orange-800 dark:text-orange-200/80 font-medium mt-1">
             {lesson.insight}
           </p>
         </div>
 
-        {/* Progress (if started) */}
         {hasStarted && courseProgress && (
           <div className="bg-teal-50/50 dark:bg-teal-900/10 border border-teal-100 dark:border-teal-900/20 rounded-xl p-4">
             <div className="flex justify-between items-center mb-2">
@@ -244,22 +318,14 @@ function CourseOverview({
                 style={{ width: `${courseProgress.completion_percentage}%` }}
               />
             </div>
-            <p className="mt-2 text-[11px] text-teal-600 dark:text-teal-400 font-medium">
-              {Math.max(
-                0,
-                100 - Math.round(courseProgress.completion_percentage),
-              )}
-              % remaining
-            </p>
           </div>
         )}
 
-        {/* Modules list — rows are clickable */}
         <div className="space-y-4">
           <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex justify-between items-center">
             Course Modules
             <span className="text-[10px] font-medium text-slate-400">
-              {lesson.videos.length} lesson
+              {lesson.videos.length} video
               {lesson.videos.length !== 1 ? "s" : ""}
             </span>
           </h3>
@@ -272,19 +338,19 @@ function CourseOverview({
             <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1 custom-scrollbar">
               {lesson.videos.map((video, idx) => {
                 const isWatched = watchedIds.has(video.id);
-                const firstUnwatchedIdx = lesson.videos.findIndex(
-                  (v) => !watchedIds.has(v.id),
-                );
-                const isCurrent = idx === firstUnwatchedIdx;
-                // Lock non-free videos if user hasn't enrolled yet
-                const isLocked = !video.is_free && !hasStarted && idx > 0;
+                const isCurrent =
+                  !isWatched &&
+                  (firstUnwatchedIdx === -1
+                    ? idx === 0
+                    : idx === firstUnwatchedIdx);
+                const isLocked = !video.is_free && !hasStarted;
 
                 return (
                   <button
                     key={video.id}
                     onClick={() => onVideoRowClick(video, isLocked)}
                     disabled={isLocked}
-                    className={`w-full text-left flex items-center justify-between p-3 sm:p-4 rounded-xl border transition-all duration-200 group ${
+                    className={`w-full text-left flex items-center justify-between gap-3 p-3 sm:p-4 rounded-xl border transition-all duration-200 group ${
                       isLocked
                         ? "opacity-60 cursor-not-allowed bg-white dark:bg-slate-900/40 border-slate-100 dark:border-slate-800"
                         : isWatched
@@ -294,7 +360,7 @@ function CourseOverview({
                             : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer"
                     }`}
                   >
-                    <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                       <div
                         className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 ${
                           isLocked
@@ -315,9 +381,9 @@ function CourseOverview({
                         )}
                       </div>
 
-                      <div>
+                      <div className="min-w-0">
                         <h4
-                          className={`text-xs sm:text-sm font-bold leading-none ${
+                          className={`text-xs sm:text-sm font-bold leading-tight truncate ${
                             isLocked
                               ? "text-slate-400 dark:text-slate-600"
                               : "text-slate-800 dark:text-slate-200"
@@ -325,21 +391,21 @@ function CourseOverview({
                         >
                           {video.title}
                         </h4>
-                        <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 mt-1 block tracking-tight">
+                        <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 mt-1 block truncate">
                           Module {idx + 1}
-                          {video.description ? ` • ${video.description}` : ""}
+                          {video.description ? ` - ${video.description}` : ""}
                         </span>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
                       {isLocked && (
-                        <span className="text-[10px] font-bold text-slate-300 dark:text-slate-700 uppercase tracking-tighter">
+                        <span className="text-[10px] font-bold text-slate-300 dark:text-slate-700 uppercase">
                           Locked
                         </span>
                       )}
                       {isWatched && (
-                        <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-tighter">
+                        <span className="text-[10px] font-bold text-emerald-400 uppercase">
                           Done
                         </span>
                       )}
@@ -354,11 +420,10 @@ function CourseOverview({
           )}
         </div>
 
-        {apiError && (
-          <p className="text-xs text-red-500 font-medium">{apiError}</p>
+        {enrolError && (
+          <p className="text-xs text-red-500 font-medium">{enrolError}</p>
         )}
 
-        {/* Footer */}
         <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
           <button
             onClick={onClose}
@@ -373,204 +438,12 @@ function CourseOverview({
           >
             <PlayCircleFilled />
             {starting
-              ? "Starting…"
+              ? "Starting..."
               : hasStarted
                 ? "Continue Learning"
                 : "Start Learning Now"}
           </button>
         </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Video Player View ────────────────────────────────────────────────────────
-
-interface VideoPlayerViewProps {
-  video: VideoAPI;
-  lesson: Lesson;
-  watchedIds: Set<number>;
-  progressId: number | null;
-  onBack: () => void;
-  onClose: () => void;
-  onSelectVideo: (video: VideoAPI) => void;
-}
-
-function VideoPlayerView({
-  video,
-  lesson,
-  watchedIds,
-  progressId,
-  onBack,
-  onSelectVideo,
-}: VideoPlayerViewProps) {
-  const [watchVideo, { isLoading: isMarking }] = useWatchVideoMutation();
-  const [localWatched, setLocalWatched] = useState<Set<number>>(
-    new Set(watchedIds),
-  );
-
-  const currentIdx = lesson.videos.findIndex((v) => v.id === video.id);
-  const prevVideo = currentIdx > 0 ? lesson.videos[currentIdx - 1] : null;
-  const nextVideo =
-    currentIdx < lesson.videos.length - 1
-      ? lesson.videos[currentIdx + 1]
-      : null;
-
-  // Build absolute URL — API returns relative path like /media/...
-  const videoUrl = video.video.startsWith("http")
-    ? video.video
-    : `${process.env.NEXT_PUBLIC_API_URL ?? ""}${video.video}`;
-
-  async function handleMarkWatched() {
-    if (!progressId || localWatched.has(video.id) || isMarking) return;
-    try {
-      await watchVideo({ progressId, videoId: video.id }).unwrap();
-      // Optimistically update local state so the badge appears immediately
-      // The RTK invalidation will also refresh the global progress cache
-      setLocalWatched((prev) => new Set([...prev, video.id]));
-    } catch {
-      // silently fail — user can retry or it'll reflect on next fetch
-    }
-  }
-
-  // When moving to a different video, sync localWatched from the latest watchedIds
-  function handleSelectVideo(v: VideoAPI) {
-    setLocalWatched(new Set(watchedIds));
-    onSelectVideo(v);
-  }
-
-  const isCurrentWatched = localWatched.has(video.id);
-
-  return (
-    <div className="flex flex-col">
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
-        >
-          <ArrowLeftOutlined />
-          Back to overview
-        </button>
-        <span className="text-xs text-slate-400 font-medium">
-          Module {currentIdx + 1} of {lesson.videos.length}
-        </span>
-      </div>
-
-      {/* Video player */}
-      <div className="w-full bg-black aspect-video">
-        <video
-          key={video.id} /* key forces re-mount on video change */
-          src={videoUrl}
-          controls
-          autoPlay
-          className="w-full h-full object-contain"
-          controlsList="nodownload"
-          onEnded={handleMarkWatched}
-        >
-          Your browser does not support the video tag.
-        </video>
-      </div>
-
-      {/* Video title + actions */}
-      <div className="px-5 pt-4 pb-2 flex items-start justify-between gap-3">
-        <div>
-          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">
-            {video.title}
-          </h2>
-          {video.description && (
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              {video.description}
-            </p>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 mt-1">
-          {isCurrentWatched ? (
-            <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-500 uppercase tracking-wide">
-              <CheckCircleFilled /> Watched
-            </span>
-          ) : progressId ? (
-            <button
-              onClick={handleMarkWatched}
-              disabled={isMarking}
-              className="text-[10px] font-bold text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 uppercase tracking-wide transition-colors disabled:opacity-50"
-            >
-              {isMarking ? "Saving…" : "Mark as watched"}
-            </button>
-          ) : null}
-        </div>
-      </div>
-
-      {/* Prev / Next */}
-      <div className="flex gap-3 px-5 py-3 border-t border-slate-100 dark:border-slate-800 mt-1">
-        <button
-          onClick={() => prevVideo && handleSelectVideo(prevVideo)}
-          disabled={!prevVideo}
-          className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          ← Previous
-        </button>
-        <button
-          onClick={() => nextVideo && handleSelectVideo(nextVideo)}
-          disabled={!nextVideo}
-          className="flex-1 py-2.5 rounded-xl bg-indigo-600 dark:bg-indigo-500 text-white text-sm font-bold hover:bg-indigo-700 dark:hover:bg-indigo-600 shadow-md shadow-indigo-200 dark:shadow-none transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          Next →
-        </button>
-      </div>
-
-      {/* Mini playlist */}
-      <div className="px-5 pb-5 max-h-52 overflow-y-auto custom-scrollbar space-y-1.5">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
-          All Modules
-        </p>
-        {lesson.videos.map((v, idx) => {
-          const isWatched = localWatched.has(v.id);
-          const isActive = v.id === video.id;
-          return (
-            <button
-              key={v.id}
-              onClick={() => handleSelectVideo(v)}
-              className={`w-full text-left flex items-center gap-3 p-2.5 rounded-lg transition-all ${
-                isActive
-                  ? "bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800"
-                  : "hover:bg-slate-50 dark:hover:bg-slate-800/60"
-              }`}
-            >
-              {/* Number / check circle */}
-              <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
-                  isActive
-                    ? "bg-indigo-600 text-white"
-                    : isWatched
-                      ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600"
-                      : "bg-slate-100 dark:bg-slate-800 text-slate-400"
-                }`}
-              >
-                {isWatched && !isActive ? <CheckCircleFilled /> : idx + 1}
-              </div>
-
-              <span
-                className={`text-xs font-semibold truncate ${
-                  isActive
-                    ? "text-indigo-700 dark:text-indigo-300"
-                    : isWatched
-                      ? "text-emerald-700 dark:text-emerald-400"
-                      : "text-slate-600 dark:text-slate-400"
-                }`}
-              >
-                {v.title}
-              </span>
-
-              {isActive && (
-                <span className="ml-auto shrink-0 text-[9px] font-bold text-indigo-500 uppercase">
-                  Playing
-                </span>
-              )}
-            </button>
-          );
-        })}
       </div>
     </div>
   );
