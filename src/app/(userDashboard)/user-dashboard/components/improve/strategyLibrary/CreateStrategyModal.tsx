@@ -154,14 +154,14 @@ const CreateStrategyModal: React.FC<CreateStrategyModalProps> = ({
               mode="multiple"
               placeholder="Select market types"
               tokenSeparators={[","]}
-            >
-              <Option value="all">All Brokers</Option>
-              <Option value="Indian Markets">Indian Markets</Option>
-              <Option value="Options">Options</Option>
-              <Option value="Forex">Forex</Option>
-              <Option value="Commodities">Commodities</Option>
-              <Option value="Crypto">Crypto</Option>
-            </Select>
+              options={[
+                { value: "all", label: "All Brokers" },
+                { value: "Indian Markets", label: "Indian Markets" },
+                { value: "Options", label: "Options" },
+                { value: "Forex", label: "Forex" },
+                { value: "Crypto", label: "Crypto" },
+              ]}
+            ></Select>
           </Form.Item>
         </div>
 
