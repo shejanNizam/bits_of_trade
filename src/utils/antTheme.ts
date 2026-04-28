@@ -118,6 +118,13 @@ export const darkTheme = {
       colorTextHeading: "#2563EB",
       colorText: "#ffffff",
       colorBorder: "#303030",
+      colorBgContainer: "#12203b",
+      colorBgBody: "#12203b",
+      colorBgHeader: "#0d1628",
+      colorHeaderBg: "#0d1628",
+      rowHoverBg: "#1a2d4e",
+      rowSelectedBg: "#1e3a5f",
+      rowSelectedHoverBg: "#234a7a",
     },
     Menu: {
       colorBgContainer: "#141414",
