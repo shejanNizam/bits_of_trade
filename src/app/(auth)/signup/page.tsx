@@ -240,6 +240,7 @@ const Signup: React.FC = () => {
       ErrorSwal({
         title: "Signup failed!",
         text:
+          apiError?.data?.error ||
           apiError?.data?.errors?.[0]?.message ||
           "Registration failed. Please try again.",
       });

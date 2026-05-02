@@ -35,7 +35,7 @@ export const lightTheme = {
       colorSuccess: "#2563EB",
     },
     Form: {
-      labelColor: "#000000", // Dark text for light mode
+      labelColor: "#000000",
       labelFontFamily: "'Raleway', sans-serif",
       labelFontWeight: 700,
       labelFontSize: 16,
@@ -150,7 +150,7 @@ export const darkTheme = {
       colorSuccess: "#2563EB",
     },
     Form: {
-      labelColor: "#ffffff", // White text for dark mode
+      labelColor: "#ffffff",
       labelFontFamily: "'Raleway', sans-serif",
       labelFontWeight: 700,
       labelFontSize: 16,
@@ -163,8 +163,8 @@ export const darkTheme = {
     Input: {
       colorBorder: "#2563EB",
       colorTextPlaceholder: "#999999",
-      colorBgContainer: "#12203b", // Input background color
-      colorText: "#ffffff", // Input text color
+      colorBgContainer: "#12203b",
+      colorText: "#ffffff",
       borderRadius: 4,
       controlHeight: 40,
     },
@@ -173,37 +173,37 @@ export const darkTheme = {
       borderRadius: 4,
       controlHeight: 80,
       colorTextPlaceholder: "#999999",
-      colorBgContainer: "#12203b", // Password input background
-      colorText: "#ffffff", // Password input text
+      colorBgContainer: "#12203b",
+      colorText: "#ffffff",
     },
     InputNumber: {
       colorBorder: "#666666",
-      colorBgContainer: "#12203b", // Number input background
-      colorText: "#ffffff", // Number input text
+      colorBgContainer: "#12203b",
+      colorText: "#ffffff",
     },
     Select: {
       colorBorder: "#2563EB",
       borderRadius: 8,
       controlHeight: 40,
       colorTextPlaceholder: "#999999",
-      colorBgContainer: "#12203b", // Select input background
-      colorText: "#ffffff", // Select text color
-      // Dropdown styles
-      colorBgElevated: "#12203b", // Dropdown background color
-      colorTextQuaternary: "#ffffff", // Option text color
-      controlItemBgHover: "#1a2d4e", // Option hover background
-      controlItemBgActive: "#2563EB", // Selected option background
-      colorPrimaryHover: "#2563EB", // Hover border color
-      optionSelectedColor: "#ffffff", // Selected option text color
-      optionSelectedBg: "#2563EB", // Selected option background
+      colorBgContainer: "#12203b",
+      colorText: "#ffffff",
+
+      colorBgElevated: "#12203b",
+      colorTextQuaternary: "#ffffff",
+      controlItemBgHover: "#1a2d4e",
+      controlItemBgActive: "#2563EB",
+      colorPrimaryHover: "#2563EB",
+      optionSelectedColor: "#ffffff",
+      optionSelectedBg: "#2563EB",
     },
     DatePicker: {
       colorBorder: "#2563EB",
       colorTextPlaceholder: "#999999",
       colorIcon: "#2563EB",
       activeBg: "rgba(37, 99, 235, 0.1)",
-      colorBgContainer: "#12203b", // Date picker background
-      colorText: "#ffffff", // Date picker text
+      colorBgContainer: "#12203b",
+      colorText: "#ffffff",
     },
     Collapse: {
       colorText: "#ffffff",
@@ -213,20 +213,20 @@ export const darkTheme = {
       colorFillAlter: "transparent",
     },
     Modal: {
-      colorBgContainer: "#12203b", // Modal background - your custom color
-      colorBgElevated: "#12203b", // Elevated content background (same for consistency)
-      colorText: "#ffffff", // Text color
-      colorTextHeading: "#ffffff", // Heading text color
-      colorIcon: "#999999", // Icon color
-      colorIconHover: "#2563EB", // Icon hover color
-      borderRadius: 20, // Border radius
-      borderRadiusLG: 20, // Large border radius
-      padding: 24, // Content padding
-      paddingLG: 28, // Large padding
-      fontSize: 16, // Font size
-      fontSizeLG: 18, // Large font size
-      lineHeight: 1.5, // Line height
-      wireframe: false, // Disable wireframe style
+      colorBgContainer: "#12203b",
+      colorBgElevated: "#12203b",
+      colorText: "#ffffff",
+      colorTextHeading: "#ffffff",
+      colorIcon: "#999999",
+      colorIconHover: "#2563EB",
+      borderRadius: 20,
+      borderRadiusLG: 20,
+      padding: 24,
+      paddingLG: 28,
+      fontSize: 16,
+      fontSizeLG: 18,
+      lineHeight: 1.5,
+      wireframe: false,
     },
     Tabs: {
       itemActiveColor: "#2563EB",

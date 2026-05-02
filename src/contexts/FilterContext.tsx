@@ -49,7 +49,6 @@ interface FilterContextType {
   activeFilterCount: number;
 }
 
-// All undefined — so reset clears everything back to "All" in the UI
 const defaultFilters: FilterParams = {
   page: 1,
   limit: 10,
@@ -63,9 +62,7 @@ const countActiveFilters = (filters: FilterParams): number =>
     const value = filters[key];
     if (value === undefined || value === null || value === "") return false;
     if (Array.isArray(value)) return value.length > 0;
-    // Key exists in defaultFilters → only count if it differs
     if (key in defaultFilters) return value !== defaultFilters[key];
-    // Key not in defaultFilters → having any real value = active
     return true;
   }).length;
 
