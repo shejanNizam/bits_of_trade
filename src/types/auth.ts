@@ -68,11 +68,11 @@ export interface User {
   email: string;
   first_name: string;
   last_name: string;
-  subscription_type: string;
+  /** Possible values: "none" | "tool" | "learning" | "both" */
+  subscription_type: "none" | "tool" | "learning" | "both";
+  subscription_status: string;
   profile_picture: string | null;
   created_at: string;
-  // Add this line
   onboarding_completed: boolean;
-  // Add this if you plan to use it from the response you shared
   session_state?: string | null;
 }
