@@ -89,6 +89,9 @@ const GoogleLoginButton: React.FC = () => {
 
       if (data?.tokens?.access) {
         localStorage.setItem("token", data.tokens.access);
+        if (data.tokens.refresh) {
+          localStorage.setItem("refresh", data.tokens.refresh);
+        }
         setAuthCookie(data.tokens.access); // ← NEW
 
         dispatch(
@@ -214,6 +217,9 @@ const LoginContent: React.FC = () => {
 
       if (response?.tokens?.access) {
         localStorage.setItem("token", response.tokens.access);
+        if (response.tokens.refresh) {
+          localStorage.setItem("refresh", response.tokens.refresh);
+        }
         localStorage.setItem("user_id", String(response.user.id));
         setAuthCookie(response.tokens.access); // ← NEW
 

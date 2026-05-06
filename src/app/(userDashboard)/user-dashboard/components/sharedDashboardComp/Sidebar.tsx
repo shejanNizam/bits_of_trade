@@ -144,6 +144,7 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
           confirmButtonColor: "#3085d6",
         }).then(() => {
           localStorage.removeItem("token");
+          localStorage.removeItem("refresh");
           localStorage.removeItem("user_id");
           clearAuthCookie();
           dispatch(logout());
