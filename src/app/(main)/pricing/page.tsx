@@ -3,13 +3,16 @@
 
 import PricingCard from "@/components/pricing/PricingCard";
 import CustomHeading from "@/components/shared/CustomHeading";
+import LoginRequiredModal from "@/components/shared/LoginRequiredModal";
 import {
   useCreateOrderMutation,
   useGetAllPricingQuery,
   type CardKey,
   type CreateOrderResponse,
 } from "@/redux/features/pricing/pricingApi";
+import { RootState } from "@/redux/store";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -107,12 +110,21 @@ export default function Pricing() {
   const { data: plans = [], isLoading, isError } = useGetAllPricingQuery({});
   const [createOrder] = useCreateOrderMutation();
 
-  // Which card_key is currently processing a payment request
+  // ── Auth ────────────────────────────────────────────────────────────────────
+  // Same selector pattern used in Navbar
+  const { user } = useSelector((state: RootState) => state.auth);
+
+  // ── Login-required modal ─────────────────────────────────────────────────────
+  const [loginModal, setLoginModal] = useState<{
+    open: boolean;
+    planName?: string;
+  }>({ open: false });
+
+  // ── Per-card loading & inline notifications ──────────────────────────────────
   const [loadingCard, setLoadingCard] = useState<CardKey | null>(null);
   const [notification, setNotification] = useState<Notification | null>(null);
   const notifTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Clear timer on unmount
   useEffect(() => {
     return () => {
       if (notifTimer.current) clearTimeout(notifTimer.current);
@@ -129,19 +141,31 @@ export default function Pricing() {
   );
 
   /**
-   * Core payment handler:
-   * 1. Load Razorpay SDK
-   * 2. Call create-order API → get order details
-   * 3. Open Razorpay checkout modal
+   * Core payment handler.
+   *
+   * Steps:
+   *  1. Guard — show login modal if the user is not authenticated.
+   *  2. Load Razorpay SDK.
+   *  3. Call create-order API → get order details.
+   *  4. Open Razorpay checkout modal.
    */
   const handleBuy = useCallback(
     async (
       cardKey: CardKey,
       billingCycle?: "monthly" | "yearly",
+      /** Human-readable plan name for the login modal message */
+      planName?: string,
     ): Promise<void> => {
+      // ── 1. Auth guard ───────────────────────────────────────────────────────
+      if (!user) {
+        setLoginModal({ open: true, planName });
+        return;
+      }
+
       setLoadingCard(cardKey);
+
       try {
-        // 1. Ensure the Razorpay script is loaded
+        // ── 2. Load Razorpay script ───────────────────────────────────────────
         const scriptLoaded = await loadRazorpayScript();
         if (!scriptLoaded) {
           showNotification(
@@ -151,13 +175,13 @@ export default function Pricing() {
           return;
         }
 
-        // 2. Create order via backend
+        // ── 3. Create order via backend ───────────────────────────────────────
         const order: CreateOrderResponse = await createOrder({
           card_key: cardKey,
           ...(billingCycle ? { billing_cycle: billingCycle } : {}),
         }).unwrap();
 
-        // 3. Open Razorpay checkout
+        // ── 4. Open Razorpay checkout ─────────────────────────────────────────
         const rzp = new window.Razorpay({
           key: order.key,
           amount: order.amount, // in paise — Razorpay expects this
@@ -166,8 +190,8 @@ export default function Pricing() {
           description: order.plan_name,
           order_id: order.order_id,
           handler(_response: unknown) {
-            // Razorpay fires this on successful payment capture client-side.
-            // The webhook already activates the subscription server-side.
+            // Razorpay fires this on client-side capture confirmation.
+            // The webhook activates the subscription server-side.
             showNotification(
               "success",
               `Payment successful! Your ${order.plan_name} subscription is being activated. It may take a moment to reflect.`,
@@ -175,12 +199,10 @@ export default function Pricing() {
           },
           modal: {
             ondismiss() {
-              // User closed the modal without paying — no action needed
+              // User closed modal without paying — no action needed.
             },
           },
-          theme: {
-            color: "#6366f1",
-          },
+          theme: { color: "#6366f1" },
         });
 
         rzp.on("payment.failed", (_response: unknown) => {
@@ -203,15 +225,17 @@ export default function Pricing() {
         setLoadingCard(null);
       }
     },
-    [createOrder, showNotification],
+    [user, createOrder, showNotification],
   );
+
+  // ── Resolve plans ────────────────────────────────────────────────────────────
 
   const disciplinePlan = findPlan(plans as PricingPlan[], "discipline_tools");
   const learningPlan = findPlan(plans as PricingPlan[], "learning_hub");
   const comboMonthly = findPlan(plans as PricingPlan[], "combo_monthly");
   const comboAnnual = findPlan(plans as PricingPlan[], "combo_annual");
 
-  // ── Render states ─────────────────────────────────────────────────────────
+  // ── Loading / error states ────────────────────────────────────────────────────
 
   if (isLoading) {
     return (
@@ -233,10 +257,17 @@ export default function Pricing() {
     );
   }
 
-  // ── Main render ───────────────────────────────────────────────────────────
+  // ── Main render ───────────────────────────────────────────────────────────────
 
   return (
     <section className="py-16 px-4 bg-gray-50 dark:bg-gray-900 transition-colors">
+      {/* Login-required modal */}
+      <LoginRequiredModal
+        isOpen={loginModal.open}
+        planName={loginModal.planName}
+        onClose={() => setLoginModal({ open: false })}
+      />
+
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-12 text-center">
@@ -258,7 +289,6 @@ export default function Pricing() {
                 : "border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
             }`}
           >
-            {/* Icon */}
             <span className="mt-0.5 shrink-0 text-lg leading-none">
               {notification.type === "success" ? "✓" : "✕"}
             </span>
@@ -275,7 +305,7 @@ export default function Pricing() {
 
         {/* Pricing Cards */}
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
-          {/* Card 1: Discipline Tools — monthly/yearly toggle */}
+          {/* Card 1: Discipline Tools — monthly / yearly toggle */}
           {disciplinePlan && (
             <PricingCard
               badge={disciplinePlan.badge}
@@ -288,6 +318,7 @@ export default function Pricing() {
                 handleBuy(
                   "discipline_tools",
                   period === "yearly" ? "yearly" : "monthly",
+                  disciplinePlan.name,
                 )
               }
               monthlyOption={{
@@ -326,7 +357,9 @@ export default function Pricing() {
               description={learningPlan.tagline}
               colorScheme="amber"
               isLoading={loadingCard === "learning_hub"}
-              onBuy={() => handleBuy("learning_hub")}
+              onBuy={() =>
+                handleBuy("learning_hub", undefined, learningPlan.name)
+              }
               singleOption={{
                 price: fmt(learningPlan.price),
                 period: getPeriod(learningPlan.billing_cycle),
@@ -349,8 +382,20 @@ export default function Pricing() {
                 loadingCard === "combo_monthly" ||
                 loadingCard === "combo_annual"
               }
-              onBuyMonthly={() => handleBuy("combo_monthly")}
-              onBuyYearly={() => handleBuy("combo_annual")}
+              onBuyMonthly={() =>
+                handleBuy(
+                  "combo_monthly",
+                  undefined,
+                  comboMonthly.name || "Complete System",
+                )
+              }
+              onBuyYearly={() =>
+                handleBuy(
+                  "combo_annual",
+                  undefined,
+                  comboAnnual.name || "Complete System",
+                )
+              }
               comboOptions={{
                 monthly: {
                   title: comboMonthly.name || "Monthly Combo",
@@ -373,7 +418,7 @@ export default function Pricing() {
             />
           )}
 
-          {/* Fallback: render combo card if only one combo plan is active */}
+          {/* Fallback: only one combo plan is active */}
           {(comboMonthly || comboAnnual) && !(comboMonthly && comboAnnual) && (
             <PricingCard
               badge={
@@ -389,7 +434,11 @@ export default function Pricing() {
                 loadingCard === "combo_annual"
               }
               onBuy={() =>
-                handleBuy(comboMonthly ? "combo_monthly" : "combo_annual")
+                handleBuy(
+                  comboMonthly ? "combo_monthly" : "combo_annual",
+                  undefined,
+                  "Complete System",
+                )
               }
               singleOption={{
                 price: fmt((comboMonthly ?? comboAnnual)!.price),
