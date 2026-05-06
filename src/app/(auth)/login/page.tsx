@@ -2,7 +2,8 @@
 
 import { useLoginMutation } from "@/redux/api/authApi/authApi";
 import { setCredentials } from "@/redux/slices/authSlice";
-import { ApiError, LoginFormValues, LoginResponse } from "@/types/auth";
+import { LoginFormValues, LoginResponse } from "@/types/auth";
+import { getApiErrorMessage } from "@/utils/apiError";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import { setAuthCookie } from "@/utils/cookieUtils"; // ← NEW
 import { Button, Checkbox, Divider, Form, Input, theme } from "antd";
@@ -106,13 +107,11 @@ const GoogleLoginButton: React.FC = () => {
         }
       }
     } catch (error) {
-      const apiError = error as ApiError;
       ErrorSwal({
         title: "Google Sign-in Failed",
-        text:
-          apiError?.data?.error ||
-          apiError?.data?.errors?.[0]?.message ||
-          "Could not sign in with Google.",
+        text: getApiErrorMessage(error, "Could not sign in with Google.", [
+          "email",
+        ]),
       });
     } finally {
       setIsLoading(false);
@@ -242,13 +241,12 @@ const LoginContent: React.FC = () => {
         }
       }
     } catch (error) {
-      const apiError = error as ApiError;
       ErrorSwal({
         title: "Login failed!",
-        text:
-          apiError?.data?.error ||
-          apiError?.data?.errors?.[0]?.message ||
-          "Login failed. Please try again.",
+        text: getApiErrorMessage(error, "Login failed. Please try again.", [
+          "non_field_errors",
+          "email",
+        ]),
       });
     }
   };

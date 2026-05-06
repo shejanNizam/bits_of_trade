@@ -162,7 +162,7 @@ export function DisciplineTestFlow() {
 
         // Navigate to report view with risk level as query param
         router.push(
-          `/onboarding/discipline-test?view=report&risk=${riskLevel}&score=${totalScore}`,
+          `/discipline-test?view=report&risk=${riskLevel}&score=${totalScore}`,
         );
       } catch (error) {
         console.error("Failed to submit test:", error);

@@ -39,7 +39,7 @@ export function OneLastThing() {
         <div className="space-y-3 sm:space-y-4">
           {/* Primary Button */}
           <CustomPrimaryButton
-            onClick={() => router.push("/onboarding/discipline-test")}
+            onClick={() => router.push("/discipline-test")}
             className="w-full"
           >
             <span className="text-sm sm:text-base md:text-lg">

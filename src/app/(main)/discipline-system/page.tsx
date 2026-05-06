@@ -97,7 +97,7 @@ export default function DisciplineSystem() {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
-            href="/onboarding/discipline-test"
+            href="/discipline-test"
             className="h-11 sm:h-12 md:h-14 rounded-full bg-primary hover:bg-secondary dark:bg-primary dark:hover:bg-secondary shadow-lg dark:shadow-blue-500/20 hover:shadow-sm text-white font-medium text-sm sm:text-base md:text-lg px-6 sm:px-8 transition-all duration-300 hover:scale-105 active:scale-95 touch-manipulation inline-flex items-center justify-center"
           >
             Take Discipline Test

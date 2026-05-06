@@ -2,7 +2,12 @@
 
 import { useSignupMutation } from "@/redux/api/authApi/authApi";
 import { setCredentials } from "@/redux/slices/authSlice";
-import { ApiError, SignupFormValues, SignupResponse } from "@/types/auth";
+import { SignupFormValues, SignupResponse } from "@/types/auth";
+import {
+  getApiErrorData,
+  getApiErrorMessage,
+  getErrorText,
+} from "@/utils/apiError";
 import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
 import { Button, Divider, Form, Input, theme } from "antd";
 import Link from "next/link";
@@ -97,13 +102,11 @@ const GoogleLoginButton: React.FC = () => {
       SuccessSwal({ title: "Success!", text: "Signed in with Google!" });
       router.push("/dashboard");
     } catch (error) {
-      const apiError = error as ApiError;
       ErrorSwal({
         title: "Google Sign-in Failed",
-        text:
-          apiError?.data?.error ||
-          apiError?.data?.errors?.[0]?.message ||
-          "Could not sign in with Google.",
+        text: getApiErrorMessage(error, "Could not sign in with Google.", [
+          "email",
+        ]),
       });
     } finally {
       setIsLoading(false);
@@ -236,13 +239,28 @@ const Signup: React.FC = () => {
 
       router.push("/login");
     } catch (error) {
-      const apiError = error as ApiError;
+      const errorData = getApiErrorData(error);
+      const emailError = getErrorText(errorData.email);
+      const errorMessage = getApiErrorMessage(
+        error,
+        "Registration failed. Please try again.",
+        [
+          "email",
+          "non_field_errors",
+          "password",
+          "password_confirm",
+          "first_name",
+          "last_name",
+        ],
+      );
+
+      if (emailError) {
+        form.setFields([{ name: "email", errors: [emailError] }]);
+      }
+
       ErrorSwal({
         title: "Signup failed!",
-        text:
-          apiError?.data?.error ||
-          apiError?.data?.errors?.[0]?.message ||
-          "Registration failed. Please try again.",
+        text: errorMessage,
       });
     }
   };
