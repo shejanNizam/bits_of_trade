@@ -37,7 +37,7 @@ export default function SettingsPage() {
       iconBg: "bg-green-100 dark:bg-green-900/30",
       iconColor: "text-green-600 dark:text-green-400",
       action: "Manage",
-      href: "/user-dashboard/settings/notification",
+      href: "/user-dashboard/settings/security",
     },
     {
       id: "data-privacy",
@@ -47,7 +47,7 @@ export default function SettingsPage() {
       iconBg: "bg-purple-100 dark:bg-purple-900/30",
       iconColor: "text-purple-600 dark:text-purple-400",
       action: "View",
-      href: "/user-dashboard/settings/profile",
+      href: "/user-dashboard/settings/data-privacy",
     },
     {
       id: "billing",
@@ -57,7 +57,7 @@ export default function SettingsPage() {
       iconBg: "bg-indigo-100 dark:bg-indigo-900/30",
       iconColor: "text-indigo-600 dark:text-indigo-400",
       action: "Manage",
-      href: "/user-dashboard/settings/profile",
+      href: "/user-dashboard/settings/billing",
     },
   ];
 

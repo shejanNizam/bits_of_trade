@@ -1,8 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import PricingCard from "@/components/pricing/PricingCard";
 import CustomHeading from "@/components/shared/CustomHeading";
-import { useGetAllPricingQuery } from "@/redux/features/pricing/pricingApi";
+import {
+  useCreateOrderMutation,
+  useGetAllPricingQuery,
+  type CardKey,
+  type CreateOrderResponse,
+} from "@/redux/features/pricing/pricingApi";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -10,11 +17,7 @@ type BillingCycle = "forever" | "monthly" | "quarterly" | "biannual" | "annual";
 
 interface PricingPlan {
   id: string;
-  card_key:
-    | "discipline_tools"
-    | "learning_hub"
-    | "combo_monthly"
-    | "combo_annual";
+  card_key: CardKey;
   name: string;
   tagline: string;
   badge: string;
@@ -31,7 +34,26 @@ interface PricingPlan {
   updated_at: string;
 }
 
-// ─── Billing cycle → display period string ────────────────────────────────────
+// ─── Notification types ───────────────────────────────────────────────────────
+
+type NotificationType = "success" | "error";
+
+interface Notification {
+  type: NotificationType;
+  message: string;
+}
+
+// ─── Razorpay global (loaded dynamically) ─────────────────────────────────────
+
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Razorpay: any;
+  }
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
 const CYCLE_PERIOD: Record<BillingCycle, string> = {
   forever: "forever",
   monthly: "/ month",
@@ -44,34 +66,158 @@ function getPeriod(cycle: BillingCycle): string {
   return CYCLE_PERIOD[cycle] ?? "";
 }
 
-// ─── Format price with Indian locale ─────────────────────────────────────────
 function fmt(price: string | number): string {
   return `₹${Number(price).toLocaleString("en-IN")}`;
 }
 
-// ─── Helper: find a plan by card_key ─────────────────────────────────────────
-function findPlan(
-  plans: PricingPlan[],
-  cardKey: PricingPlan["card_key"],
-): PricingPlan | null {
+function findPlan(plans: PricingPlan[], cardKey: CardKey): PricingPlan | null {
   return plans.find((p) => p.card_key === cardKey) ?? null;
+}
+
+/**
+ * Injects the Razorpay checkout script once and resolves when it is ready.
+ * Safe to call multiple times — reuses the already-loaded instance.
+ */
+function loadRazorpayScript(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") return resolve(false);
+    if (window.Razorpay) return resolve(true);
+
+    const existing = document.querySelector(
+      'script[src="https://checkout.razorpay.com/v1/checkout.js"]',
+    );
+    if (existing) {
+      existing.addEventListener("load", () => resolve(true));
+      existing.addEventListener("error", () => resolve(false));
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function Pricing() {
   const { data: plans = [], isLoading, isError } = useGetAllPricingQuery({});
+  const [createOrder] = useCreateOrderMutation();
+
+  // Which card_key is currently processing a payment request
+  const [loadingCard, setLoadingCard] = useState<CardKey | null>(null);
+  const [notification, setNotification] = useState<Notification | null>(null);
+  const notifTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear timer on unmount
+  useEffect(() => {
+    return () => {
+      if (notifTimer.current) clearTimeout(notifTimer.current);
+    };
+  }, []);
+
+  const showNotification = useCallback(
+    (type: NotificationType, message: string) => {
+      if (notifTimer.current) clearTimeout(notifTimer.current);
+      setNotification({ type, message });
+      notifTimer.current = setTimeout(() => setNotification(null), 6000);
+    },
+    [],
+  );
+
+  /**
+   * Core payment handler:
+   * 1. Load Razorpay SDK
+   * 2. Call create-order API → get order details
+   * 3. Open Razorpay checkout modal
+   */
+  const handleBuy = useCallback(
+    async (
+      cardKey: CardKey,
+      billingCycle?: "monthly" | "yearly",
+    ): Promise<void> => {
+      setLoadingCard(cardKey);
+      try {
+        // 1. Ensure the Razorpay script is loaded
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) {
+          showNotification(
+            "error",
+            "Payment gateway failed to load. Please check your connection and try again.",
+          );
+          return;
+        }
+
+        // 2. Create order via backend
+        const order: CreateOrderResponse = await createOrder({
+          card_key: cardKey,
+          ...(billingCycle ? { billing_cycle: billingCycle } : {}),
+        }).unwrap();
+
+        // 3. Open Razorpay checkout
+        const rzp = new window.Razorpay({
+          key: order.key,
+          amount: order.amount, // in paise — Razorpay expects this
+          currency: order.currency,
+          name: "BitsOfTrade",
+          description: order.plan_name,
+          order_id: order.order_id,
+          handler(_response: unknown) {
+            // Razorpay fires this on successful payment capture client-side.
+            // The webhook already activates the subscription server-side.
+            showNotification(
+              "success",
+              `Payment successful! Your ${order.plan_name} subscription is being activated. It may take a moment to reflect.`,
+            );
+          },
+          modal: {
+            ondismiss() {
+              // User closed the modal without paying — no action needed
+            },
+          },
+          theme: {
+            color: "#6366f1",
+          },
+        });
+
+        rzp.on("payment.failed", (_response: unknown) => {
+          showNotification(
+            "error",
+            "Payment failed. Please try again or use a different payment method.",
+          );
+        });
+
+        rzp.open();
+      } catch (err: unknown) {
+        const apiError = err as { data?: { error?: string }; status?: number };
+        const message =
+          apiError?.data?.error ??
+          (apiError?.status === 401
+            ? "Please log in to complete your purchase."
+            : "Something went wrong. Please try again.");
+        showNotification("error", message);
+      } finally {
+        setLoadingCard(null);
+      }
+    },
+    [createOrder, showNotification],
+  );
 
   const disciplinePlan = findPlan(plans as PricingPlan[], "discipline_tools");
   const learningPlan = findPlan(plans as PricingPlan[], "learning_hub");
   const comboMonthly = findPlan(plans as PricingPlan[], "combo_monthly");
   const comboAnnual = findPlan(plans as PricingPlan[], "combo_annual");
 
+  // ── Render states ─────────────────────────────────────────────────────────
+
   if (isLoading) {
     return (
       <section className="py-16 px-4 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto max-w-7xl text-center text-gray-500 py-24">
-          Loading pricing...
+          Loading pricing…
         </div>
       </section>
     );
@@ -87,6 +233,8 @@ export default function Pricing() {
     );
   }
 
+  // ── Main render ───────────────────────────────────────────────────────────
+
   return (
     <section className="py-16 px-4 bg-gray-50 dark:bg-gray-900 transition-colors">
       <div className="container mx-auto max-w-7xl">
@@ -99,6 +247,32 @@ export default function Pricing() {
           </p>
         </div>
 
+        {/* Inline notification banner */}
+        {notification && (
+          <div
+            role="alert"
+            aria-live="polite"
+            className={`mb-8 flex items-start gap-3 rounded-xl border px-5 py-4 text-sm font-medium transition-all ${
+              notification.type === "success"
+                ? "border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-300"
+                : "border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+            }`}
+          >
+            {/* Icon */}
+            <span className="mt-0.5 shrink-0 text-lg leading-none">
+              {notification.type === "success" ? "✓" : "✕"}
+            </span>
+            <span className="flex-1">{notification.message}</span>
+            <button
+              aria-label="Dismiss notification"
+              onClick={() => setNotification(null)}
+              className="ml-auto shrink-0 opacity-60 hover:opacity-100 transition-opacity"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         {/* Pricing Cards */}
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
           {/* Card 1: Discipline Tools — monthly/yearly toggle */}
@@ -109,6 +283,13 @@ export default function Pricing() {
               description={disciplinePlan.tagline}
               colorScheme="blue"
               hasToggle={true}
+              isLoading={loadingCard === "discipline_tools"}
+              onBuy={(period) =>
+                handleBuy(
+                  "discipline_tools",
+                  period === "yearly" ? "yearly" : "monthly",
+                )
+              }
               monthlyOption={{
                 price: fmt(disciplinePlan.price),
                 period: getPeriod(disciplinePlan.billing_cycle),
@@ -118,7 +299,6 @@ export default function Pricing() {
                 note: disciplinePlan.footer_note,
               }}
               yearlyOption={{
-                // price_yearly is string | null — fall back to empty string so type is always string
                 price: disciplinePlan.price_yearly
                   ? fmt(disciplinePlan.price_yearly)
                   : fmt(disciplinePlan.price),
@@ -132,7 +312,7 @@ export default function Pricing() {
                   ? `Save ${fmt(
                       Number(disciplinePlan.price) * 12 -
                         Number(disciplinePlan.price_yearly),
-                    )} with yearly plan`
+                    )} with the yearly plan`
                   : undefined,
               }}
             />
@@ -145,6 +325,8 @@ export default function Pricing() {
               title={learningPlan.name}
               description={learningPlan.tagline}
               colorScheme="amber"
+              isLoading={loadingCard === "learning_hub"}
+              onBuy={() => handleBuy("learning_hub")}
               singleOption={{
                 price: fmt(learningPlan.price),
                 period: getPeriod(learningPlan.billing_cycle),
@@ -155,7 +337,7 @@ export default function Pricing() {
             />
           )}
 
-          {/* Card 3: Complete System — combo card, both options must be non-null */}
+          {/* Card 3: Complete System — combo card (both plans active) */}
           {comboMonthly && comboAnnual && (
             <PricingCard
               badge={comboMonthly.badge || "Structure + Understanding"}
@@ -163,8 +345,13 @@ export default function Pricing() {
               description={comboMonthly.tagline}
               colorScheme="purple"
               isCombo={true}
+              isLoading={
+                loadingCard === "combo_monthly" ||
+                loadingCard === "combo_annual"
+              }
+              onBuyMonthly={() => handleBuy("combo_monthly")}
+              onBuyYearly={() => handleBuy("combo_annual")}
               comboOptions={{
-                // Both are guaranteed non-null here — no null assignability issue
                 monthly: {
                   title: comboMonthly.name || "Monthly Combo",
                   price: fmt(comboMonthly.price),
@@ -197,6 +384,13 @@ export default function Pricing() {
               title="Complete System"
               description={comboMonthly?.tagline ?? comboAnnual?.tagline ?? ""}
               colorScheme="purple"
+              isLoading={
+                loadingCard === "combo_monthly" ||
+                loadingCard === "combo_annual"
+              }
+              onBuy={() =>
+                handleBuy(comboMonthly ? "combo_monthly" : "combo_annual")
+              }
               singleOption={{
                 price: fmt((comboMonthly ?? comboAnnual)!.price),
                 period: getPeriod((comboMonthly ?? comboAnnual)!.billing_cycle),

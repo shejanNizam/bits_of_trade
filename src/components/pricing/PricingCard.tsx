@@ -19,7 +19,7 @@ interface ComboOptions {
   monthly: {
     title: string;
     price: string;
-    period?: string; // optional — rendered if present, omitted if not
+    period?: string;
     features: string[];
     buttonText: string;
     note: string;
@@ -46,6 +46,45 @@ interface PricingCardProps {
   singleOption?: PricingOption;
   isCombo?: boolean;
   comboOptions?: ComboOptions;
+  /**
+   * Called when the CTA button is clicked on a regular (non-combo) card.
+   * For toggle cards, `period` is the currently selected period.
+   * For single-option cards, `period` is always "monthly".
+   */
+  onBuy?: (period: PricingPeriod) => void;
+  /** Called when the monthly CTA is clicked on a combo card. */
+  onBuyMonthly?: () => void;
+  /** Called when the annual CTA is clicked on a combo card. */
+  onBuyYearly?: () => void;
+  /** When true, all CTA buttons on this card are disabled and show a spinner. */
+  isLoading?: boolean;
+}
+
+// ─── Spinner ──────────────────────────────────────────────────────────────────
+function Spinner() {
+  return (
+    <svg
+      className="inline-block w-4 h-4 mr-2 animate-spin"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+      />
+    </svg>
+  );
 }
 
 export default function PricingCard({
@@ -59,6 +98,10 @@ export default function PricingCard({
   singleOption,
   isCombo = false,
   comboOptions,
+  onBuy,
+  onBuyMonthly,
+  onBuyYearly,
+  isLoading = false,
 }: PricingCardProps) {
   const [selectedPeriod, setSelectedPeriod] =
     useState<PricingPeriod>("monthly");
@@ -106,6 +149,9 @@ export default function PricingCard({
     hasToggle && selectedPeriod === "yearly"
       ? yearlyOption
       : monthlyOption || singleOption;
+
+  const btnBase =
+    "w-full py-3.5 rounded-lg font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed";
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-lg flex flex-col">
@@ -186,9 +232,20 @@ export default function PricingCard({
                   </div>
                 )}
                 <button
-                  className={`w-full py-3.5 rounded-lg font-medium transition-colors mb-4 ${colors.button}`}
+                  onClick={() =>
+                    onBuy?.(hasToggle ? selectedPeriod : "monthly")
+                  }
+                  disabled={isLoading}
+                  className={`${btnBase} mb-4 ${colors.button}`}
                 >
-                  {currentOption.buttonText}
+                  {isLoading ? (
+                    <>
+                      <Spinner />
+                      Processing…
+                    </>
+                  ) : (
+                    currentOption.buttonText
+                  )}
                 </button>
 
                 {currentOption.note && (
@@ -247,9 +304,18 @@ export default function PricingCard({
               </ul>
 
               <button
-                className={`w-full py-3.5 rounded-lg font-medium transition-colors ${colors.button}`}
+                onClick={() => onBuyMonthly?.()}
+                disabled={isLoading}
+                className={`${btnBase} ${colors.button}`}
               >
-                {comboOptions.monthly.buttonText}
+                {isLoading ? (
+                  <>
+                    <Spinner />
+                    Processing…
+                  </>
+                ) : (
+                  comboOptions.monthly.buttonText
+                )}
               </button>
 
               <p className="text-xs text-center text-gray-400 dark:text-gray-500 mt-3 transition-colors">
@@ -288,13 +354,22 @@ export default function PricingCard({
               </ul>
 
               <button
-                className={`w-full py-3.5 rounded-lg font-medium transition-colors ${
+                onClick={() => onBuyYearly?.()}
+                disabled={isLoading}
+                className={`${btnBase} ${
                   comboOptions.yearly.buttonVariant === "solid"
                     ? colors.buttonSolid
                     : colors.button
                 }`}
               >
-                {comboOptions.yearly.buttonText}
+                {isLoading ? (
+                  <>
+                    <Spinner />
+                    Processing…
+                  </>
+                ) : (
+                  comboOptions.yearly.buttonText
+                )}
               </button>
 
               <p className="text-xs text-center text-purple-600 dark:text-purple-400 mt-3 font-medium transition-colors">

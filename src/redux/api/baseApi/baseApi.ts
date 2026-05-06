@@ -40,6 +40,7 @@ const baseApi = createApi({
     "UserCourseProgress",
     "review",
     "pricing",
+    "payments",
     "blog",
     "LearningHubPublic",
   ],
