@@ -16,7 +16,7 @@ export const accountDeletionApi = baseApi.injectEndpoints({
       DeleteAccountRequest
     >({
       query: (body) => ({
-        url: "/api/accounts/me/delete/",
+        url: "api/auth/me/delete/",
         method: "DELETE",
         body,
       }),
