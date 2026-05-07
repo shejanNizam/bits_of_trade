@@ -9,6 +9,15 @@ export interface DeleteAccountResponse {
   message: string;
 }
 
+export interface ChangePasswordRequest {
+  old_password: string;
+  new_password: string;
+}
+
+export interface ChangePasswordResponse {
+  message: string;
+}
+
 export const accountDeletionApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     deleteAccount: builder.mutation<
@@ -22,7 +31,21 @@ export const accountDeletionApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["auth", "user"],
     }),
+
+    //
+    changePassword: builder.mutation<
+      ChangePasswordResponse,
+      ChangePasswordRequest
+    >({
+      query: (body) => ({
+        url: "api/auth/password/change/",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["auth"],
+    }),
   }),
 });
 
-export const { useDeleteAccountMutation } = accountDeletionApi;
+export const { useDeleteAccountMutation, useChangePasswordMutation } =
+  accountDeletionApi;
