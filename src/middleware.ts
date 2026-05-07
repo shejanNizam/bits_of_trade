@@ -10,19 +10,28 @@ const PUBLIC_ROUTES = [
   "/faqs",
 ];
 
-const ALWAYS_PUBLIC_ROUTES = ["/discipline-test", "/onboarding/discipline-test"];
+const ALWAYS_PUBLIC_ROUTES = [
+  "/discipline-test",
+  "/onboarding/discipline-test",
+  "/reset-password",
+];
 const AUTH_ROUTES = ["/login", "/signup", "/forgot-password"];
 const AUTHENTICATED_HOME = "/user-dashboard";
+
+const isRouteMatch = (pathname: string, route: string) =>
+  pathname === route || pathname.startsWith(`${route}/`);
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("auth-token")?.value;
   const isAuthenticated = Boolean(token);
 
-  const isAlwaysPublicRoute = ALWAYS_PUBLIC_ROUTES.includes(pathname);
+  const isAlwaysPublicRoute = ALWAYS_PUBLIC_ROUTES.some((route) =>
+    isRouteMatch(pathname, route),
+  );
   const isPublicRoute =
     isAlwaysPublicRoute || PUBLIC_ROUTES.includes(pathname);
-  const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
+  const isAuthRoute = AUTH_ROUTES.some((route) => isRouteMatch(pathname, route));
 
   if (isAlwaysPublicRoute) {
     return NextResponse.next();
