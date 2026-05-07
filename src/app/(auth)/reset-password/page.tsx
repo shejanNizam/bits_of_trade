@@ -1,141 +1,93 @@
 "use client";
 
-import { Button, Form, Input, message, theme } from "antd";
+import { useResetPasswordMutation } from "@/redux/api/authApi/authApi";
+import { getApiErrorMessage } from "@/utils/apiError";
+import { ErrorSwal, SuccessSwal } from "@/utils/allSwal";
+import { Button, Form, Input, theme } from "antd";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 
-// 🔥 Uncomment when API is integrated
-// import { ErrorSwal, SuccessSwal } from "@/components/utils/allSwalFire";
-// import { useResetPasswordMutation } from "@/lib/redux/features/authApi";
-
-// ==================== TYPES ====================
 interface ResetPasswordFormValues {
   password: string;
   confirmPassword: string;
 }
 
-// 🔥 Uncomment when API is ready
-// interface ResetPasswordResponse {
-//   success: boolean;
-//   data?: {
-//     message: string;
-//   };
-//   message: string;
-// }
+interface ResetPasswordResponse {
+  detail?: string;
+  message?: string;
+}
 
-// interface ApiError {
-//   data?: {
-//     message: string;
-//   };
-//   message?: string;
-// }
-
-// ==================== COMPONENT ====================
-const ResetPassword: React.FC = () => {
+const ResetPasswordContent: React.FC = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [form] = Form.useForm<ResetPasswordFormValues>();
   const { token } = theme.useToken();
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
 
-  // ==================== API INTEGRATION ====================
-  // 🔥 Uncomment when backend API is ready
-  // const [resetPassword, { isLoading }] = useResetPasswordMutation();
+  const uid = searchParams.get("uid")?.trim() || "";
+  const resetToken = searchParams.get("token")?.trim() || "";
+  const isResetLinkMissing = !uid || !resetToken;
 
-  // 🔥 Mock loading state - Remove when API is integrated
-  const isLoading = false;
-
-  // ==================== FORM SUBMIT HANDLER ====================
   const onFinish = async (values: ResetPasswordFormValues): Promise<void> => {
+    if (isResetLinkMissing) {
+      await ErrorSwal({
+        title: "Invalid Reset Link",
+        text: "Please request a new password reset link and try again.",
+      });
+      router.push("/forgot-password");
+      return;
+    }
+
+    if (values.password !== values.confirmPassword) {
+      await ErrorSwal({
+        title: "Password Mismatch",
+        text: "Passwords do not match.",
+      });
+      return;
+    }
+
     try {
-      // ==================== PASSWORD MATCH VALIDATION ====================
-      // Note: This is also handled by Form.Item validation, but keeping as double-check
-      if (values.password !== values.confirmPassword) {
-        message.error("Passwords do not match!");
-        return;
-      }
-
-      // ==================== API CALL ====================
-      // 🔥 Uncomment when backend is ready
-      /*
-      // Get token from localStorage
-      const authToken = localStorage.getItem("user_token");
-
-      if (!authToken) {
-        ErrorSwal({
-          title: "No Token Found",
-          text: "Please request a new password reset link.",
-        });
-        router.push("/forgot-password");
-        return;
-      }
-
       const response: ResetPasswordResponse = await resetPassword({
-        token: authToken,
-        body: {
-          password: values.password,
-          confirmPassword: values.confirmPassword,
-        },
+        uid,
+        token: resetToken,
+        new_password1: values.password,
+        new_password2: values.confirmPassword,
       }).unwrap();
 
-      // Success notification
-      SuccessSwal({
+      await SuccessSwal({
         title: "Password Reset Successful!",
-        text: response?.message || response?.data?.message || "Your password has been reset successfully.",
+        text:
+          response?.detail ||
+          response?.message ||
+          "Your password has been reset successfully.",
       });
 
-      // Remove token from localStorage
-      localStorage.removeItem("user_token");
-
-      // Redirect to login page
       router.push("/login");
-      */
-
-      // ==================== MOCK SUCCESS ====================
-      // 🔥 Remove this block when API is integrated
-      message.success("Password reset successful! (Mock - Remove when API ready)");
-
-      // Mock redirect
-      setTimeout(() => {
-        router.push("/login");
-      }, 1000);
     } catch (error) {
-      // ==================== ERROR HANDLING ====================
-      console.error("Reset password error:", error);
-
-      // 🔥 Uncomment when backend is ready
-      /*
-      const apiError = error as ApiError;
-      ErrorSwal({
+      await ErrorSwal({
         title: "Password Reset Failed",
-        text: apiError?.data?.message || apiError?.message || "Something went wrong. Please try again.",
+        text: getApiErrorMessage(
+          error,
+          "The reset link is invalid or expired. Please request a new one.",
+          ["new_password1", "new_password2", "uid", "token"],
+        ),
       });
-      */
-
-      // 🔥 Mock error - Remove when API integrated
-      const errorMessage = (error as Error)?.message || "Something went wrong!";
-      message.error(`Password reset failed: ${errorMessage} (Mock error)`);
     }
   };
 
-  // ==================== NAVIGATION HANDLERS ====================
-  const handleBack = (): void => {
-    router.back();
-  };
-
-  // ==================== RENDER ====================
   return (
     <div className="min-h-screen w-full flex flex-col justify-center items-center px-4 py-12 bg-gray-100 dark:bg-gray-900 transition-colors">
       <div className="shadow-lg dark:shadow-gray-800/50 rounded-2xl w-full max-w-md p-8 relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-colors">
-        {/* ==================== BACK BUTTON ==================== */}
         <button
-          onClick={handleBack}
+          onClick={() => router.back()}
           className="absolute top-4 left-4 text-gray-600 dark:text-gray-400 hover:opacity-70 focus:outline-none transition-opacity z-50"
           aria-label="Go Back"
         >
           <FaArrowLeft size={24} />
         </button>
 
-        {/* ==================== HEADER ==================== */}
         <div className="flex flex-col items-center mb-6">
           <h2 className="text-2xl md:text-3xl font-semibold mt-4 text-blue-600 dark:text-blue-400 transition-colors">
             Reset Password
@@ -145,14 +97,12 @@ const ResetPassword: React.FC = () => {
           </p>
         </div>
 
-        {/* ==================== RESET PASSWORD FORM ==================== */}
         <Form
           form={form}
           layout="vertical"
           onFinish={onFinish}
           className="space-y-2"
         >
-          {/* ==================== NEW PASSWORD FIELD ==================== */}
           <Form.Item<ResetPasswordFormValues>
             label={
               <span className="font-semibold text-gray-900 dark:text-white transition-colors">
@@ -184,7 +134,6 @@ const ResetPassword: React.FC = () => {
             />
           </Form.Item>
 
-          {/* ==================== CONFIRM PASSWORD FIELD ==================== */}
           <Form.Item<ResetPasswordFormValues>
             label={
               <span className="font-semibold text-gray-900 dark:text-white transition-colors">
@@ -221,7 +170,6 @@ const ResetPassword: React.FC = () => {
             />
           </Form.Item>
 
-          {/* ==================== SUBMIT BUTTON ==================== */}
           <Form.Item className="mt-6">
             <Button
               type="primary"
@@ -235,7 +183,6 @@ const ResetPassword: React.FC = () => {
             </Button>
           </Form.Item>
 
-          {/* ==================== LOGIN LINK ==================== */}
           <p className="text-center pt-4 text-gray-700 dark:text-gray-300 transition-colors">
             Remembered your password?{" "}
             <Link
@@ -248,6 +195,20 @@ const ResetPassword: React.FC = () => {
         </Form>
       </div>
     </div>
+  );
+};
+
+const ResetPassword: React.FC = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen w-full flex justify-center items-center bg-gray-100 dark:bg-gray-900">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      }
+    >
+      <ResetPasswordContent />
+    </Suspense>
   );
 };
 

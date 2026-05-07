@@ -32,7 +32,7 @@ export default function SettingsPage() {
     {
       id: "security",
       title: "Security",
-      description: "Password, two-factor authentication, and sessions",
+      description: "Password change",
       icon: FiShield,
       iconBg: "bg-green-100 dark:bg-green-900/30",
       iconColor: "text-green-600 dark:text-green-400",

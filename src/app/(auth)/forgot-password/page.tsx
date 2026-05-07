@@ -52,7 +52,7 @@ const ForgotPassword: React.FC = () => {
       });
 
       // Redirect to login page or a confirmation page
-      router.push("/login?reset=requested");
+      // router.push("/login?reset=requested");
     } catch (error) {
       // Error Handling - though this endpoint shouldn't typically error for non-existent emails
       console.error("Password reset request error:", error);
