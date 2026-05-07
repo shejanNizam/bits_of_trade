@@ -1,5 +1,16 @@
 import baseApi from "../baseApi/baseApi";
 
+interface ResetPasswordPayload {
+  uidb64: string;
+  token: string;
+  new_password: string;
+}
+
+interface ResetPasswordResponse {
+  detail?: string;
+  message?: string;
+}
+
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // 01. signup api endpoint
@@ -62,7 +73,10 @@ export const authApi = baseApi.injectEndpoints({
     }),
 
     // 06. confirm reset password api endpoint
-    resetPassword: builder.mutation({
+    resetPassword: builder.mutation<
+      ResetPasswordResponse,
+      ResetPasswordPayload
+    >({
       query: (body) => {
         return {
           url: "/api/auth/password/reset/confirm/",

@@ -14,11 +14,6 @@ interface ResetPasswordFormValues {
   confirmPassword: string;
 }
 
-interface ResetPasswordResponse {
-  detail?: string;
-  message?: string;
-}
-
 const ResetPasswordContent: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -26,9 +21,10 @@ const ResetPasswordContent: React.FC = () => {
   const { token } = theme.useToken();
   const [resetPassword, { isLoading }] = useResetPasswordMutation();
 
-  const uid = searchParams.get("uid")?.trim() || "";
+  const uidb64 =
+    searchParams.get("uidb64")?.trim() || searchParams.get("uid")?.trim() || "";
   const resetToken = searchParams.get("token")?.trim() || "";
-  const isResetLinkMissing = !uid || !resetToken;
+  const isResetLinkMissing = !uidb64 || !resetToken;
 
   const onFinish = async (values: ResetPasswordFormValues): Promise<void> => {
     if (isResetLinkMissing) {
@@ -49,11 +45,10 @@ const ResetPasswordContent: React.FC = () => {
     }
 
     try {
-      const response: ResetPasswordResponse = await resetPassword({
-        uid,
+      const response = await resetPassword({
+        uidb64,
         token: resetToken,
-        new_password1: values.password,
-        new_password2: values.confirmPassword,
+        new_password: values.password,
       }).unwrap();
 
       await SuccessSwal({
@@ -71,7 +66,7 @@ const ResetPasswordContent: React.FC = () => {
         text: getApiErrorMessage(
           error,
           "The reset link is invalid or expired. Please request a new one.",
-          ["new_password1", "new_password2", "uid", "token"],
+          ["new_password", "uidb64", "token"],
         ),
       });
     }
