@@ -25,12 +25,10 @@ export default function ThemeToggle() {
       aria-label="Toggle theme"
     >
       {isDark ? (
-        // <span className="text-sm">☀️</span>
         <span className="text-sm">
           <FaSun size={20} color="#2563EB" />
         </span>
       ) : (
-        // <span className="text-sm">🌙</span>
         <span className="text-sm">
           <FaMoon size={20} color="#2563EB" />
         </span>

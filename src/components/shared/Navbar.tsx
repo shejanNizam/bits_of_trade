@@ -9,7 +9,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useSelector } from "react-redux";
-// import default_img from "../../assets/user_img_default.png";
 import ThemeToggle from "./ThemeToggle";
 
 const primaryLinkClass =

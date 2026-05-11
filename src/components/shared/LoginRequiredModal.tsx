@@ -5,7 +5,6 @@ import Link from "next/link";
 interface LoginRequiredModalProps {
   isOpen: boolean;
   onClose: () => void;
-  /** Plan name to show in the message, e.g. "Discipline Tools" */
   planName?: string;
 }
 

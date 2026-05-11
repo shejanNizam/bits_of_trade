@@ -4,7 +4,7 @@ export interface SignupFormValues {
   last_name: string;
   email: string;
   password: string;
-  confirmPassword: string; // Used locally in AntD form
+  confirmPassword: string;
   agree: boolean;
 }
 
@@ -68,7 +68,6 @@ export interface User {
   email: string;
   first_name: string;
   last_name: string;
-  /** Possible values: "none" | "tool" | "learning" | "both" */
   subscription_type: "none" | "tool" | "learning" | "both";
   subscription_status: string;
   profile_picture: string | null;

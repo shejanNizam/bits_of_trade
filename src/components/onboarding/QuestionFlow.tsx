@@ -87,11 +87,10 @@ export function QuestionFlow() {
       setAnswers({ ...answers, [currentQuestion.id]: updated });
     } else {
       setAnswers({ ...answers, [currentQuestion.id]: value });
-      // Auto-advance for single choice, but only if it's NOT the last question
+
       if (currentStep < questions.length - 1) {
         setTimeout(() => setCurrentStep(currentStep + 1), 300);
       } else {
-        // If it's the last question and single choice, trigger final submission
         setTimeout(() => handleNext(value), 300);
       }
     }
@@ -99,25 +98,19 @@ export function QuestionFlow() {
 
   // 3. Updated handleNext to handle API submission
   const handleNext = async (lastValue?: string) => {
-    // If we are not on the last question, just increment step
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Logic for final submission
       try {
-        // Ensure we have the latest answers including the one just clicked
         const finalAnswers = lastValue
           ? { ...answers, [currentQuestion.id]: lastValue }
           : answers;
 
-        // 🔥 API Call
         await completeOnboarding(finalAnswers).unwrap();
 
-        // Navigate to the "One Last Thing" view
         router.push("/onboarding?step=last");
       } catch (error) {
         console.error("Failed to submit onboarding:", error);
-        // Optional: Add a toast notification here for the user
       }
     }
   };
@@ -142,7 +135,6 @@ export function QuestionFlow() {
 
   return (
     <div className="min-h-screen flex flex-col bg-linear-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
-      {/* Top Progress Bar */}
       <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center gap-4">
           <button
@@ -215,7 +207,6 @@ export function QuestionFlow() {
             })}
           </div>
 
-          {/* Show button for multiple choice OR the last question to ensure submission feedback */}
           {(currentQuestion.type === "multiple" ||
             currentStep === questions.length - 1) && (
             <CustomPrimaryButton

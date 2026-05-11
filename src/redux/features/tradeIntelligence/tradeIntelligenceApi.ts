@@ -1,24 +1,5 @@
-// import baseApi from "@/redux/api/baseApi/baseApi";
-
-// export const tradeIntelligenceApi = baseApi.injectEndpoints({
-//   endpoints: (builder) => ({
-//     // POST api --> create analyze
-//     createAnalyze: builder.mutation({
-//       query: (payload) => ({
-//         url: "/api/trade-intelligence/analyze/",
-//         method: "POST",
-//         body: payload,
-//       }),
-//       invalidatesTags: ["tradeIntelligence"],
-//     }),
-//   }),
-// });
-
-// export const { useCreateAnalyzeMutation } = tradeIntelligenceApi;
-
 import baseApi from "@/redux/api/baseApi/baseApi";
 
-// Request Types
 export type TimeRange =
   | "all"
   | "last7"
@@ -28,14 +9,13 @@ export type TimeRange =
   | "custom";
 
 export interface TradeIntelligencePayload {
-  timeRange: TimeRange; // Required
-  fromDate?: string; // Required when timeRange is "custom"
-  toDate?: string; // Required when timeRange is "custom"
-  market?: string; // Optional, omit for all markets
-  broker?: string; // Optional, omit for all brokers
+  timeRange: TimeRange;
+  fromDate?: string;
+  toDate?: string;
+  market?: string;
+  broker?: string;
 }
 
-// Response Types
 export interface IntelligenceSummary {
   text: string;
   performance: "positive" | "negative";
@@ -68,7 +48,7 @@ export interface HoldingBackItem {
   out_of: number | null;
   pct: number | null;
   description: string;
-  avg_session_pnl_after?: number; // Only for fomo_after_loss
+  avg_session_pnl_after?: number;
 }
 
 export interface RepeatingPattern {
@@ -78,7 +58,7 @@ export interface RepeatingPattern {
   out_of: number | null;
   description: string;
   stat: string;
-  journal_mention_pct?: number; // Only for revenge_trading
+  journal_mention_pct?: number;
 }
 
 export interface SessionPnLSummary {
@@ -109,7 +89,7 @@ export interface DisciplineHealth {
 export interface TradeIntelligenceResponse {
   period: string;
   total_trades: number;
-  message?: string; // Present when total_trades === 0
+  message?: string;
   intelligence_summary?: IntelligenceSummary;
   doing_well?: DoingWellItem[];
   holding_back?: HoldingBackItem[];

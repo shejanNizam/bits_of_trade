@@ -1,5 +1,3 @@
-// /api/cms/reviews/
-
 import baseApi from "@/redux/api/baseApi/baseApi";
 
 export const reviewApi = baseApi.injectEndpoints({

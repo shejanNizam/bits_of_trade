@@ -46,21 +46,13 @@ interface PricingCardProps {
   singleOption?: PricingOption;
   isCombo?: boolean;
   comboOptions?: ComboOptions;
-  /**
-   * Called when the CTA button is clicked on a regular (non-combo) card.
-   * For toggle cards, `period` is the currently selected period.
-   * For single-option cards, `period` is always "monthly".
-   */
+
   onBuy?: (period: PricingPeriod) => void;
-  /** Called when the monthly CTA is clicked on a combo card. */
   onBuyMonthly?: () => void;
-  /** Called when the annual CTA is clicked on a combo card. */
   onBuyYearly?: () => void;
-  /** When true, all CTA buttons on this card are disabled and show a spinner. */
   isLoading?: boolean;
 }
 
-// ─── Spinner ──────────────────────────────────────────────────────────────────
 function Spinner() {
   return (
     <svg
@@ -155,7 +147,6 @@ export default function PricingCard({
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-lg flex flex-col">
-      {/* Badge & Toggle */}
       <div className="mb-6 flex items-center justify-between">
         <span
           className={`inline-block text-xs font-medium px-3 py-1.5 rounded-md transition-colors ${colors.badge}`}
@@ -189,7 +180,6 @@ export default function PricingCard({
         )}
       </div>
 
-      {/* Regular Card Content */}
       {!isCombo && (
         <div className="flex-1 flex flex-col">
           {currentOption && (
@@ -259,7 +249,6 @@ export default function PricingCard({
         </div>
       )}
 
-      {/* Combo Card Content */}
       {isCombo && comboOptions && (
         <>
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 transition-colors">
@@ -271,7 +260,6 @@ export default function PricingCard({
           </p>
 
           <div className="flex-1 flex flex-col">
-            {/* Monthly Combo */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-base font-semibold text-gray-900 dark:text-white transition-colors">
@@ -323,7 +311,6 @@ export default function PricingCard({
               </p>
             </div>
 
-            {/* Annual Combo */}
             <div className="pt-6 border-t border-gray-100 dark:border-gray-700 transition-colors mt-auto">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-base font-semibold text-gray-900 dark:text-white transition-colors">

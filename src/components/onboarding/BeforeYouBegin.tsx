@@ -23,19 +23,16 @@ export function BeforeYouBegin({ onContinue }: BeforeYouBeginProps) {
   return (
     <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8 bg-linear-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       <div className="max-w-sm sm:max-w-md w-full bg-white dark:bg-gray-900 shadow-xl sm:shadow-2xl dark:shadow-gray-900/50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 border border-gray-200 dark:border-gray-800 transition-colors">
-        {/* Shield Icon */}
         <div className="text-center mb-4 sm:mb-6">
           <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-blue-600 dark:bg-blue-500 rounded-full shadow-lg dark:shadow-blue-500/20 transition-colors">
             <MdSecurity className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </div>
         </div>
 
-        {/* Title */}
         <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-6 sm:mb-8 text-gray-900 dark:text-white transition-colors">
           Before you begin
         </h2>
 
-        {/* What we DON'T do */}
         <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl sm:rounded-2xl p-4 sm:p-5 mb-4 border border-blue-100 dark:border-blue-900/50 transition-colors">
           <div className="space-y-3">
             <div className="flex items-start gap-3">
@@ -59,7 +56,6 @@ export function BeforeYouBegin({ onContinue }: BeforeYouBeginProps) {
           </div>
         </div>
 
-        {/* What we DO */}
         <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl sm:rounded-2xl p-4 sm:p-5 mb-6 border border-blue-100 dark:border-blue-900/50 transition-colors">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 transition-colors">
             What we do:
@@ -86,7 +82,6 @@ export function BeforeYouBegin({ onContinue }: BeforeYouBeginProps) {
           </div>
         </div>
 
-        {/* Checkbox */}
         <label className="flex items-start gap-3 mb-6 cursor-pointer group">
           <div className="relative shrink-0 mt-0.5">
             <input
@@ -112,7 +107,6 @@ export function BeforeYouBegin({ onContinue }: BeforeYouBeginProps) {
           </span>
         </label>
 
-        {/* Next Button */}
         <CustomPrimaryButton
           onClick={handleContinue}
           disabled={!isChecked}

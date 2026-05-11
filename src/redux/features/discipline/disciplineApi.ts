@@ -3,7 +3,6 @@ import baseApi from "@/redux/api/baseApi/baseApi";
 export const disciplineApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // /api/discipline/current-session/
-    // /api/discipline/current-session/
     getCurrentSession: builder.query({
       query: () => ({
         url: "/api/discipline/current-session/",

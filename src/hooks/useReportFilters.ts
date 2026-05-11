@@ -1,4 +1,3 @@
-// hooks/useReportFilters.ts
 import { useFilters } from "@/contexts/FilterContext";
 import { useEffect } from "react";
 

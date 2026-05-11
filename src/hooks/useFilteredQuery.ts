@@ -1,4 +1,3 @@
-// hooks/useFilteredQuery.ts
 import { useFilters } from "@/contexts/FilterContext";
 import { useEffect } from "react";
 

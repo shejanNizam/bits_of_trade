@@ -92,7 +92,6 @@ const answerScores: Record<string, number> = {
   "Almost never": 3,
 };
 
-// Calculate risk level based on total score
 function calculateRiskLevel(totalScore: number): "low" | "moderate" | "high" {
   if (totalScore >= 8) {
     return "high";
@@ -102,7 +101,6 @@ function calculateRiskLevel(totalScore: number): "low" | "moderate" | "high" {
   return "low";
 }
 
-// Calculate total score from answers
 function calculateTotalScore(
   answers: Record<string, string | string[]>,
 ): number {
@@ -110,12 +108,10 @@ function calculateTotalScore(
 
   Object.values(answers).forEach((answer) => {
     if (Array.isArray(answer)) {
-      // Multiple choice question - sum all selected options
       answer.forEach((a) => {
         totalScore += answerScores[a] || 0;
       });
     } else {
-      // Single choice question
       totalScore += answerScores[answer] || 0;
     }
   });
@@ -152,15 +148,12 @@ export function DisciplineTestFlow() {
       try {
         setIsLoading(true);
 
-        // Calculate total score and risk level
         const totalScore = calculateTotalScore(answers);
         const riskLevel = calculateRiskLevel(totalScore);
 
-        // Store risk level in sessionStorage or query params to pass to report view
         sessionStorage.setItem("disciplineRiskLevel", riskLevel);
         sessionStorage.setItem("disciplineTotalScore", totalScore.toString());
 
-        // Navigate to report view with risk level as query param
         router.push(
           `/discipline-test?view=report&risk=${riskLevel}&score=${totalScore}`,
         );
@@ -192,10 +185,8 @@ export function DisciplineTestFlow() {
 
   return (
     <div className="min-h-screen flex flex-col bg-linear-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors">
-      {/* Top Progress Bar */}
       <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10 shadow-sm dark:shadow-gray-900/50 transition-colors">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4 flex items-center gap-3 sm:gap-4">
-          {/* Back Button */}
           <button
             onClick={handleBack}
             disabled={currentStep === 0}
@@ -204,7 +195,6 @@ export function DisciplineTestFlow() {
             <IoMdArrowBack className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 dark:text-gray-300" />
           </button>
 
-          {/* Progress Bar */}
           <div className="flex-1 h-2 sm:h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden transition-colors">
             <div
               className="h-full bg-blue-600 dark:bg-blue-500 transition-all duration-300 ease-out"
@@ -212,36 +202,30 @@ export function DisciplineTestFlow() {
             />
           </div>
 
-          {/* Progress Text */}
           <div className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap transition-colors">
             {currentStep + 1}/{disciplineQuestions.length}
           </div>
         </div>
       </div>
 
-      {/* Question Card */}
       <div className="flex-1 flex items-center justify-center p-3 sm:p-4 md:p-6">
         <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl w-full bg-white dark:bg-gray-900 shadow-xl sm:shadow-2xl dark:shadow-gray-900/50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 border border-gray-200 dark:border-gray-800 transition-colors">
-          {/* Question Number Badge */}
           <div className="text-center mb-4 sm:mb-6">
             <span className="inline-block bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400 text-xs sm:text-sm font-medium px-4 sm:px-5 py-1.5 sm:py-2 rounded-full border border-blue-200 dark:border-blue-900/50 transition-colors">
               Question {currentStep + 1} of {disciplineQuestions.length}
             </span>
           </div>
 
-          {/* Question Title */}
           <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-center mb-2 sm:mb-3 text-gray-900 dark:text-white leading-tight transition-colors">
             {currentQuestion.title}
           </h2>
 
-          {/* Subtitle */}
           {currentQuestion.subtitle && (
             <p className="text-sm sm:text-base text-center mb-6 sm:mb-8 text-gray-600 dark:text-gray-400 transition-colors">
               {currentQuestion.subtitle}
             </p>
           )}
 
-          {/* Options */}
           <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
             {currentQuestion.options.map((option) => {
               const selected = isSelected(option);
@@ -257,7 +241,6 @@ export function DisciplineTestFlow() {
                 >
                   <span className="pr-3">{option}</span>
 
-                  {/* Checkbox/Radio Circle */}
                   <div
                     className={`shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                       selected
@@ -274,7 +257,6 @@ export function DisciplineTestFlow() {
             })}
           </div>
 
-          {/* Next Button (only for multiple answers) */}
           {currentQuestion.type === "multiple" && (
             <CustomPrimaryButton
               onClick={handleNext}

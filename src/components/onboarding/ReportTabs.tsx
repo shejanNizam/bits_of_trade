@@ -107,11 +107,9 @@ export function ReportTabs() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
 
-  // Use the RTK Query mutation
   const [sendReport, { isLoading: isSending }] =
     useSendDisciplineReportMutation();
 
-  // Set risk level based on URL param when component mounts
   useEffect(() => {
     if (riskParam && ["low", "moderate", "high"].includes(riskParam)) {
       setRiskLevel(riskParam);
@@ -158,13 +156,11 @@ export function ReportTabs() {
 
   const handleSubmit = async (values: { email: string }) => {
     try {
-      // Call the API to send the report
       await sendReport({
         email: values.email,
         risk_level: riskLevel,
       }).unwrap();
 
-      // Show success message
       Modal.success({
         title: "Success!",
         content: "Your discipline profile has been sent to your email.",
